@@ -24,6 +24,10 @@ public class User {
     @Column( nullable = false, name = "PASSWORD" )
     private String password;
 
+    @OneToOne( fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn( name = "ROLE_ID", referencedColumnName = "ROLE_ID", nullable = false)
+    private Role role;
+
     // TODO: check timestamps format and auditing
     private Timestamp creationDate;
     private Timestamp updateDate;

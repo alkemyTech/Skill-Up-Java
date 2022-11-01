@@ -23,6 +23,10 @@ public class Account {
     @Column( nullable = false, name = "BALANCE" )
     private Double balance;
 
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn( name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+    private User user;
+
     // TODO: check timestamps format and auditing
     private Timestamp creationDate;
     private Timestamp updateDate;

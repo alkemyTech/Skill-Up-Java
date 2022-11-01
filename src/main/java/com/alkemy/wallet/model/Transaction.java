@@ -23,11 +23,9 @@ public class Transaction {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    // TODO: Create foreign key userId
-    // --- Foreign Key userID
-
-    // TODO: Create foreign key accountId
-    // --- Foreign Key accountId
+    @ManyToOne
+    @JoinColumn( name = "ACCOUNT_ID", referencedColumnName = "ACCOUNT_ID", nullable = false)
+    private Account account;
 
     // TODO: Check timestamps format and auditing
     private Timestamp transactionDate;

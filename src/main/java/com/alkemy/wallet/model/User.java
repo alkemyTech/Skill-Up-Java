@@ -36,5 +36,4 @@ public class User {
 
     @Column(name = "soft_delete")
     private Byte softDelete;
-
 }

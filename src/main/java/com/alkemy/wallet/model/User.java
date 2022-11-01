@@ -1,9 +1,18 @@
 package com.alkemy.wallet.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table( name = "USERS" )
 public class User {
 
@@ -30,4 +39,8 @@ public class User {
 
     // TODO: check soft delete rules
     private Boolean softDelete;
+
+    public User(int userId){
+        this.userId = userId;
+    }
 }

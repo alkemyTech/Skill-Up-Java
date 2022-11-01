@@ -30,7 +30,7 @@ public class Account {
     @Column(name = "currency")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     @NotNull
-    private Double currency;
+    private String currency;
     @Column(name = "transaction_limit")
     @NotNull
     private Double transactionLimit;
@@ -39,9 +39,9 @@ public class Account {
     private Double balance;
     @Column(name = "timestamp")
     @CreationTimestamp
-    private LocalDateTime createDateTime;
+    private LocalDateTime createDate;
     @UpdateTimestamp
-    private LocalDateTime updateDateTime;
+    private LocalDateTime updateDate;
     //@ManyToOne(fetch = FetchType.LAZY, optional = false)
     //@JoinColumn(name = "userId", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)

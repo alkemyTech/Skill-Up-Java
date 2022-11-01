@@ -5,19 +5,20 @@ import java.sql.Timestamp;
 
 // TODO: Check db table name
 @Entity
-@Table
+@Table(name = "ROLES")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roleId;
+    @Column(name = "ROLE_ID")
+    private Integer roleId;
 
     // TODO: Check enum string content
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false)
+    @Column(name = "NAME", nullable = false)
     private RoleName name;
 
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     // TODO: Check timestamps format and auditing

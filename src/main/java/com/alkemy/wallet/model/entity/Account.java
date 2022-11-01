@@ -12,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-
 @Getter
 @Setter
 @Entity
@@ -22,32 +21,37 @@ import java.time.LocalDateTime;
 public class Account {
     private static final long serialVersionUID = 1L;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long accountId;
+
     @Column(name = "currency")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     @NotNull
     private String currency;
+
     @Column(name = "transaction_limit")
     @NotNull
     private Double transactionLimit;
+
     @Column(name = "balance")
     @NotNull
     private Double balance;
+
     @Column(name = "timestamp")
     @CreationTimestamp
     private LocalDateTime createDate;
+
     @UpdateTimestamp
     private LocalDateTime updateDate;
+
     //@ManyToOne(fetch = FetchType.LAZY, optional = false)
     //@JoinColumn(name = "userId", nullable = false)
     //@OnDelete(action = OnDeleteAction.CASCADE)
     //@JsonIgnore
     //private User user;
-    private boolean softDelete = Boolean.FALSE;
 
+    private boolean softDelete = Boolean.FALSE;
 
 }

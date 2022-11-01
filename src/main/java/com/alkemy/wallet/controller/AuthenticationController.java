@@ -1,6 +1,8 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.security.AuthenticationRequest;
+import com.alkemy.wallet.security.AuthenticationResponse;
 import com.alkemy.wallet.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,11 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user){
         return authenticationService.registerUser(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> loginUser(@RequestBody AuthenticationRequest authenticationRequest){
+        return authenticationService.loginUser(authenticationRequest);
     }
 
 

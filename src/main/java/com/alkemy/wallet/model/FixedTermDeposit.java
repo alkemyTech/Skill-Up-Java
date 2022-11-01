@@ -15,11 +15,9 @@ public class FixedTermDeposit {
     @Column(name = "AMOUNT", nullable = false)
     private Double amount;
 
-    // TODO: Create foreign key userID
-    // --- Foreign Key userID
-
-    // TODO: Create foreign key accountID
-    // --- Foreign Key accountID
+    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.PERSIST )
+    @JoinColumn( name = "ACCOUNT_ID", referencedColumnName = "ACCOUNT_ID")
+    private Account account;
 
     @Column(name = "INTEREST", nullable = false)
     private Double interest;

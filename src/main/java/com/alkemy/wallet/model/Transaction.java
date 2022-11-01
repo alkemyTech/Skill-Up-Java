@@ -1,7 +1,5 @@
 package com.alkemy.wallet.model;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 

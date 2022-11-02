@@ -1,0 +1,44 @@
+package com.alkemy.wallet.model.entity;
+
+import com.alkemy.wallet.model.entity.User;
+import com.sun.istack.NotNull;
+import com.sun.istack.Nullable;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "roles")
+public class Role {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name")
+    @NotNull
+    @Enumerated (value = EnumType.STRING)
+    private String name;
+
+    @Column(name = "description")
+    @NotNull
+    private String description;
+
+    @Column(name = "creationDate")
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+
+    @Column(name = "updateDate")
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
+
+    @OneToOne(mappedBy = "role")
+    private User user;
+}

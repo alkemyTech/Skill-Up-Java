@@ -5,9 +5,7 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,5 +20,10 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers(){
         List<UserDTO> users =  userService.getAllUsers();
         return ResponseEntity.ok().body(users);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Integer> deleteUserById(@PathVariable Integer id){
+        userService.deleteUserById(id);
+        return ResponseEntity.ok().build();
     }
 }

@@ -32,4 +32,11 @@ public class UserServiceImpl implements UserService {
         List<UserDTO>  result  = userMapper.userEntityList2DTOList(userList);
         return null;
     }
+
+    @Override
+    public Integer deleteUserById(Integer id) {
+        userRepository.deleteById(id);
+        return null;
+    }
+
 }

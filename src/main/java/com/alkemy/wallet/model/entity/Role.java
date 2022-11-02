@@ -25,7 +25,7 @@ public class Role {
     @Column(name = "name")
     @NotNull
     @Enumerated (value = EnumType.STRING)
-    private String name;
+    private RoleEnum name;
 
     @Column(name = "description")
     @NotNull

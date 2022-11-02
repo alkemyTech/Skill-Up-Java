@@ -3,9 +3,12 @@ package com.alkemy.wallet.service.implementation;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
 import com.alkemy.wallet.mapper.UserMapper;
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,5 +34,10 @@ public class UserServiceImpl implements UserService {
                       .lastName( "User" )
                       .email( "user@sample.com" )
                       .build();
+    }
+
+    @Override
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+        return repository.findByEmail(email);
     }
 }

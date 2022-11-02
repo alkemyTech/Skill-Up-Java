@@ -1,6 +1,9 @@
 package com.alkemy.wallet.model.entity;
 
-public enum Type {
+import lombok.Getter;
+
+@Getter
+public enum TypeEnum {
     INCOME,
     PAYMENT,
     DEPOSIT

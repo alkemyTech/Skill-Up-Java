@@ -18,21 +18,21 @@ import java.util.Set;
 @Entity
 @Table(name = "accounts")
 @SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
-@Where(clause = "softDelete=false")
+@Where(clause = "deleted=false")
 public class Account {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id")
-    private Long accountId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "currency")
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     @NotNull
     private String currency;
 
-    @Column(name = "transaction_limit")
+    @Column(name = "transactionLimit")
     @NotNull
     private Double transactionLimit;
 
@@ -40,22 +40,26 @@ public class Account {
     @NotNull
     private Double balance;
 
-    @Column(name = "timestamp")
-    @CreationTimestamp
-    private LocalDateTime createDate;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
+    @Column(name = "creationDate")
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+
+    @Column(name = "updateDate")
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    //@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    //@JoinColumn(name = "userId", nullable = false)
-    //@OnDelete(action = OnDeleteAction.CASCADE)
-    //@JsonIgnore
-    //private User user;
-
-    private boolean softDelete = Boolean.FALSE;
+    private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy="account")
     private Set<Transaction> transactions;
+
+    @OneToMany(mappedBy="account")
+    private Set<FixedTermDeposit> fixedTermsDeposit;
 
 }

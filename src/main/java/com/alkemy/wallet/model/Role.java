@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import com.alkemy.wallet.enumeration.RoleList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,9 +16,9 @@ public class Role {
     @Column(name = "id_rol", nullable = false)
     private Integer id;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false)
-    private String name;
+    private RoleList name;
 
     @Column(name = "description", length = 80)
     private String description;

@@ -23,10 +23,11 @@ public class TransactionController {
     //Falta agregar que tire error cuando no este autorizado
 
     // TODO: Undo comments when model mapper is available
-    // TODO: Implement model mapper for TransactionDepositDto
+    // TODO: Implement model mapper for Transaction (TransactionDepositDto)
 //    @PostMapping( value = "/deposit" )
 //    @PreAuthorize("hasRole('USER_ROLE')")
-//    public Transaction createDeposit(@RequestBody TransactionDepositDto transactionDepositDto) {
-//        return transactionService.createDeposit(convertToEntity(transactionDepositDto));
+//    public TransactionDepositDto createDeposit(@RequestBody TransactionDepositDto transactionDepositDto) {
+//        Transaction depositCreated = transactionService.createDeposit(convertToEntity(transactionDepositDto);
+//        return convertToDto(depositCreated);
 //    }
 }

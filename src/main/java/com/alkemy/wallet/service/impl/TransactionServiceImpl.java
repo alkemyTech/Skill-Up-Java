@@ -1,6 +1,9 @@
 package com.alkemy.wallet.service.impl;
 
 
+import com.alkemy.wallet.dto.TransactionCreateDTO;
+import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.TransactionRepository;

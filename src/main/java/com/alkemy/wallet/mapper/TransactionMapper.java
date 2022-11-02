@@ -1,5 +1,8 @@
 package com.alkemy.wallet.mapper;
 
+import com.alkemy.wallet.dto.TransactionCreateDTO;
+import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.model.Transaction;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +23,7 @@ public class TransactionMapper {
         transDTO.setDescription(trans.getDescription());
         transDTO.setUser(trans.getUser());
         transDTO.setAccount(trans.getAccount());
-        transDTO.setTransactionDate(trans.getTransactonDate());
+        transDTO.setTransactionDate(trans.getTransactionDate());
         return transDTO;
     }
     //DTO2Entity
@@ -33,7 +36,7 @@ public class TransactionMapper {
         transEntity.setDescription(dto.getDescription());
         transEntity.setUser(dto.getUser());
         transEntity.setAccount(dto.getAccount());
-        transEntity.setTransactionDate(dto.getTransactonDate());
+        transEntity.setTransactionDate(dto.getTransactionDate());
         return transEntity;
     }
     //ListDTO2ListEntity
@@ -58,8 +61,9 @@ public class TransactionMapper {
 
     //TODO
     public Transaction transUpdateDTO2Entity(TransactionUpdateDTO transDTO, Transaction transEntity) {
-        Transaction transUpdated = transEntity.setDescription(transDTO.getDescription());
-
+        //Transaction transUpdated = transEntity.setDescription(transDTO.getDescription());
+        transEntity.setDescription(transDTO.getDescription());
+        Transaction transUpdated =  transEntity;
         return transUpdated;
     }
 
@@ -71,7 +75,7 @@ public class TransactionMapper {
         transEntity.setDescription(dto.getDescription());
         transEntity.setUser(dto.getUser());
         transEntity.setAccount(dto.getAccount());
-        transEntity.setTransactionDate(dto.getTransactonDate());
+        transEntity.setTransactionDate(dto.getTransactionDate());
 
         return transEntity;
     }

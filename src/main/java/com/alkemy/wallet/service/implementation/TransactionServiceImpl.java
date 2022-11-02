@@ -16,6 +16,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Transaction createDeposit(Transaction transaction) {
         Double amount = transaction.getAmount();
 
+        // It would be nice to have an exception handler. We should implement it in a separate branch
         if(amount <= 0) {
             throw new IllegalArgumentException("The amount must be greater than 0");
         }

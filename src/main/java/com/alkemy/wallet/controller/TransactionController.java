@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,8 @@ public class TransactionController {
     // TODO: Implement model mapper for Transaction (TransactionDepositDto)
 //    @PostMapping( value = "/deposit" )
 //    @PreAuthorize("hasRole('USER_ROLE')")
-//    public TransactionDepositDto createDeposit(@RequestBody TransactionDepositDto transactionDepositDto) {
+//    public ResponseEntity<TransactionDepositDto> createDeposit(@RequestBody TransactionDepositDto transactionDepositDto) {
 //        Transaction depositCreated = transactionService.createDeposit(convertToEntity(transactionDepositDto);
-//        return convertToDto(depositCreated);
+//        return ResponseEntity.ok(convertToDto(depositCreated));
 //    }
 }

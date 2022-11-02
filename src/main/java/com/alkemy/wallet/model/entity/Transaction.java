@@ -19,8 +19,8 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "transactionId")
+    private Long transactionId;
 
     @Column(name = "amount")
     @NotNull

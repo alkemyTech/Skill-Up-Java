@@ -1,2 +1,4 @@
-package com.alkemy.wallet.controller;public class BankController {
+package com.alkemy.wallet.controller;
+
+public class BankController {
 }

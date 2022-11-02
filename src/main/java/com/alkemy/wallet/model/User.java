@@ -36,4 +36,9 @@ public class User {
 
     @Column(name = "soft_delete")
     private Byte softDelete;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
 }

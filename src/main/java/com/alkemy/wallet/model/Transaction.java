@@ -22,12 +22,8 @@ public class Transaction {
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Column(name = "description", length = 45)
+    @Column(name = "description", length = 100)
     private String description;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)

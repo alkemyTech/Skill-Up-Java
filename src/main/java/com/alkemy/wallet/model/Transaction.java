@@ -1,12 +1,13 @@
 package com.alkemy.wallet.model;
 
-import org.springframework.data.annotation.CreatedDate;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "TRANSACTIONS")
+@Data
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

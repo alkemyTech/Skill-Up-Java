@@ -2,6 +2,8 @@ package com.alkemy.wallet.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -10,6 +12,8 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +37,5 @@ public class Account {
     private Instant creationDate;
 
     @Column(name = "soft_delete")
-    private Byte softDelete;
+    private boolean softDelete = Boolean.FALSE;
 }

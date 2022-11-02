@@ -33,7 +33,7 @@ public class Account {
     @Column(name = "update_date")
     private Instant updateDate;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     private Instant creationDate;
 
     @Column(name = "soft_delete")

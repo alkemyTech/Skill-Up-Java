@@ -22,7 +22,7 @@ public class Role {
     @Column(name = "description", length = 80)
     private String description;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     private Instant creationDate;
 
     @Column(name = "update_date")

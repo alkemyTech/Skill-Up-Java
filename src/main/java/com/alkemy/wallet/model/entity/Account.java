@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -53,5 +54,8 @@ public class Account {
     //private User user;
 
     private boolean softDelete = Boolean.FALSE;
+
+    @OneToMany(mappedBy="account")
+    private Set<Transaction> transactions;
 
 }

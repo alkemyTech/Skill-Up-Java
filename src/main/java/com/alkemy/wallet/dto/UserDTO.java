@@ -1,11 +1,19 @@
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.Role;
+
+import java.time.Instant;
+
 public class UserDTO {
     Integer id;
     String firstName;
     String lastName;
     String email;
     String password;
+    Instant creationDate;
+    Instant updateDate;
+    boolean softDelete;
+    Role role;
 
     public Integer getId() {
         return id;
@@ -54,6 +62,27 @@ public class UserDTO {
     public void setSoftDelete(boolean softDelete) {
         this.softDelete = softDelete;
     }
+    public Instant getCreationDate() {
+        return creationDate;
+    }
 
-    boolean softDelete;
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Instant getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Instant updateDate) {
+        this.updateDate = updateDate;
+    }
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 }

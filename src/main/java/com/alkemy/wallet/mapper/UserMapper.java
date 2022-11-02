@@ -16,6 +16,10 @@ public class UserMapper {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
+        user.setCreationDate(userDTO.getCreationDate());
+        user.setUpdateDate(userDTO.getUpdateDate());
+        user.setSoftDelete(userDTO.isSoftDelete());
+        user.setRole(userDTO.getRole());
         return user;
     }
     public UserDTO userEntity2DTO(User user){
@@ -25,6 +29,10 @@ public class UserMapper {
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
+        userDTO.setCreationDate(user.getCreationDate());
+        userDTO.setUpdateDate(user.getUpdateDate());
+        userDTO.setSoftDelete(user.isSoftDelete());
+        userDTO.setRole(user.getRole());
         return userDTO;
     }
 

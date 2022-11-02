@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionDepositDto;
 import com.alkemy.wallet.dto.TransactionDetailDto;
+import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,16 @@ public class TransactionController {
 //    @PostMapping( value = "/deposit" )
 //    @PreAuthorize("hasRole('USER_ROLE')")
 //    public ResponseEntity<TransactionDepositDto> createDeposit(@RequestBody TransactionDepositDto transactionDepositDto) {
-//        Transaction depositCreated = transactionService.createDeposit(convertToEntity(transactionDepositDto);
+//        try{
+//            Transaction depositCreated = transactionService.createDeposit(convertToEntity(transactionDepositDto);
+//        } catch (InvalidAmountException err) {
+//            handleAmountException(err);
+//        }
+//
 //        return ResponseEntity.ok(convertToDto(depositCreated));
 //    }
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<Object> handleAmountException(Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }

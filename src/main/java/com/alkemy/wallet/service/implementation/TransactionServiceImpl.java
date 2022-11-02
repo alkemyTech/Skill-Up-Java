@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.TransactionDepositDto;
+import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.TransactionService;
@@ -18,7 +19,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // It would be nice to have an exception handler. We should implement it in a separate branch
         if(amount <= 0) {
-            throw new IllegalArgumentException("The amount must be greater than 0");
+            throw new InvalidAmountException();
         }
 
         return transactionRepository.save(transaction);

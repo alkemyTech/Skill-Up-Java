@@ -5,11 +5,9 @@ import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.service.FixedTermDepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -22,6 +20,7 @@ public class FixedTermDepositController {
     @PostMapping("/create")
     public void createFixedTermDeposit(@Validated @RequestBody FixedTermDepositDto fixedTermDepositDto){
 
+        fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
         fixedTermDepositService.createFixedTermDeposit(fixedTermDepositDto);
 
     }

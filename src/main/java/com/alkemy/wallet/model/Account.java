@@ -38,4 +38,9 @@ public class Account {
 
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }

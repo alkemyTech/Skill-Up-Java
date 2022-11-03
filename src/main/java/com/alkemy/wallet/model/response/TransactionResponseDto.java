@@ -21,4 +21,76 @@ public class TransactionResponseDto {
 
     private UserResponseDto userResponseDto;
     private AccountResponseDto accountResponseDto;
+
+    public Long getTransactionsId() {
+        return transactionsId;
+    }
+
+    public void setTransactionsId(Long transactionsId) {
+        this.transactionsId = transactionsId;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public TransactionTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(TransactionTypeEnum type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public UserResponseDto getUserResponseDto() {
+        return userResponseDto;
+    }
+
+    public void setUserResponseDto(UserResponseDto userResponseDto) {
+        this.userResponseDto = userResponseDto;
+    }
+
+    public AccountResponseDto getAccountResponseDto() {
+        return accountResponseDto;
+    }
+
+    public void setAccountResponseDto(AccountResponseDto accountResponseDto) {
+        this.accountResponseDto = accountResponseDto;
+    }
 }

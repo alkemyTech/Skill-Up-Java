@@ -32,4 +32,76 @@ public class Account {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
     private User user;
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public AccountCurrencyEnum getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(AccountCurrencyEnum currency) {
+        this.currency = currency;
+    }
+
+    public Double getTransactionLimit() {
+        return transactionLimit;
+    }
+
+    public void setTransactionLimit(Double transactionLimit) {
+        this.transactionLimit = transactionLimit;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public Long getFkUserId() {
+        return fkUserId;
+    }
+
+    public void setFkUserId(Long fkUserId) {
+        this.fkUserId = fkUserId;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(LocalDateTime updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public Boolean getSoftDelete() {
+        return softDelete;
+    }
+
+    public void setSoftDelete(Boolean softDelete) {
+        this.softDelete = softDelete;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

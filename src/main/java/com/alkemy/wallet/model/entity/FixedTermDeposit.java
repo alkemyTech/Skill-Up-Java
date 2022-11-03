@@ -31,4 +31,76 @@ public class FixedTermDeposit {
     @OneToOne
     @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
     private User user;
+
+    public Long getTransactionsId() {
+        return transactionsId;
+    }
+
+    public void setTransactionsId(Long transactionsId) {
+        this.transactionsId = transactionsId;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public Long getFkUserId() {
+        return fkUserId;
+    }
+
+    public void setFkUserId(Long fkUserId) {
+        this.fkUserId = fkUserId;
+    }
+
+    public Long getFkAccountId() {
+        return fkAccountId;
+    }
+
+    public void setFkAccountId(Long fkAccountId) {
+        this.fkAccountId = fkAccountId;
+    }
+
+    public Double getInterest() {
+        return interest;
+    }
+
+    public void setInterest(Double interest) {
+        this.interest = interest;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(LocalDateTime closingDate) {
+        this.closingDate = closingDate;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

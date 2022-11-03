@@ -4,6 +4,7 @@ package com.alkemy.wallet.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.*;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
@@ -49,6 +51,8 @@ public class User {
     @JsonIgnore
     private Role role;
 
+
+
     @Column(name = "creationDate")
     @CreationTimestamp
     private LocalDateTime creationDate;
@@ -64,4 +68,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<FixedTermDeposit> fixedTermDeposit;
+
+    public User(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
 }

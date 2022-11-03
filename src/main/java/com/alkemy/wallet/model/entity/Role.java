@@ -1,13 +1,10 @@
 package com.alkemy.wallet.model.entity;
 
-import com.alkemy.wallet.model.entity.User;
 import com.sun.istack.NotNull;
-import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

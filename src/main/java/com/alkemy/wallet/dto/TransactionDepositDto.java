@@ -1,12 +1,9 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.TransactionType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Getter;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 import java.util.Date;

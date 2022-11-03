@@ -1,14 +1,12 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.dto.TransactionDepositDto;
-import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
-import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/transactions")

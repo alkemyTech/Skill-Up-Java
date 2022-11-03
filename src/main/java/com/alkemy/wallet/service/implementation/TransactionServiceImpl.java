@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.implementation;
 
-import com.alkemy.wallet.dto.TransactionDepositDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.TransactionRepository;

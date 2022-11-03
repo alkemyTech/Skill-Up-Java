@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import com.alkemy.wallet.enumeration.TypeList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +19,9 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private Double amount;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private TypeList type;
 
     @Column(name = "description", length = 100)
     private String description;

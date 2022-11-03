@@ -12,7 +12,20 @@ public class TransactionServiceImpl implements ITransactionService {
     private TransactionRepository transactionRepository;
 
     @Override
-    public void saveTransaction(Transaction transaction){
+    public void saveTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
+    }
+
+    @Override
+    public Transaction updateDescription(Long transactionId, String description, Long accountId) {
+        Transaction transaction = transactionRepository.findById(transactionId).orElse(null);
+
+        if (transaction != null && transaction.getAccount().getAccountId() == accountId) {
+            transaction.setDescription(description);
+            this.saveTransaction(transaction);
+            return transaction;
+        }
+
+        return null;
     }
 }

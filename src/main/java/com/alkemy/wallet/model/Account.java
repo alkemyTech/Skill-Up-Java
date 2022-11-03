@@ -1,7 +1,10 @@
 package com.alkemy.wallet.model;
 
+import com.alkemy.wallet.enumeration.CurrencyList;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -10,15 +13,17 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_account", nullable = false)
     private Integer id;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "currency", nullable = false)
-    private String currency;
+    private CurrencyList currency;
 
     @Column(name = "transaction_limit", nullable = false)
     private Double transactionLimit;
@@ -29,9 +34,14 @@ public class Account {
     @Column(name = "update_date")
     private Instant updateDate;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     private Instant creationDate;
 
     @Column(name = "soft_delete")
-    private Byte softDelete;
+    private boolean softDelete = Boolean.FALSE;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }

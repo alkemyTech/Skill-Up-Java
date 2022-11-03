@@ -14,15 +14,15 @@ public class TransactionMapper {
 
 
     //Entity2DTO
-    public TransactionDTO transEntity2DTO(Transaction trans) {
+    /*public TransactionDTO transEntity2DTO(Transaction trans) {
 
         TransactionDTO transDTO = new TransactionDTO();
         transDTO.setAmount(trans.getAmount());
-        transDTO.setType(trans.getType());
+       // transDTO.setType(trans.getType().name());
         transDTO.setId(trans.getId());
         transDTO.setDescription(trans.getDescription());
-        transDTO.setUser(trans.getUser());
-        transDTO.setAccount(trans.getAccount());
+        //transDTO.setUser(trans.getUser());
+        //transDTO.setAccount(trans.getAccount());
         transDTO.setTransactionDate(trans.getTransactionDate());
         return transDTO;
     }
@@ -31,10 +31,10 @@ public class TransactionMapper {
 
         Transaction transEntity = new Transaction();
         transEntity.setAmount(dto.getAmount());
-        transEntity.setType(dto.getType());
+        //transEntity.setType(dto.getType());
         transEntity.setId(dto.getId());
         transEntity.setDescription(dto.getDescription());
-        transEntity.setUser(dto.getUser());
+        //transEntity.setUser(dto.getUser());
         transEntity.setAccount(dto.getAccount());
         transEntity.setTransactionDate(dto.getTransactionDate());
         return transEntity;
@@ -71,12 +71,12 @@ public class TransactionMapper {
     public Transaction transCreateDTO2Entity(TransactionCreateDTO dto) {
         Transaction transEntity = new Transaction();
         transEntity.setAmount(dto.getAmount());
-        transEntity.setType(dto.getType());
+        //transEntity.setType(dto.getType());
         transEntity.setDescription(dto.getDescription());
-        transEntity.setUser(dto.getUser());
+        //transEntity.setUser(dto.getUser());
         transEntity.setAccount(dto.getAccount());
         transEntity.setTransactionDate(dto.getTransactionDate());
 
         return transEntity;
-    }
+    }*/
 }

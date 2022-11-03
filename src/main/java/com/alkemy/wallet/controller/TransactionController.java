@@ -12,11 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
 
+
+/*
 
 
 
@@ -47,14 +51,14 @@ public class TransactionController {
 
 
     // probably we need to put the validation dependency in pom.xml --> "javax.validation.Valid";
-    /* need a method "makePayment" from TransactionService wich modifies the currency of the proper Account and saves a
+     need a method "makePayment" from TransactionService wich modifies the currency of the proper Account and saves a
      new Transaction object into the DataBase.
-     */
+
     @PostMapping("/deposit")
-    ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transaction ){
+    ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO ){
 
      transaction.setType("deposit");
-     transactionService.makePayment(transaction);
+     transactionService.makeTranction(transDTO);
      return new ResponseEntity<>( HttpStatus.CREATED);
 
     }
@@ -64,7 +68,7 @@ public class TransactionController {
     ResponseEntity<?> makePayment(@RequestBody @Valid TransactionCreateDTO transaction ){
 
      transaction.setType("payment");
-     transactionService.makePayment(transaction);
+     transactionService.makeTransaction(transaction);
      return new ResponseEntity<>( HttpStatus.CREATED);
 
     }
@@ -82,7 +86,7 @@ public class TransactionController {
 
     }
 
-
+*/
 
 
 

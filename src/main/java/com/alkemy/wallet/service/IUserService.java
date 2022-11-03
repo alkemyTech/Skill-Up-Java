@@ -5,7 +5,7 @@ import com.alkemy.wallet.dto.UserDTO;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
     List<UserDTO> getAllUsers();
 
     boolean deleteUserById(Integer id);

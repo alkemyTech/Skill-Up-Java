@@ -4,11 +4,8 @@ import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.UserRepository;
-import com.alkemy.wallet.service.UserService;
+import com.alkemy.wallet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.List;
 
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     @Autowired
     UserRepository userRepository;

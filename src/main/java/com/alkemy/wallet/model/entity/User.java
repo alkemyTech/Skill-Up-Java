@@ -44,14 +44,9 @@ public class User {
     @Column(name = "password")
     @NotNull
     private String password;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "roleId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="role_id")
     private Role role;
-
-
 
     @Column(name = "creationDate")
     @CreationTimestamp

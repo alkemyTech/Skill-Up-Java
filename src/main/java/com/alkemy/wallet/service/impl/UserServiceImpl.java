@@ -25,18 +25,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> getAllUsers() {
+        List<User>  users =  userRepository.findAll();
+        List<UserDTO>  result  = userMapper.userEntityList2DTOList(users);
+        return result;
+    }
+    /*@Override
+    public List<UserDTO> getUsersForPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(0, 10);
-
         Page<User> users =  userRepository.findAll(pageWithTenElements);
         List<User> userList = users.getContent();
         List<UserDTO>  result  = userMapper.userEntityList2DTOList(userList);
         return null;
     }
-
+    */
     @Override
-    public Integer deleteUserById(Integer id) {
-        userRepository.deleteById(id);
-        return null;
+    public boolean deleteUserById(Integer id) {
+       userRepository.deleteById(id);
+       return true;
     }
-
 }

@@ -30,7 +30,7 @@ public class FixedTermDeposit {
     @Column(name = "interest", nullable = false)
     private Double interest;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date")
     private Instant creationDate;
 
     @Column(name = "update_date")

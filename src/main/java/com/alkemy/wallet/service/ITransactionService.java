@@ -6,16 +6,16 @@ import com.alkemy.wallet.dto.TransactionUpdateDTO;
 
 import java.util.List;
 
-public interface TransactionService {
+public interface ITransactionService {
 
     //Get One.
-    TransactionDTO getById(Integer id);
+    TransactionDTO getTransactionById(Integer id);
 
     //Get All by User in a List.
-    List<TransactionDTO> getAllByUser(Integer id);
+    List<TransactionDTO> getAllByUserId(Integer id);
 
     //Create
-    void createTransaction(TransactionCreateDTO transDTO);
+    void makeTransaction(TransactionCreateDTO transDTO);
 
     //Update
     void updateTransaction(TransactionUpdateDTO transDTO, Integer id);

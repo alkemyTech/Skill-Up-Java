@@ -24,7 +24,6 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
     private final FixedTermDepositMapper mapper;
 
     @Override
-    @PreAuthorize("hasRole('USER')")
     public FixedTermDeposit createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException {
         FixedTermDeposit fixedTermDeposit=new FixedTermDeposit(mapper.convertToEntity(fixedTermDepositDto));
         Timestamp timestamp=new Timestamp(new Date().getTime());

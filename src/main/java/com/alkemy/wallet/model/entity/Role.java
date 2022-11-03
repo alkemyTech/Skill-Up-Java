@@ -1,15 +1,12 @@
 package com.alkemy.wallet.model.entity;
-
-import com.alkemy.wallet.model.entity.User;
 import com.sun.istack.NotNull;
-import com.sun.istack.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -39,6 +36,6 @@ public class Role {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    @OneToOne(mappedBy = "role")
-    private User user;
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    private Set<User> users;
 }

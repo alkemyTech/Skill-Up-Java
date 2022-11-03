@@ -10,8 +10,6 @@ public record UserDto(
         @JsonProperty( "lastName" )
         String lastName,
         @JsonProperty( "email" )
-        String email,
-        @JsonProperty( "lastName" )
-        String password
+        String email
 ) {
 }

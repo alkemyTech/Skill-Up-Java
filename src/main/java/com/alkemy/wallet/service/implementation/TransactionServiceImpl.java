@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.implementation;
 
-
 import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.InvalidAmountException;

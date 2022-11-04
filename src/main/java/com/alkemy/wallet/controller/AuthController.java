@@ -2,7 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.model.User;
-import com.alkemy.wallet.service.UserService;
+import com.alkemy.wallet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {

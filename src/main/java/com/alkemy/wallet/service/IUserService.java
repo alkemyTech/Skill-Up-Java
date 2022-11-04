@@ -8,8 +8,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
-public interface UserService {
+public interface IUserService {
     public List<UserDTO> getAllUsers();
-   
+
     public User createUser(UserDTO userDTO);
+
+    boolean deleteUserById(Integer id);
+
 }

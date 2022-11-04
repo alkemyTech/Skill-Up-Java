@@ -5,6 +5,6 @@ import com.alkemy.wallet.exception.FixedTermDepositException;
 import com.alkemy.wallet.model.FixedTermDeposit;
 
 public interface FixedTermDepositService {
-    FixedTermDeposit createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException;
+    FixedTermDepositDto createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException;
 
 }

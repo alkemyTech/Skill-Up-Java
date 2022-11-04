@@ -5,30 +5,23 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/auth")
+public class AuthController {
+
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers(){
-        List<UserDTO> users =  userService.getAllUsers();
-        return ResponseEntity.ok().body(users);
-    }
-
-    @PostMapping("/create")
+    @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         User user = userService.createUser(userDTO);
+        // should not return the actual user
+        // TODO: Return DTO with only required data
         return ResponseEntity.ok().body(user);
     }
 }

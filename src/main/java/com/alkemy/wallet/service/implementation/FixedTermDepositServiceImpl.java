@@ -24,7 +24,7 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
     private final FixedTermDepositMapper mapper;
 
     @Override
-    public FixedTermDeposit createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException {
+    public FixedTermDepositDto createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException {
         FixedTermDeposit fixedTermDeposit=new FixedTermDeposit(mapper.convertToEntity(fixedTermDepositDto));
         Timestamp timestamp=new Timestamp(new Date().getTime());
         fixedTermDeposit.setCreationDate(timestamp);
@@ -33,8 +33,9 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
            if(days<30){
                throw new FixedTermDepositException();
            }
+
         fixedTermDeposit.setInterest(0.5*days);
         fixedTermDepositRepository.save(fixedTermDeposit);
-        return fixedTermDeposit;
+        return fixedTermDepositDto;
     }
 }

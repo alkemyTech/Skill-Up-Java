@@ -44,7 +44,7 @@ public class Account {
     @JoinColumn(name = "userId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user;
+    private UserEntity user;
 
     @Column(name = "creationDate")
     @CreationTimestamp

@@ -37,5 +37,5 @@ public class Role {
     private LocalDateTime updateDate;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<User> users;
+    private Set<UserEntity> users;
 }

@@ -1,8 +1,8 @@
 package com.alkemy.wallet.configuration;
 
 
-import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.RoleEnum;
+import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ public class Authentication extends GlobalAuthenticationConfigurerAdapter {
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(email -> {
-            com.alkemy.wallet.model.entity.User user = userRepository.findByEmail(email);
+            UserEntity user = userRepository.findByEmail(email);
             if (user != null) {
                 if (user.getRole().getName() == RoleEnum.ADMIN) {
                     return new User(user.getEmail(), user.getPassword(), AuthorityUtils.createAuthorityList("ADMIN"));

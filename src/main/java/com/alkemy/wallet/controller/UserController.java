@@ -1,7 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.email.ValidatorEmail;
-import com.alkemy.wallet.model.entity.User;
+import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @PostMapping("/auth/register")
-    public ResponseEntity<Object> register(@RequestParam User user){
+    public ResponseEntity<Object> register(@RequestParam UserEntity user){
 
         if (user.getFirstName().isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
@@ -45,14 +45,14 @@ public class UserController {
         if (!validatorEmail.test(user.getEmail())) {
             return new ResponseEntity<>("invalid mail", HttpStatus.FORBIDDEN);
         }
-        User newUser = new User(user.getFirstName(),user.getLastName(),user.getEmail(),passwordEncoder.encode(user.getPassword()));
+        UserEntity newUser = new UserEntity(user.getFirstName(),user.getLastName(),user.getEmail(),passwordEncoder.encode(user.getPassword()));
         userRepository.save(newUser);
 
         return new ResponseEntity<>("User generated",HttpStatus.CREATED);
     }
 
     @GetMapping("/users")
-    public List<User> showAllUsers(){
+    public List<UserEntity> showAllUsers(){
         return userService.showAllUsers();
     }
 

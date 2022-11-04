@@ -12,7 +12,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "roles")
-public class Role {
+public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +37,5 @@ public class Role {
     private LocalDateTime updateDate;
 
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<User> users;
+    private Set<UserEntity> users;
 }

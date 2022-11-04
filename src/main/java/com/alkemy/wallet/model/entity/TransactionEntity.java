@@ -14,39 +14,33 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "fixed_term_deposits")
-public class FixedTermDeposit {
+@Table(name = "transactions")
+public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "transactionId")
+    private Long transactionId;
 
     @Column(name = "amount")
     @NotNull
     private Double amount;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private User user;
+    @Column(name = "type", nullable = false, length = 8)
+    @Enumerated (value = EnumType.STRING)
+    private TypeEnum type;
+
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "accountId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Account account;
+    private AccountEntity account;
 
-    @Column(name = "interests")
-    @NotNull
-    private Double interests;
-
-    @Column(name = "creationDate")
+    @Column(name = "timestamp")
     @CreationTimestamp
-    private LocalDateTime creationDate;
+    private LocalDateTime transactionDate;
 
-    @Column(name = "closingDate")
-    @CreationTimestamp
-    private LocalDateTime closingDate;
 }

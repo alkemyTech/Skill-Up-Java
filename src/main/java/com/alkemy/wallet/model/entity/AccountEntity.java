@@ -19,7 +19,7 @@ import java.util.Set;
 @Table(name = "accounts")
 @SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
-public class Account {
+public class AccountEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -44,7 +44,7 @@ public class Account {
     @JoinColumn(name = "userId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user;
+    private UserEntity user;
 
     @Column(name = "creationDate")
     @CreationTimestamp
@@ -57,9 +57,9 @@ public class Account {
     private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy="account")
-    private Set<Transaction> transactions;
+    private Set<TransactionEntity> transactions;
 
     @OneToMany(mappedBy="account")
-    private Set<FixedTermDeposit> fixedTermsDeposit;
+    private Set<FixedTermDepositEntity> fixedTermsDeposit;
 
 }

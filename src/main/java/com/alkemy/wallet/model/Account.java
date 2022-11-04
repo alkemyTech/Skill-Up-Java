@@ -1,36 +1,50 @@
 package com.alkemy.wallet.model;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table( name = "ACCOUNTS" )
+@Data
+@Table(name = "ACCOUNTS")
+@NoArgsConstructor
 public class Account {
 
     @Id
-    @GeneratedValue( strategy = IDENTITY )
-    @Column( name = "ACCOUNT_ID" )
+    @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "ACCOUNT_ID")
     private Integer accountId;
 
-    @Column( nullable = false, name = "CURRENCY" )
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "CURRENCY")
+    private Currency currency;
 
-    @Column( nullable = false, name = "TRANSACTION_LIMIT" )
+    @Column(nullable = false, name = "TRANSACTION_LIMIT")
     private Double transactionLimit;
 
-    @Column( nullable = false, name = "BALANCE" )
+    @Column(nullable = false, name = "BALANCE")
     private Double balance;
 
-    @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn( name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false, name = "USER_ID")
     private User user;
 
     // TODO: check timestamps format and auditing
     private Timestamp creationDate;
+
     private Timestamp updateDate;
 
     // TODO: check soft delete rules
     private Boolean softDelete;
+
+    public Account(User user, Currency currency, Double transactionLimit, Double balance, Timestamp creationDate) {
+        this.currency = currency;
+        this.transactionLimit = transactionLimit;
+        this.balance = balance;
+        this.user = user;
+        this.creationDate = creationDate;
+    }
 }

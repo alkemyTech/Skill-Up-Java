@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -41,77 +43,4 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "fkAccountId", insertable = false, updatable = false)
     private Account account;
-
-    //Getters & Setters
-    public Long getTransactionsId() {
-        return transactionsId;
-    }
-
-    public void setTransactionsId(Long transactionsId) {
-        this.transactionsId = transactionsId;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public TransactionTypeEnum getType() {
-        return type;
-    }
-
-    public void setType(TransactionTypeEnum type) {
-        this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getTransactionDate() {
-        return transactionDate;
-    }
-
-    public void setTransactionDate(LocalDateTime transactionDate) {
-        this.transactionDate = transactionDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public Long getFkUserId() {
-        return fkUserId;
-    }
-
-    public void setFkUserId(Long fkUserId) {
-        this.fkUserId = fkUserId;
-    }
-
-    public Long getFkAccountId() {
-        return fkAccountId;
-    }
-
-    public void setFkAccountId(Long fkAccountId) {
-        this.fkAccountId = fkAccountId;
-    }
 }

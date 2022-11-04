@@ -10,22 +10,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FixedTermDepositRequestDto {
-
     private Long transactionsId;
-
     private Double amount;
-
     private Long userId;
-
     private Long accountId;
-
     private Double interest;
-
     private LocalDateTime creationDate;
-
     private LocalDateTime closingDate;
-
     private AccountRequestDto accountRequestDto;
-
     private UserRequestDto userRequestDto;
 }

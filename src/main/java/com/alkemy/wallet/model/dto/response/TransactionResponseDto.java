@@ -1,5 +1,6 @@
-package com.alkemy.wallet.model.response;
+package com.alkemy.wallet.model.dto.response;
 
+import com.alkemy.wallet.model.TransactionTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,17 +10,17 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FixedTermDepositResponseDto {
+public class TransactionResponseDto {
     private Long transactionsId;
     private Double amount;
+    private TransactionTypeEnum type;
+    private String description;
     private Long userId;
     private Long accountId;
-    private Double interest;
-    private LocalDateTime creationDate;
-    private LocalDateTime closingDate;
+    private LocalDateTime transactionDate;
 
-    private AccountResponseDto accountResponseDto;
     private UserResponseDto userResponseDto;
+    private AccountResponseDto accountResponseDto;
 
     public Long getTransactionsId() {
         return transactionsId;
@@ -35,6 +36,22 @@ public class FixedTermDepositResponseDto {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public TransactionTypeEnum getType() {
+        return type;
+    }
+
+    public void setType(TransactionTypeEnum type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getUserId() {
@@ -53,36 +70,12 @@ public class FixedTermDepositResponseDto {
         this.accountId = accountId;
     }
 
-    public Double getInterest() {
-        return interest;
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
     }
 
-    public void setInterest(Double interest) {
-        this.interest = interest;
-    }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public LocalDateTime getClosingDate() {
-        return closingDate;
-    }
-
-    public void setClosingDate(LocalDateTime closingDate) {
-        this.closingDate = closingDate;
-    }
-
-    public AccountResponseDto getAccountResponseDto() {
-        return accountResponseDto;
-    }
-
-    public void setAccountResponseDto(AccountResponseDto accountResponseDto) {
-        this.accountResponseDto = accountResponseDto;
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
     }
 
     public UserResponseDto getUserResponseDto() {
@@ -91,5 +84,13 @@ public class FixedTermDepositResponseDto {
 
     public void setUserResponseDto(UserResponseDto userResponseDto) {
         this.userResponseDto = userResponseDto;
+    }
+
+    public AccountResponseDto getAccountResponseDto() {
+        return accountResponseDto;
+    }
+
+    public void setAccountResponseDto(AccountResponseDto accountResponseDto) {
+        this.accountResponseDto = accountResponseDto;
     }
 }

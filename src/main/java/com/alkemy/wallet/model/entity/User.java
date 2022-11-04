@@ -25,6 +25,7 @@ public class User {
     private String email;
     @Column(nullable = false, length = 20)
     private String password;
+
     private Long fkRoleId;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
@@ -35,6 +36,14 @@ public class User {
     @OneToOne
     @JoinColumn(name = "fkRoleId", insertable = false, updatable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transactions;
+
+
+
+    @OneToMany(mappedBy = "user")
+    private List<FixedTermDeposit> fixedTermDeposits;
 
     public Long getUserId() {
         return userId;
@@ -76,14 +85,6 @@ public class User {
         this.password = password;
     }
 
-    public Long getFkRoleId() {
-        return fkRoleId;
-    }
-
-    public void setFkRoleId(Long fkRoleId) {
-        this.fkRoleId = fkRoleId;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -122,5 +123,29 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Long getFkRoleId() {
+        return fkRoleId;
+    }
+
+    public void setFkRoleId(Long fkRoleId) {
+        this.fkRoleId = fkRoleId;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public List<FixedTermDeposit> getFixedTermDeposits() {
+        return fixedTermDeposits;
+    }
+
+    public void setFixedTermDeposits(List<FixedTermDeposit> fixedTermDeposits) {
+        this.fixedTermDeposits = fixedTermDeposits;
     }
 }

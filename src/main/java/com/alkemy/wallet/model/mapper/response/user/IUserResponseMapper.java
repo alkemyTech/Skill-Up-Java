@@ -2,7 +2,7 @@ package com.alkemy.wallet.model.mapper.response.user;
 
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.response.complemento.IAccountResponse2Mapper;
-import com.alkemy.wallet.model.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

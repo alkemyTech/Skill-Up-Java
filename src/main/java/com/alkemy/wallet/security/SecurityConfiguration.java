@@ -11,8 +11,11 @@ import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +33,34 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf().disable()
+                //PERMISOS
+                .authorizeRequests()
+                .antMatchers("/**")
+                .permitAll()
+                .and()
+
+                //SESSION MANAGMENT
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+
+                //Autorizaciones
+                .exceptionHandling()
+                .authenticationEntryPoint(
+                        (request, response, ex) -> {
+                            response.sendError(
+                                    HttpServletResponse.SC_UNAUTHORIZED,
+                                    ex.getMessage()
+                            );
+                        }
+                );
+
+
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity.rememberMe().key("uniqueAndSecret")
+                .and()
+                .logout().deleteCookies("JSESSIONID");
     }
 
     @Bean

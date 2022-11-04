@@ -11,15 +11,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionResponseDto {
+
     private Long transactionsId;
+
     private Double amount;
+
     private TransactionTypeEnum type;
+
     private String description;
+
     private Long userId;
+
     private Long accountId;
+
     private LocalDateTime transactionDate;
 
     private UserResponseDto userResponseDto;
+
     private AccountResponseDto accountResponseDto;
 
     public Long getTransactionsId() {

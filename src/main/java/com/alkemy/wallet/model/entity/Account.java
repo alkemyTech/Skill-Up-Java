@@ -1,46 +1,63 @@
 package com.alkemy.wallet.model.entity;
 
 import com.alkemy.wallet.model.AccountCurrencyEnum;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
-@Getter
-@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Table(name = "accounts")
+@SQLDelete(sql = "UPDATE accounts SET softDelete=true WHERE id=?")
+@Where(clause = "softDelete=false")
 public class Account {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
+
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private AccountCurrencyEnum currency;
+
     @Column(nullable = false)
     private Double transactionLimit;
+
     @Column(nullable = false)
     private Double balance;
 
     private Long fkUserId;
+
+    @DateTimeFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime creationDate;
+
+    @DateTimeFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime updateDate;
-    private Boolean softDelete;
+
+    private Boolean softDelete = Boolean.FALSE;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
     private User user;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<FixedTermDeposit> fixedTermDeposits;
 
+    //Getters & Setters
     public Long getAccountId() {
         return accountId;
     }
@@ -129,3 +146,4 @@ public class Account {
         this.fixedTermDeposits = fixedTermDeposits;
     }
 }
+

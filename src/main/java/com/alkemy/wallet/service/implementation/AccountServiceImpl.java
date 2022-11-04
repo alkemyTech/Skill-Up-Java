@@ -49,6 +49,13 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.convertToDto(accountRepository.save(updatedAccount));
     }
 
+    public Account findAccountByUserIdAndCurrency(User user, Currency currency){
+
+        Account account=accountRepository.findAccountByUserIdAndCurrency(user,currency).get();
+        return account;
+    }
+
+
     private double getTransactionLimitForCurrency(Currency currency){
         return switch (currency) {
             case ARS -> 300000;

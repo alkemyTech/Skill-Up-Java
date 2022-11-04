@@ -28,6 +28,7 @@ public class FixedTermDeposit {
 
     @ManyToOne( fetch = FetchType.LAZY, cascade = CascadeType.PERSIST )
     @JoinColumn( name = "ACCOUNT_ID", referencedColumnName = "ACCOUNT_ID")
+    @Getter@Setter
     private Account account;
 
     @Column(name = "INTEREST", nullable = false)

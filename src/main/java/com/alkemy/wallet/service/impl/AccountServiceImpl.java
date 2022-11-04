@@ -15,4 +15,9 @@ public class AccountServiceImpl implements IAccountService {
     public void saveAccount(Account account){
         accountRepository.save(account);
     }
+
+    @Override
+    public double getBalance() {
+        return 0;
+    }
 }

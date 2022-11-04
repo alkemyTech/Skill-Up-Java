@@ -12,7 +12,6 @@ public class FixedTermDepositDto {
     private Integer fixedTermDepositId;
     @JsonProperty("amount")
     private Double amount;
-    private Integer account;
     @JsonProperty("closingDate")
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp closingDate;

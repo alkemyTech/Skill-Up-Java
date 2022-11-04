@@ -9,25 +9,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/fixedDeposit")
+@RequestMapping("/fixedDeposit")
 public class FixedTermDepositController {
     @Autowired
     private final FixedTermDepositService fixedTermDepositService;
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<String> createFixedTermDeposit(@Validated @RequestBody FixedTermDepositDto fixedTermDepositDto) throws FixedTermDepositException {
+    public ResponseEntity<String> createFixedTermDeposit(@Validated @RequestBody FixedTermDepositDto fixedTermDepositDto, @RequestHeader String token) throws FixedTermDepositException {
         fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
-        fixedTermDepositService.createFixedTermDeposit(fixedTermDepositDto);
+        fixedTermDepositService.createFixedTermDeposit(fixedTermDepositDto, token);
         return ResponseEntity.status(HttpStatus.CREATED).body("Successful creation of an FixedTermDeposit.");
 
     }

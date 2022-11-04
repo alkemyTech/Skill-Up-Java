@@ -1,7 +1,7 @@
 package com.alkemy.wallet.model.mapper.response.fixed_term_deposit;
 
 import com.alkemy.wallet.model.entity.FixedTermDeposit;
-import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.dto.response.fixed_term_deposit.FixedTermDepositResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

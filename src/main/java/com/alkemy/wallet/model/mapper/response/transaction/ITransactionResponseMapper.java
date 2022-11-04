@@ -1,13 +1,13 @@
 package com.alkemy.wallet.model.mapper.response.transaction;
 
 import com.alkemy.wallet.model.entity.Transaction;
-import com.alkemy.wallet.model.mapper.response.complemento.IAccountResponse2Mapper;
-import com.alkemy.wallet.model.mapper.response.complemento.IUserResponse2Mapper;
-import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
+import com.alkemy.wallet.model.dto.response.transaction.TransactionResponseDto;
+import com.alkemy.wallet.model.mapper.response.account.IAccountConUserResponseMapper;
+import com.alkemy.wallet.model.mapper.response.user.IUserConAccountResponseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {IUserResponse2Mapper.class, IAccountResponse2Mapper.class})
+@Mapper(componentModel = "spring", uses = {IUserConAccountResponseMapper.class, IAccountConUserResponseMapper.class})
 public interface ITransactionResponseMapper {
     @Mapping(target = "userResponseDto", source = "user")
     @Mapping(target = "userId", source = "fkUserId")

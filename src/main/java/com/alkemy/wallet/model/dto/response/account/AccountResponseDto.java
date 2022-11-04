@@ -1,5 +1,6 @@
-package com.alkemy.wallet.model.dto.response;
+package com.alkemy.wallet.model.dto.response.account;
 
+import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -26,8 +27,6 @@ public class AccountResponseDto {
     private LocalDateTime updateDate;
 
     private Boolean softDelete;
-
-    private UserResponseDto userResponseDto;
 
     public Long getAccountId() {
         return accountId;
@@ -91,13 +90,5 @@ public class AccountResponseDto {
 
     public void setSoftDelete(Boolean softDelete) {
         this.softDelete = softDelete;
-    }
-
-    public UserResponseDto getUserResponseDto() {
-        return userResponseDto;
-    }
-
-    public void setUserResponseDto(UserResponseDto userResponseDto) {
-        this.userResponseDto = userResponseDto;
     }
 }

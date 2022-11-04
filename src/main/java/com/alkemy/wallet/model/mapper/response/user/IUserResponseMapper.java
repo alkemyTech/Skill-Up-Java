@@ -1,14 +1,13 @@
 package com.alkemy.wallet.model.mapper.response.user;
 
 import com.alkemy.wallet.model.entity.User;
-import com.alkemy.wallet.model.mapper.response.complemento.IAccountResponse2Mapper;
-import com.alkemy.wallet.model.dto.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = {IAccountResponse2Mapper.class})
+/** Este es para mapear User en otros mapper sin el error spring.main.allow-circular-references */
+@Mapper(componentModel = "spring")
 public interface IUserResponseMapper {
     @Mapping(target = "roleId", source = "fkRoleId")
-    @Mapping(target = "accountResponseDto", source = "accounts")
     UserResponseDto userToUserResponse(User user);
 }

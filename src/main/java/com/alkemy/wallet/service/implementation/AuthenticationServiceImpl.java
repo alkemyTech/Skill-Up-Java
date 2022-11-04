@@ -30,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private JWTUtil jwtUtil;
 
     @Override
-    public ResponseEntity<User> registerUser(UserDto user){
+    public ResponseEntity<UserDto> registerUser(UserRequestDto user){
 
         //Check One or more fields are empty
         if(user.name()==null || user.lastName()==null || user.email()==null || user.password()==null)
@@ -40,18 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(userService.loadUserByUsername(user.email())!=null)
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
 
-        //Crypt Password
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String passEncoded =passwordEncoder.encode(user.password());
-
-        // SET PASSWORD
-        // user.password(passEncoded);
-
-        User u = null;
-        // SAVE NEW USER
-        // u = userService.createUser(null)
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(u);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
     public ResponseEntity <AuthenticationResponse> loginUser(AuthenticationRequest authenticationRequest){

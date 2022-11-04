@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.UserDto;
+import com.alkemy.wallet.dto.UserRequestDto;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.security.AuthenticationRequest;
 import com.alkemy.wallet.security.AuthenticationResponse;
@@ -20,7 +21,7 @@ public class AuthenticationController {
     private AuthenticationServiceImpl authenticationServiceImpl;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserDto user){
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserRequestDto user){
         return authenticationServiceImpl.registerUser(user);
     }
 

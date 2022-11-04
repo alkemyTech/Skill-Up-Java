@@ -20,12 +20,12 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/get/users")
+    @GetMapping("/users")
     public ResponseEntity<List<UserResponseDto>> getUsers() {
         return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/get/accounts/{userId}")
+    @GetMapping("/accounts/{userId}")
     public ResponseEntity<AccountSinUserResponseDto> getAccountUserById(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.getAccountUserById(userId), HttpStatus.OK);
     }

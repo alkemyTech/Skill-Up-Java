@@ -4,7 +4,7 @@ import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.Transaction;
-import com.alkemy.wallet.service.TransactionService;
+import com.alkemy.wallet.service.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

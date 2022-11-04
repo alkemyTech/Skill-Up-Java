@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionCreateDTO;
+import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
@@ -27,22 +28,16 @@ public class TransactionController {
 
     @Autowired
     ITransactionService transactionService;
-/*
-    @Autowired
-    AccountService accountService;
+
 
 
     @GetMapping("/{transactionId}/")
-    ResponseEntity<Transaction> transactionDetails(@PathVariable Integer transactionId){
-        // need a method "getTransactionById" from TransactionService that returns a Transaction object.
-        if( transactionService.getTransactionById(transactionId) != null ){
-            return ResponseEntity.ok( transactionService.transactionById(transactionId).get() );
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    ResponseEntity<TransactionDTO> transactionDetails(@PathVariable Integer transactionId){
 
-}
+        return ResponseEntity.ok(transactionService.getTransactionById(transactionId));
 
+    }
+/*
 
  // need a method from transactionService that returns a Page<Transaction> collection
     @GetMapping("/{userId}")

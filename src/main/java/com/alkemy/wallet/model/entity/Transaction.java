@@ -67,22 +67,6 @@ public class Transaction {
         this.description = description;
     }
 
-    public Long getFkUserId() {
-        return fkUserId;
-    }
-
-    public void setFkUserId(Long fkUserId) {
-        this.fkUserId = fkUserId;
-    }
-
-    public Long getFkAccountId() {
-        return fkAccountId;
-    }
-
-    public void setFkAccountId(Long fkAccountId) {
-        this.fkAccountId = fkAccountId;
-    }
-
     public LocalDateTime getTransactionDate() {
         return transactionDate;
     }
@@ -105,5 +89,21 @@ public class Transaction {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public Long getFkUserId() {
+        return fkUserId;
+    }
+
+    public void setFkUserId(Long fkUserId) {
+        this.fkUserId = fkUserId;
+    }
+
+    public Long getFkAccountId() {
+        return fkAccountId;
+    }
+
+    public void setFkAccountId(Long fkAccountId) {
+        this.fkAccountId = fkAccountId;
     }
 }

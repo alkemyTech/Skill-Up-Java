@@ -1,6 +1,5 @@
-package com.alkemy.wallet.model.request;
+package com.alkemy.wallet.model.dto.request;
 
-import com.alkemy.wallet.model.TransactionTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,14 +9,15 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionRequestDto {
+public class FixedTermDepositRequestDto {
     private Long transactionsId;
     private Double amount;
-    private TransactionTypeEnum type;
-    private String description;
     private Long userId;
     private Long accountId;
-    private LocalDateTime transactionDate;
+    private Double interest;
+    private LocalDateTime creationDate;
+    private LocalDateTime closingDate;
 
+    private AccountRequestDto accountRequestDto;
     private UserRequestDto userRequestDto;
 }

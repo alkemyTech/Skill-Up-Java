@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -24,6 +25,7 @@ public class Account {
     private Double transactionLimit;
     @Column(nullable = false)
     private Double balance;
+
     private Long fkUserId;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
@@ -32,6 +34,12 @@ public class Account {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
     private User user;
+
+    @OneToMany(mappedBy = "account")
+    private List<Transaction> transactions;
+
+    @OneToMany(mappedBy = "account")
+    private List<FixedTermDeposit> fixedTermDeposits;
 
     public Long getAccountId() {
         return accountId;
@@ -65,14 +73,6 @@ public class Account {
         this.balance = balance;
     }
 
-    public Long getFkUserId() {
-        return fkUserId;
-    }
-
-    public void setFkUserId(Long fkUserId) {
-        this.fkUserId = fkUserId;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -103,5 +103,29 @@ public class Account {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Long getFkUserId() {
+        return fkUserId;
+    }
+
+    public void setFkUserId(Long fkUserId) {
+        this.fkUserId = fkUserId;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    public List<FixedTermDeposit> getFixedTermDeposits() {
+        return fixedTermDeposits;
+    }
+
+    public void setFixedTermDeposits(List<FixedTermDeposit> fixedTermDeposits) {
+        this.fixedTermDeposits = fixedTermDeposits;
     }
 }

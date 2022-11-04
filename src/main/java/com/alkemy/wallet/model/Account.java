@@ -13,8 +13,8 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@SQLDelete(sql = "UPDATE accounts SET soft_delete = true WHERE id=?")
+@Where(clause = "soft_delete=false")
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -35,9 +35,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 //PERMISOS
+                //SITIOS A LOS QUE CUALQUIERA PUEDE INGRESAR
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/auth/**", "/accounts/**" )
                 .permitAll()
+                .and()
+                //SITIOS A LOS QUE CUALQUIER USUARIO AUTORIZADO PUEDE INGRESAR
+                .authorizeRequests()
+                .antMatchers("/transactions/**","/api/fixedDeposit/**","/users/**")
+                .authenticated()
                 .and()
 
                 //SESSION MANAGMENT

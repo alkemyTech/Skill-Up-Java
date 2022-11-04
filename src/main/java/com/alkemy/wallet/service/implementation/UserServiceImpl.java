@@ -4,6 +4,7 @@ import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
+import com.alkemy.wallet.model.RoleName;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.UserService;
@@ -37,8 +38,11 @@ public class UserServiceImpl implements UserService {
 
         User user = DtoToEntity(userRequestDto);
 
-        // SET ROLE TO USER
-        user.setRole(null);
+        //SET ROLE TO USER
+        //THIS ROLE CREATION MUST BE DELETED IN THE FUTURE
+        RoleName roleName = RoleName.USER;
+        Role role = new Role(roleName,"Rol de usuarios",new Timestamp(System.currentTimeMillis()),null);
+        user.setRole(role);
 
         user.setCreationDate(new Timestamp(System.currentTimeMillis()));
         user.setSoftDelete(false);
@@ -47,24 +51,29 @@ public class UserServiceImpl implements UserService {
         String passEncoded =passwordEncoder.encode(user.getPassword());
         user.setPassword(passEncoded);
 
-        User aux;
-        aux = repository.save(user);
-
-        return entityToDTO(aux);
+        return entityToDTO(repository.save(user));
     }
 
 
 
 
     public UserDto entityToDTO(User user){
-        ModelMapper mapper = new ModelMapper();
-        UserDto userDto = mapper.map(user,UserDto.class);
-        return userDto;
+//        ModelMapper mapper = new ModelMapper();
+//        UserDto userDto = mapper.map(user,UserDto.class);
+        return new UserDto(user.getFirstName(),user.getFirstName(), user.getEmail());
+
     }
 
     public User DtoToEntity(UserRequestDto userDto){
-        ModelMapper mapper = new ModelMapper();
-        User user = mapper.map(userDto,User.class);
+//        ModelMapper mapper = new ModelMapper();
+//        User user = mapper.map(userDto,User.class);
+        User user = new User();
+
+        user.setPassword(userDto.password());
+        user.setEmail(userDto.email());
+        user.setFirstName(userDto.name());
+        user.setLastName(userDto.lastName());
+
         return user;
     }
 

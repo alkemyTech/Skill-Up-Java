@@ -24,4 +24,14 @@ public class Role {
     // TODO: Check timestamps format and auditing
     private Timestamp creationDate;
     private Timestamp updateDate;
+
+    public Role(RoleName name, String description, Timestamp creationDate, Timestamp updateDate) {
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
+        this.updateDate = updateDate;
+    }
+
+    public Role() {
+    }
 }

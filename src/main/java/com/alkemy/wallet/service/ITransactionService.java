@@ -1,7 +1,7 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.entity.Transaction;
+import com.alkemy.wallet.model.entity.TransactionEntity;
 
 public interface ITransactionService {
-    public void saveTransaction(Transaction transaction);
+    public void saveTransaction(TransactionEntity transaction);
 }

@@ -42,9 +42,10 @@ public class UserEntity {
     @Column(name = "password")
     @NotNull
     private String password;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="role_id")
-    private Role role;
+    private RoleEntity role;
 
     @Column(name = "creationDate")
     @CreationTimestamp
@@ -57,7 +58,7 @@ public class UserEntity {
     private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "user")
-    private Set<Account> account;
+    private Set<AccountEntity> account;
 
     @OneToMany(mappedBy = "user")
     private Set<FixedTermDeposit> fixedTermDeposit;

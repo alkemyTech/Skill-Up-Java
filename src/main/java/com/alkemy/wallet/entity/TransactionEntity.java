@@ -19,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Setter
 @Entity
 @Table(name = "TRANSACTIONS")
-public class TransactionsEntity {
+public class TransactionEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

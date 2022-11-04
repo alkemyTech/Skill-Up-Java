@@ -11,6 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Data
 @NoArgsConstructor
 @Table(name = "ACCOUNTS")
+@NoArgsConstructor
 public class Account {
 
     @Id

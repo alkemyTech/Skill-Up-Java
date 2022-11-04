@@ -36,7 +36,7 @@ public class FixedTermDeposit {
     @JoinColumn(name = "accountId", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Account account;
+    private AccountEntity account;
 
     @Column(name = "interests")
     @NotNull

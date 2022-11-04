@@ -25,7 +25,7 @@ public class Authentication extends GlobalAuthenticationConfigurerAdapter {
         auth.userDetailsService(email -> {
             UserEntity user = userRepository.findByEmail(email);
             if (user != null) {
-                if (user.getRole().getName() == RoleEnum.ADMIN) {
+                if (user.getRole().getName().equals(RoleEnum.ADMIN.getName())) {
                     return new User(user.getEmail(), user.getPassword(), AuthorityUtils.createAuthorityList("ADMIN"));
                 }
                 return new User(user.getEmail(), user.getPassword(), AuthorityUtils.createAuthorityList("CLIENT"));
@@ -36,8 +36,6 @@ public class Authentication extends GlobalAuthenticationConfigurerAdapter {
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
     }
 }

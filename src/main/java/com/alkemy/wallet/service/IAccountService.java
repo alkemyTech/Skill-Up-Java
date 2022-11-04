@@ -1,9 +1,7 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.AccountEntity;
 
 public interface IAccountService {
-    public void saveAccount(Account account);
-
-    double getBalance();
+    public void saveAccount(AccountEntity account);
 }

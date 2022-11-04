@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
 
     public UserDto entityToDTO(User user){
+        //Mappers commented until they work automatically
 //        ModelMapper mapper = new ModelMapper();
 //        UserDto userDto = mapper.map(user,UserDto.class);
         return new UserDto(user.getFirstName(),user.getFirstName(), user.getEmail());
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User DtoToEntity(UserRequestDto userDto){
+        //Mappers commented until they work automatically
 //        ModelMapper mapper = new ModelMapper();
 //        User user = mapper.map(userDto,User.class);
         User user = new User();

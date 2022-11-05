@@ -123,4 +123,9 @@ public class UserServiceImpl implements UserService {
     public int getUserIdByEmail(String email) {
         return repository.findUserIdByEmail(email);
     }
+
+    @Override
+    public int getUserIdByEmail(String email) {
+        return repository.findUserIdByEmail(email);
+    }
 }

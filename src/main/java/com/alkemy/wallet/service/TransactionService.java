@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface TransactionService {
     TransactionDetailDto getTransactionDetailById (Integer Id) throws Exception;
+    List<TransactionDetailDto> getTransactionsDetailByAccountId (Integer accountId);
 
     TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto);
 

@@ -22,6 +22,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     void updateDescription(@Param(value = "id") Integer id, @Param(value = "description") String description);
 
 
-    List<Transaction> findAllByUser(Integer id, Pageable pageable);
+    //List<Transaction> findAllByUser(Integer id, Pageable pageable);
 
 }

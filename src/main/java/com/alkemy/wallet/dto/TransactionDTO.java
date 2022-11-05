@@ -1,5 +1,6 @@
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.User;
 import com.sun.istack.NotNull;
@@ -11,21 +12,19 @@ import java.time.Instant;
 public class TransactionDTO {
 
 
-    Integer id;
 
     Double amount;
 
-    String type;
+    TypeList type;
 
     String description;
 
     Instant transactionDate;
 
-    @NotNull
-    Account account;
 
-    @NotNull
-    User user;
+    Integer account_id;
+
+
 
 
 

@@ -27,8 +27,11 @@ public class Transaction {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "account_id", nullable = false, insertable = false, updatable = false)
     private Account account;
+
+    @Column(name="account_id")
+    private Integer account_id;
 
     @Column(name = "transaction_date", nullable = false)
     private Instant transactionDate;

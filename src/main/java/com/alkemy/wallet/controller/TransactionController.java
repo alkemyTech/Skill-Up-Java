@@ -2,9 +2,11 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
+import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.ITransactionService;
+import com.alkemy.wallet.service.impl.transaction.strategy.DepositStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,13 +22,11 @@ import javax.validation.Valid;
 public class TransactionController {
 
 
-/*
-
 
 
     @Autowired
-    TransactionService transactionService;
-
+    ITransactionService transactionService;
+/*
     @Autowired
     AccountService accountService;
 
@@ -53,16 +53,16 @@ public class TransactionController {
     // probably we need to put the validation dependency in pom.xml --> "javax.validation.Valid";
      need a method "makePayment" from TransactionService wich modifies the currency of the proper Account and saves a
      new Transaction object into the DataBase.
-
+*/
     @PostMapping("/deposit")
     ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO ){
 
-     transaction.setType("deposit");
-     transactionService.makeTranction(transDTO);
+     transDTO.setType(TypeList.DEPOSIT);
+     transactionService.makeTransaction(transDTO, new DepositStrategy());
      return new ResponseEntity<>( HttpStatus.CREATED);
 
     }
-
+/*
    // same as above
     @PostMapping("/payment")
     ResponseEntity<?> makePayment(@RequestBody @Valid TransactionCreateDTO transaction ){
@@ -82,7 +82,7 @@ public class TransactionController {
         }
         transactionService.updateTransaction(transactionUpdateDTO,transactionId);
         return ResponseEntity.ok().build();
-
+         asdasdasdasdasdasdasdasd
 
     }
 

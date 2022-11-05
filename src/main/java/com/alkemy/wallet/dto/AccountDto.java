@@ -1,6 +1,7 @@
 package com.alkemy.wallet.dto;
 
-import java.util.Currency;
+
+import com.alkemy.wallet.enumeration.Currency;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

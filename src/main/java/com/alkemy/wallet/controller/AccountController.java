@@ -2,7 +2,6 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.List;

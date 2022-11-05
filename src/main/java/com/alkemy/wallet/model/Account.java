@@ -10,6 +10,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Data
 @Table(name = "ACCOUNTS")
+@NoArgsConstructor
 public class Account {
 
     @Id

@@ -93,4 +93,9 @@ public class UserServiceImpl implements UserService {
 
         return optionalUser.get();
     }
+
+    @Override
+    public int getUserIdByEmail(String email) {
+        return repository.findUserIdByEmail(email);
+    }
 }

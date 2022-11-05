@@ -2,8 +2,7 @@ package com.alkemy.wallet.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -15,6 +14,9 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "accounts")
 @SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")

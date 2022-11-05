@@ -1,8 +1,12 @@
 package com.alkemy.wallet.repository;
 
+import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.RoleDTO;
+import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
+import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.RoleEntity;
+import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,4 +58,21 @@ public class BankDAO {
         return userRepository.findByEmail(email);
     }
 
+    public TransactionEntity saveDeposit(TransactionDTO transaction){
+        TransactionEntity transactionEntity = TransactionEntity.builder()
+                .amount(transaction.getAmount())
+                .description(transaction.getDescription())
+                .build();
+        return transactionRepository.saveAndFlush(transactionEntity);
+    }
+
+    public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity){
+        AccountEntity accountEntity = AccountEntity.builder()
+                .currency(accountDTO.getCurrency())
+                .transactionLimit(accountDTO.getTransactionLimit())
+                .balance(0.0)
+                .user(userEntity)
+                .build();
+        return accountRepository.saveAndFlush(accountEntity);
+    }
 }

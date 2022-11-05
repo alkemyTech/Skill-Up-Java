@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.ITransactionService;
@@ -14,5 +15,10 @@ public class TransactionServiceImpl implements ITransactionService {
     @Override
     public void saveTransaction(TransactionEntity transaction){
         transactionRepository.save(transaction);
+    }
+
+    @Override
+    public void saveDeposit(TransactionDTO transaction) {
+
     }
 }

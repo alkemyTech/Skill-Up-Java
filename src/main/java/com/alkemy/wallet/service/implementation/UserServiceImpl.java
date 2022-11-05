@@ -118,4 +118,9 @@ public class UserServiceImpl implements UserService {
             throw new ForbiddenAccessException("Cannot access another user details");
         }
     }
+
+    @Override
+    public int getUserIdByEmail(String email) {
+        return repository.findUserIdByEmail(email);
+    }
 }

@@ -4,6 +4,8 @@ import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
+import com.alkemy.wallet.dto.CurrencyRequestDto;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Currency;
@@ -13,24 +15,45 @@ import com.alkemy.wallet.service.AccountService;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
     @Override
-    public AccountDto createAccount(int userId, Currency currency) {
-        User user =  userService.getUserById(userId);
-        if(accountRepository.findAccountByUserIdAndCurrency(user, currency).isPresent()) {
+    public AccountDto createAccountByUserId(int userId, Currency currency) {
+        User user = new User(userId);
+        if (accountRepository.findAccountByUserIdAndCurrency(user, currency).isPresent()) {
+            throw new RuntimeException("User already has an account for that currency.");
+        }
+        double balance = 0;
+        double transactionLimit = getTransactionLimitForCurrency(currency);
+        Date date = new Date();
+        Timestamp creationDate = new Timestamp(date.getTime());
+        Account account = new Account(user, currency, transactionLimit, balance, creationDate);
+        return accountMapper.convertToDto(accountRepository.save(account));
+    }
+
+    @Override
+    public AccountDto createAccountByUsername(String username, Currency currency) {
+        /* Get userId from userService
+        * */
+        int userId = userService.getUserIdByEmail(username);
+        User user = new User(userId);
+        if (accountRepository.findAccountByUserIdAndCurrency(user, currency).isPresent()) {
             throw new RuntimeException("User already has an account for that currency.");
         }
         double balance = 0;
@@ -70,6 +93,22 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
+    @Override
+    public List<AccountDto> getAccountsByUserId(int userId) {
+        User user = new User(userId);
+        List<Account> accounts = accountRepository.findallByUserId(user);
+        return accounts.stream().map(accountMapper::convertToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public AccountDto getAccountByUserAndCurrency(int userId, CurrencyRequestDto currencyRequest) {
+        User user = new User(userId);
+        Optional<Account> optionalAccount = accountRepository.findAccountByUserIdAndCurrency(user, currencyRequest.currencyRequestToEnum());
+        log.info("the account by user and currency is: " + optionalAccount);
+        return null;
+    }
+
+    private double getTransactionLimitForCurrency(Currency currency) {
     @Override
     public AccountDto increaseBalance(int accountId, double amount) {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);

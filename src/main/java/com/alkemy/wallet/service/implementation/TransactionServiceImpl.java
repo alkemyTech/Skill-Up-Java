@@ -10,6 +10,7 @@ import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.AccountService;
@@ -19,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -40,6 +44,16 @@ public class TransactionServiceImpl implements TransactionService {
         }else{
             throw new ResourceNotFoundException("Transaction does not exist");
         }
+    }
+
+    @Override
+    public List<TransactionDetailDto> getTransactionsDetailByAccountId(Integer accountId) {
+        Account account = new Account();
+        account.setAccountId(accountId);
+        return transactionRepository.findallByAccountId(account)
+                .stream()
+                .map(transaction -> transactionMapper.convertToDto(transaction))
+                .collect(Collectors.toList());
     }
 
     @Override

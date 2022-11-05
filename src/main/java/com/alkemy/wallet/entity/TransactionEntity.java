@@ -1,5 +1,6 @@
 package com.alkemy.wallet.entity;
 
+import com.alkemy.wallet.enumeration.TypeTransaction;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

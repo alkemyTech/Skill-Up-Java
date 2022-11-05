@@ -1,6 +1,6 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.entity.TypeTransaction;
+import com.alkemy.wallet.enumeration.TypeTransaction;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

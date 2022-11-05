@@ -33,7 +33,7 @@ public class AccountEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "ID_ACCOUNT", nullable = false)
-  private Integer id;
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "CURRENCY", nullable = false)

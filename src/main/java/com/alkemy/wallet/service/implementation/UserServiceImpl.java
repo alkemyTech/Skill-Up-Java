@@ -32,4 +32,9 @@ public class UserServiceImpl implements UserService {
                       .email( "user@sample.com" )
                       .build();
     }
+
+    @Override
+    public int getUserIdByEmail(String email) {
+        return repository.findUserIdByEmail(email);
+    }
 }

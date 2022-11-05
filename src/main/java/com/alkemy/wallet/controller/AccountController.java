@@ -1,8 +1,7 @@
 package com.alkemy.wallet.controller;
 
-
 import com.alkemy.wallet.dto.AccountBasicDto;
-import com.alkemy.wallet.dto.UserDto;
+import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.List;
@@ -19,15 +18,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
   @Autowired
-  private IUserService userService;
+  private IUserService iuserService;
 
-  @Autowired
-  private IAccountService accountService;
+  private IAccountService iAccountService;
+  AccountController (IAccountService iAccountService){
+    this.iAccountService = iAccountService;
+  }
+  @GetMapping("/{userId}")
+  public ResponseEntity<List<AccountDto>> getAccountById(@PathVariable("UserId") Long userId){
+    List<AccountDto> listAccounts = this.iAccountService.findAllByUser(userId);
+    return ResponseEntity.ok().body(listAccounts);
+  }
 
   @GetMapping("/balance")
   public ResponseEntity<List<AccountBasicDto>> getBalance(@Valid @PathVariable Long id) {
 
-    List<AccountBasicDto> accounts = userService.getAccountsBalance(id);
+    List<AccountBasicDto> accounts = iuserService.getAccountsBalance(id);
     return ResponseEntity.ok(accounts);
   }
 

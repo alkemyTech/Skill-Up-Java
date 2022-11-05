@@ -2,6 +2,7 @@ package com.alkemy.wallet.entity;
 
 import java.time.Instant;
 import java.util.Currency;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -25,6 +26,8 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 
+
+
 public class AccountEntity {
 
   @Id
@@ -43,10 +46,10 @@ public class AccountEntity {
   private Double balance;
 
   @Column(name = "UPDATE_DATE")
-  private Instant updateDate;
+  private Date updateDate;
 
   @Column(name = "CREATION_DATE")
-  private Instant creationDate;
+  private Date creationDate;
 
   @Column(name = "SOFT_DELETE")
   private boolean softDelete = Boolean.FALSE;

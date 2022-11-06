@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import javax.persistence.Id;
-import javax.swing.text.html.parser.Entity;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +32,8 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllUsers() {
         var users = userRepository.findAll();
         return users.stream()
-                    .map( userMapper::convertToDto )
-                    .toList();
+                .map( userMapper::convertToDto )
+                .toList();
     }
 
     @Override
@@ -117,15 +115,5 @@ public class UserServiceImpl implements UserService {
         }else{
             throw new ForbiddenAccessException("Cannot access another user details");
         }
-    }
-
-    @Override
-    public int getUserIdByEmail(String email) {
-        return repository.findUserIdByEmail(email);
-    }
-
-    @Override
-    public int getUserIdByEmail(String email) {
-        return repository.findUserIdByEmail(email);
     }
 }

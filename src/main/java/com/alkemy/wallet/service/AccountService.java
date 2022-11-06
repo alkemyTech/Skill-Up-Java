@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.dto.AccountBalanceDto;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.CurrencyRequestDto;
 import com.alkemy.wallet.model.Account;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface AccountService {
     AccountDto createAccountByUserId(int userId, Currency currency);
-    AccountDto createAccountByUsername(String username, Currency currency);
+    AccountDto createAccount(String token, CurrencyRequestDto currency);
 
     AccountDto reduceBalance(int accountId, double amount);
     Account findAccountByUserIdAndCurrency(User user, Currency currency);
@@ -21,5 +22,5 @@ public interface AccountService {
 
     AccountDto getAccountByUserAndCurrency(int userId, CurrencyRequestDto currencyRequestDto);
 
-
+    List<AccountBalanceDto> getUserBalance(String username);
 }

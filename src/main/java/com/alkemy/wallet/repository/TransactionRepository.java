@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
     @Query("SELECT t FROM Transaction t WHERE t.account = ?1")
-    List<Transaction> findallByAccountId(Account account);
+    List<Transaction> findAllByAccountId(Account account);
 }

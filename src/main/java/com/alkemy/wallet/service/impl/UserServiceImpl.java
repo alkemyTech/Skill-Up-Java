@@ -1,8 +1,11 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.enumeration.RoleList;
 import com.alkemy.wallet.mapper.UserMapper;
+import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.repository.RoleRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,8 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleRepository roleRepository;
     @Autowired
     UserMapper userMapper;
     @Autowired
@@ -50,12 +55,22 @@ public class UserServiceImpl implements IUserService {
      */
 
     @Override
-    public User createUser(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO) {
+        // Password encoding
         String encodedPassword = this.passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
+        // Adding role
+        Role userRole = new Role();
+        userRole.setName(RoleList.USER);
+        userRole.setDescription("Created user with role USER");
+        roleRepository.save(userRole);
+        userDTO.setRole(userRole);
+        // Persist entity
         User user = userMapper.userDTO2Entity(userDTO);
         userRepository.save(user);
-        return user;
+        // Returning DTO response
+        UserDTO userResponse = userMapper.createUserEntity2DTOResponse(user);
+        return userResponse;
     }
 
     @Override

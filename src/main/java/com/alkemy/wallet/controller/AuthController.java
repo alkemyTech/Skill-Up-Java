@@ -18,10 +18,8 @@ public class AuthController {
     private IUserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
-        User user = userService.createUser(userDTO);
-        // should not return the actual user
-        // TODO: Return DTO with only required data
-        return ResponseEntity.ok().body(user);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+        UserDTO userResponse = userService.createUser(userDTO);
+        return ResponseEntity.ok().body(userResponse);
     }
 }

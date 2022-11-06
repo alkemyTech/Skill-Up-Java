@@ -11,7 +11,7 @@ import java.util.List;
 public interface IUserService {
     public List<UserDTO> getAllUsers();
 
-    public User createUser(UserDTO userDTO);
+    public UserDTO createUser(UserDTO userDTO);
 
     boolean deleteUserById(Integer id);
 

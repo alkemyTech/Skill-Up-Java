@@ -16,11 +16,10 @@ public class AccountController {
     private AccountServiceImpl accountService;
     @PostMapping("/create")
     public ResponseEntity<AccountDTO> createAccount(
-                                                    @RequestParam(required = false) int userId,
-                                                    @RequestParam(required = false) String currency) throws Exception{
+        @RequestParam(required = false) int userId,
+        @RequestParam(required = false) String currency) throws Exception{
 
         AccountDTO accountDTO = accountService.createAccount(userId,currency);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(accountDTO);
     }
 }

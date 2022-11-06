@@ -24,7 +24,7 @@ public class Transaction {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade=CascadeType.MERGE)
     @JoinColumn( name = "ACCOUNT_ID", referencedColumnName = "ACCOUNT_ID", nullable = false)
     private Account account;
 

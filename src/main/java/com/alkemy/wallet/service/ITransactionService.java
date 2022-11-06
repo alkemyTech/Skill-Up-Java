@@ -3,7 +3,7 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
-import com.alkemy.wallet.service.impl.transaction.strategy.ITransactionStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
 
 import java.util.List;
 

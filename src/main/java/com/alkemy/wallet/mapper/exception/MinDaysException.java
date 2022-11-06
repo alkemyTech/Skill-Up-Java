@@ -1,4 +1,4 @@
-package com.alkemy.wallet.exception;
+package com.alkemy.wallet.mapper.exception;
 
 public class MinDaysException extends RuntimeException {
 

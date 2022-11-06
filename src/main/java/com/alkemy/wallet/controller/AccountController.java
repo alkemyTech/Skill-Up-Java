@@ -21,6 +21,7 @@ public class AccountController {
   private IUserService iuserService;
 
   private IAccountService iAccountService;
+  @Autowired
   AccountController (IAccountService iAccountService){
     this.iAccountService = iAccountService;
   }

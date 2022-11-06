@@ -1,4 +1,4 @@
-package com.alkemy.wallet.exception;
+package com.alkemy.wallet.mapper.exception;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
 

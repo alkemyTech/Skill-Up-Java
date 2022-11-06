@@ -63,6 +63,13 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.convertToDto(accountRepository.save(updatedAccount));
     }
 
+
+    public Account findAccountByUserIdAndCurrency(User user, Currency currency){
+
+        Account account=accountRepository.findAccountByUserIdAndCurrency(user,currency).get();
+        return account;
+    }
+
     @Override
     public AccountDto increaseBalance(int accountId, double amount) {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
@@ -94,6 +101,7 @@ public class AccountServiceImpl implements AccountService {
 
         return accountMapper.convertToDto(optionalAccountDto.get());
     }
+
 
     private double getTransactionLimitForCurrency(Currency currency){
         return switch (currency) {

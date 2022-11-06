@@ -1,10 +1,17 @@
 package com.alkemy.wallet.mapper;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.FixedTermDepositDto;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.FixedTermDeposit;
+import lombok.RequiredArgsConstructor;
+import org.apache.catalina.mapper.Mapper;
+import org.modelmapper.ModelMapper;
+
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
@@ -13,6 +20,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class AccountMapper {
+
     @Autowired
     private UserService userService;
     public AccountDto convertToDto(Account account) {
@@ -39,5 +47,6 @@ public class AccountMapper {
                 accountDto.softDelete()
         );
     }
+
 
 }

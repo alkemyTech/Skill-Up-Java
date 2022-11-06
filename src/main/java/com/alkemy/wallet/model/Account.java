@@ -13,10 +13,12 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Data
 @Table(name = "ACCOUNTS")
+
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE accounts SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete=false")
+
 public class Account {
 
     @Id

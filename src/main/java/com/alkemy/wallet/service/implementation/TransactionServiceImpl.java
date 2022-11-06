@@ -95,6 +95,12 @@ public class TransactionServiceImpl implements TransactionService {
         return convertTransactionListToDto(transactionsOfUser);
 
     }
+    @Override
+    public List<TransactionDetailDto> getTransactionsByAccount(Integer accountId) {
+        List<Transaction> transactionsOfAccount = transactionRepository.findAllByAccountId(new Account(accountId));
+        return convertTransactionListToDto(transactionsOfAccount);
+    }
+
 
     private List<TransactionDetailDto> convertTransactionListToDto(List<Transaction> transactions){
         return transactions

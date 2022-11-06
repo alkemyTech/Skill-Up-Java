@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface TransactionService {
     TransactionDetailDto getTransactionDetailById (Integer Id) throws Exception;
-    List<TransactionDetailDto> getTransactionsDetailByAccountId (Integer accountId);
 
     TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto);
 
     TransactionDetailDto updateTransaction(TransactionPatchDto transaction, Integer Id) throws Exception;
 
     List<TransactionDetailDto> getTransactions(Integer userId);
+    List<TransactionDetailDto> getTransactionsByAccount(Integer accountId);
 
 }

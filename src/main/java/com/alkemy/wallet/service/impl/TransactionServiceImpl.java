@@ -12,7 +12,7 @@ import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.ITransactionService;
-import com.alkemy.wallet.service.impl.transaction.strategy.ITransactionStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +20,6 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,12 +58,15 @@ public class TransactionServiceImpl implements ITransactionService {
     @Override
     public void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy) {
 
-        Optional<Account> optional = accountRepository.findById(transDTO.getAccount_id());
-        Account account = optional.get();
+        Optional<Account> optAcc = accountRepository.findById(transDTO.getAccount_id());
+        if (optAcc.isEmpty()){
+            throw new TransactionException(ErrorList.OBJECT_NOT_FOUND.getMessage());
+        }
+        Account account = optAcc.get();
 
         strategy.make(transDTO.getAmount(), account);
         Transaction newTrans = transactionMapper.transCreateDTO2Entity(transDTO);
-        newTrans.setTransactionDate(Instant.now());
+        newTrans.setType(strategy.type());
         transactionRepository.save(newTrans);
     }
 
@@ -78,4 +79,5 @@ public class TransactionServiceImpl implements ITransactionService {
         String newDescription = transDTO.getDescription();
         transactionRepository.updateDescription(id , newDescription);
     }
+
 }

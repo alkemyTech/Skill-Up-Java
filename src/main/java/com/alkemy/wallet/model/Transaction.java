@@ -3,6 +3,7 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.enumeration.TypeList;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -34,5 +35,6 @@ public class Transaction {
     private Integer account_id;
 
     @Column(name = "transaction_date", nullable = false)
+    @CreationTimestamp
     private Instant transactionDate;
 }

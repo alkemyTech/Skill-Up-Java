@@ -1,4 +1,4 @@
-package com.alkemy.wallet.config;
+package com.alkemy.wallet.security.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

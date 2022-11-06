@@ -7,11 +7,9 @@ import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.ITransactionService;
-import com.alkemy.wallet.service.impl.transaction.strategy.DepositStrategy;
-import com.alkemy.wallet.service.impl.transaction.strategy.PaymentStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +51,6 @@ public class TransactionController {
     @PostMapping("/deposit")
     ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO ){
 
-     transDTO.setType(TypeList.DEPOSIT);
      transactionService.makeTransaction(transDTO, new DepositStrategy());
      return new ResponseEntity<>( HttpStatus.CREATED);
 
@@ -63,7 +60,6 @@ public class TransactionController {
     @PostMapping("/payment")
     ResponseEntity<?> makePayment(@RequestBody @Valid TransactionCreateDTO transaction ){
 
-     transaction.setType(TypeList.PAYMENT);
      transactionService.makeTransaction(transaction, new PaymentStrategy());
      return new ResponseEntity<>( HttpStatus.CREATED);
 

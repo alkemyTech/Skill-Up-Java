@@ -10,4 +10,6 @@ public interface AccountService {
     AccountDto createAccount(int userId, Currency currency);
     AccountDto reduceBalance(int accountId, double amount);
     Account findAccountByUserIdAndCurrency(User user, Currency currency);
+    AccountDto increaseBalance(int accountId, double amount);
+    AccountDto getAccountById(Integer accountId);
 }

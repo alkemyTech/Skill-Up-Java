@@ -58,4 +58,11 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
         return fixedTermDepositRepository.findallByAccount(account).stream()
                 .map(mapper::convertToDto).collect(Collectors.toList());
     }
+
+    @Override
+    public List<FixedTermDepositDto> getAccountFixedTermDeposits(int accountId) {
+        Account account = new Account(accountId);
+        return fixedTermDepositRepository.findallByAccount(account).stream()
+                .map(mapper::convertToDto).collect(Collectors.toList());
+    }
 }

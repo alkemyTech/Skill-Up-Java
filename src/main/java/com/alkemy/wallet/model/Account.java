@@ -55,4 +55,7 @@ public class Account {
         this.updateDate = new Timestamp(new Date().getTime());
         this.softDelete = false;
     }
+    public Account(int accountId){
+        this.accountId = accountId;
+    }
 }

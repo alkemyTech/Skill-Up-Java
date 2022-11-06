@@ -7,7 +7,9 @@ import com.alkemy.wallet.dto.TransactionDepositRequestDto;
 import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.dto.TransactionPatchDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.service.TransactionService;
+import com.alkemy.wallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,10 +21,14 @@ public class TransactionController {
 
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value = "/detail/{id}")
     @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<TransactionDetailDto> getTransactionDetailById(@PathVariable("id") Integer id) throws Exception {
+    public ResponseEntity<TransactionDetailDto> getTransactionDetailById(@PathVariable("id") Integer id, @RequestHeader("Authorization") String token ) throws Exception {
+        User user = transactionService.getUserByTransactionId(id);
+        userService.getUser(user.getUserId(),token);
         return ResponseEntity.ok(transactionService.getTransactionDetailById(id));
     }
 

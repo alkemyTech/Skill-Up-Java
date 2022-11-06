@@ -1,6 +1,6 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.entity.RoleEnum;
+import com.alkemy.wallet.model.RoleEnum;
 import lombok.*;
 
 @ToString
@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 public class RoleDTO {
-    private int id;
+    private Long id;
     private RoleEnum name;
     private String description;
 }

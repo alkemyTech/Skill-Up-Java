@@ -30,27 +30,29 @@ public class BankDAO {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity createUser(UserRequestDTO user, RoleDTO role) {
-
-        Optional<RoleEntity> roleEntity = roleRepository.getRoleById(role.getId());
-        RoleEntity roleEntityResponse = null;
-        if(!roleEntity.isPresent()) {
-            roleEntityResponse = RoleEntity.builder()
+    public RoleEntity getRole(RoleDTO role) {
+        Optional<RoleEntity> roleEntity = roleRepository.findByRoleId(role.getId());
+        if (!roleEntity.isPresent()) {
+            RoleEntity roleEntityResponse = RoleEntity.builder()
                     .roleId(role.getId())
                     .name(role.getName())
                     .description(role.getDescription())
                     .build();
-            roleRepository.saveAndFlush(roleEntityResponse);
+             roleRepository.saveAndFlush(roleEntityResponse);
+             return roleEntityResponse;
         }
+        return roleEntity.get();
+    }
 
-      UserEntity userEntity = UserEntity.builder()
+    public UserEntity createUser(UserRequestDTO user, RoleDTO role) {
+        RoleEntity roleEntity = getRole(role);
+        UserEntity userEntity = UserEntity.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .role(roleEntity)
                 .password(passwordEncoder.encode(user.getPassword()))
-                .role(roleEntityResponse)
                 .build();
-
         return userRepository.saveAndFlush(userEntity);
     }
 
@@ -58,7 +60,7 @@ public class BankDAO {
         return userRepository.findByEmail(email);
     }
 
-    public TransactionEntity saveDeposit(TransactionDTO transaction){
+    public TransactionEntity saveDeposit(TransactionDTO transaction) {
         TransactionEntity transactionEntity = TransactionEntity.builder()
                 .amount(transaction.getAmount())
                 .description(transaction.getDescription())
@@ -66,7 +68,7 @@ public class BankDAO {
         return transactionRepository.saveAndFlush(transactionEntity);
     }
 
-    public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity){
+    public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity) {
         AccountEntity accountEntity = AccountEntity.builder()
                 .currency(accountDTO.getCurrency())
                 .transactionLimit(accountDTO.getTransactionLimit())
@@ -74,5 +76,9 @@ public class BankDAO {
                 .user(userEntity)
                 .build();
         return accountRepository.saveAndFlush(accountEntity);
+    }
+
+    public void deleteByUserId(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

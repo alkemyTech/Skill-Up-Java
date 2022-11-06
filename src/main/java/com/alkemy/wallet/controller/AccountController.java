@@ -20,9 +20,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody AccountDTO account){
-        accountService.createAccount(account);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return accountService.createAccount(account);
     }
 
     @GetMapping("/balance")

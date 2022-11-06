@@ -3,11 +3,12 @@ package com.alkemy.wallet.model.entity;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_Id = ?")
 @Where(clause = "deleted = false")
 public class UserEntity {
 

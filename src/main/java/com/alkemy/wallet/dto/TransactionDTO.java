@@ -1,6 +1,6 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.entity.TypeEnum;
+import com.alkemy.wallet.model.TypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

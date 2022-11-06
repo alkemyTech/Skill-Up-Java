@@ -4,6 +4,7 @@ import com.alkemy.wallet.dto.FixedTermDepositDto;
 import com.alkemy.wallet.exception.FixedTermDepositException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.FixedTermDepositMapper;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.repository.FixedTermDepositRepository;
 import com.alkemy.wallet.security.JWTUtil;
@@ -12,13 +13,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional()
@@ -48,5 +50,12 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
         fixedTermDepositRepository.save(fixedTermDeposit);
         return fixedTermDepositDto;
 
+    }
+
+    @Override
+    public List<FixedTermDepositDto> getAccountFixedTermDeposits(int accountId) {
+        Account account = new Account(accountId);
+        return fixedTermDepositRepository.findallByAccount(account).stream()
+                .map(mapper::convertToDto).collect(Collectors.toList());
     }
 }

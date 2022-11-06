@@ -4,6 +4,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionDepositDto;
 import com.alkemy.wallet.dto.TransactionDetailDto;
+import com.alkemy.wallet.dto.TransactionPatchDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
@@ -41,9 +42,15 @@ public class TransactionController {
     public ResponseEntity<List<TransactionDetailDto>> listTransactions(@PathVariable Integer userId) {
         return ResponseEntity.ok(transactionService.getTransactions(userId));
     }
-//
-//    @ExceptionHandler(InvalidAmountException.class)
-//    public ResponseEntity<Object> handleAmountException(Exception e) {
-//        return ResponseEntity.badRequest().body(e.getMessage());
-//    }
+
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<Object> handleAmountException(Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @PatchMapping(value="/{id}")
+    ResponseEntity<TransactionDetailDto> updateTransaction(@RequestBody TransactionPatchDto transactionPatchDto, @PathVariable Integer id) throws Exception{
+        return ResponseEntity.ok(transactionService.updateTransaction(transactionPatchDto,id));
+    }
+
 }

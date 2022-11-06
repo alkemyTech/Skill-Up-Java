@@ -61,9 +61,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailDto getUserDetailById(Integer Id) {
-        var user = repository.findById(Id);
+        var user = userRepository.findById(Id);
         if(user.isPresent()){
-            return mapper.convertToDetailDto(user.get());
+            return userMapper.convertToDetailDto(user.get());
         }else{
             throw new ResourceNotFoundException("User does not exist");
         }

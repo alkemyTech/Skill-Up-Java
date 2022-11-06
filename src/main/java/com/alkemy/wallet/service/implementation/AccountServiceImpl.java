@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.implementation;
 
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
@@ -9,9 +10,13 @@ import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Currency;
+import com.alkemy.wallet.model.TransactionType;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.AccountRepository;
+import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
+import com.alkemy.wallet.service.FixedTermDepositService;
+import com.alkemy.wallet.service.TransactionService;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +35,11 @@ import java.util.stream.Collectors;
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
+    private final JWTUtil jwtUtil;
     private final AccountMapper accountMapper;
     private final UserService userService;
+    private final TransactionService transactionService;
+    private final FixedTermDepositService fixedTermDepositService;
 
     @Override
     public AccountDto createAccountByUserId(int userId, Currency currency) {
@@ -48,11 +56,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto createAccountByUsername(String username, Currency currency) {
-        /* Get userId from userService
-        * */
-        int userId = userService.getUserIdByEmail(username);
-        User user = new User(userId);
+    public AccountDto createAccount(String token, CurrencyRequestDto currencyDto) {
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = (User) userService.loadUserByUsername(username);
+        Currency currency = currencyDto.currencyRequestToEnum();
         if (accountRepository.findAccountByUserIdAndCurrency(user, currency).isPresent()) {
             throw new RuntimeException("User already has an account for that currency.");
         }
@@ -97,8 +104,39 @@ public class AccountServiceImpl implements AccountService {
     public AccountDto getAccountByUserAndCurrency(int userId, CurrencyRequestDto currencyRequest) {
         User user = new User(userId);
         Optional<Account> optionalAccount = accountRepository.findAccountByUserIdAndCurrency(user, currencyRequest.currencyRequestToEnum());
-        log.info("the account by user and currency is: " + optionalAccount);
-        return null;
+        if (optionalAccount.isEmpty()) {
+            throw new ResourceNotFoundException("The account couldn't be found.");
+        }
+        return accountMapper.convertToDto(optionalAccount.get());
+    }
+
+    @Override
+    public List<AccountBalanceDto> getUserBalance(String token) {
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = (User) userService.loadUserByUsername(username);
+        List<AccountDto> userAccounts = getAccountsByUserId(user.getUserId());
+        return userAccounts
+                .stream()
+                .map(this::getAccountBalance)
+                .collect(Collectors.toList());
+    }
+
+    private AccountBalanceDto getAccountBalance(AccountDto account) {
+        AccountBalanceDto accountBalance = new AccountBalanceDto();
+        accountBalance.setId(account.id());
+        accountBalance.setCurrency(account.currency());
+        var transactions = transactionService.getTransactionsByAccount(account.id());
+        double balance = account.balance();
+        for (TransactionDetailDto tr : transactions) {
+            if (tr.getType() == TransactionType.INCOME) {
+                balance += tr.getAmount();
+            } else if (tr.getType() == TransactionType.PAYMENT) {
+                balance -= tr.getAmount();
+            }
+        }
+        accountBalance.setBalance(balance);
+        accountBalance.setFixedTermDeposits(fixedTermDepositService.getAccountFixedTermDeposits(account.id()));
+        return accountBalance;
     }
 
     private double getTransactionLimitForCurrency(Currency currency) {

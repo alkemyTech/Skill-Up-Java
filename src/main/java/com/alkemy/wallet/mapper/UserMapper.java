@@ -2,6 +2,7 @@ package com.alkemy.wallet.mapper;
 
 import com.alkemy.wallet.config.util.DateFormatUtil;
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.dto.UserRegisterDTO;
 import com.alkemy.wallet.model.User;
 import org.springframework.stereotype.Component;
 
@@ -44,15 +45,13 @@ public class UserMapper {
         return dtos;
     }
 
-    public UserDTO createUserEntity2DTOResponse(User user){
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setCreationDate(DateFormatUtil.toCustomDate(user.getCreationDate()));
-        userDTO.setUpdateDate(DateFormatUtil.toCustomDate(user.getUpdateDate()));
-        userDTO.setRole(user.getRole());
-        return userDTO;
+    public UserRegisterDTO createUserEntity2DTOResponse(User user){
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
+        userRegisterDTO.setId(user.getId());
+        userRegisterDTO.setFirstName(user.getFirstName());
+        userRegisterDTO.setLastName(user.getLastName());
+        userRegisterDTO.setEmail(user.getEmail());
+        userRegisterDTO.setRole(user.getRole());
+        return userRegisterDTO;
     }
 }

@@ -1,12 +1,15 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.dto.UserRegisterDTO;
+import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.enumeration.RoleList;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.RoleRepository;
 import com.alkemy.wallet.repository.UserRepository;
+import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,8 @@ public class UserServiceImpl implements IUserService {
     RoleRepository roleRepository;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    IAccountService accountService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -55,21 +60,16 @@ public class UserServiceImpl implements IUserService {
      */
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        // Password encoding
+    public UserRegisterDTO createUser(UserDTO userDTO) {
         String encodedPassword = this.passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);
-        // Adding role
-        Role userRole = new Role();
-        userRole.setName(RoleList.USER);
-        userRole.setDescription("Created user with role USER");
-        roleRepository.save(userRole);
+        Role userRole = roleRepository.findByName(RoleList.USER);
         userDTO.setRole(userRole);
-        // Persist entity
         User user = userMapper.userDTO2Entity(userDTO);
-        userRepository.save(user);
-        // Returning DTO response
-        UserDTO userResponse = userMapper.createUserEntity2DTOResponse(user);
+        userRepository.save(user);        
+        UserRegisterDTO userResponse = userMapper.createUserEntity2DTOResponse(user);
+        accountService.createAccount(userResponse.getId(), "ARS");
+        accountService.createAccount(userResponse.getId(), "USD");
         return userResponse;
     }
 

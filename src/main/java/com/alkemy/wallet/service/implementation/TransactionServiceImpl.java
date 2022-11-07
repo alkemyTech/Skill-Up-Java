@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,9 +49,9 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionDetailDto> getTransactionsDetailByAccountId(Integer accountId) {
         Account account = new Account();
         account.setAccountId(accountId);
-        return transactionRepository.findallByAccountId(account)
+        return transactionRepository.findAllByAccountId(account)
                 .stream()
-                .map(transaction -> transactionMapper.convertToDto(transaction))
+                .map(transaction -> transactionMapper.convertToTransactionDetailDto(transaction))
                 .collect(Collectors.toList());
     }
 

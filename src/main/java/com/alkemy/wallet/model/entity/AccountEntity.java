@@ -2,8 +2,7 @@ package com.alkemy.wallet.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -15,9 +14,13 @@ import java.util.Set;
 
 @Getter
 @Setter
+@ToString
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE user_id=?")
 @Where(clause = "deleted=false")
 public class AccountEntity {
     private static final long serialVersionUID = 1L;
@@ -61,5 +64,4 @@ public class AccountEntity {
 
     @OneToMany(mappedBy="account")
     private Set<FixedTermDepositEntity> fixedTermsDeposit;
-
 }

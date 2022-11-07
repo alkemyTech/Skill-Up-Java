@@ -1,6 +1,7 @@
 package com.alkemy.wallet.configuration;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,7 +19,7 @@ public class Authorization extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/auth/login").permitAll();
+                .antMatchers(HttpMethod.POST, "/auth/login").hasAnyAuthority("ADMIN", "CLIENT");
 
         http.formLogin()
 

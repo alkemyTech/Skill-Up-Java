@@ -1,9 +1,9 @@
 package com.alkemy.wallet.model.entity;
 
+import com.alkemy.wallet.model.TypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "transactions")
 public class TransactionEntity {

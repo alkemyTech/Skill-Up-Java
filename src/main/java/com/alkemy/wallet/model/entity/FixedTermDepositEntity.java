@@ -2,17 +2,21 @@ package com.alkemy.wallet.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "fixed_term_deposits")
 public class FixedTermDepositEntity {
@@ -47,6 +51,5 @@ public class FixedTermDepositEntity {
     private LocalDateTime creationDate;
 
     @Column(name = "closingDate")
-    @CreationTimestamp
-    private LocalDateTime closingDate;
+    private LocalDate closingDate;
 }

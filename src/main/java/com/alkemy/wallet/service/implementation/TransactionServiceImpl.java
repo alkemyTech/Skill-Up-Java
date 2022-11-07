@@ -1,23 +1,28 @@
 package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.exception.InvalidAccountCurrencyException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.TransactionRepository;
+import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
 import com.alkemy.wallet.service.TransactionService;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -31,6 +36,8 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountMapper accountMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @Override
     public TransactionDetailDto getTransactionDetailById(Integer transactionId, String userToken ) throws ResourceNotFoundException {
@@ -95,10 +102,47 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
+    public TransactionDetailDto sendArs(String token, TransactionTransferRequestDto transactionTransferRequestDto) {
+        return sendCurrency(token, transactionTransferRequestDto, Currency.ARS);
+    }
+
+    @Override
+    public TransactionDetailDto sendUsd(String token, TransactionTransferRequestDto transactionTransferRequestDto) {
+        return sendCurrency(token, transactionTransferRequestDto, Currency.USD);
+    }
+
+    private TransactionDetailDto sendCurrency(String token, TransactionTransferRequestDto transactionTransferRequestDto, Currency currency){
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+        AccountDto accountReceiverDto = accountService.getAccountById(transactionTransferRequestDto.getAccountId());
+
+        if(!accountReceiverDto.currency().equals(currency)){
+            throw new InvalidAccountCurrencyException("The transfer currency must be equal to the currency of the receiver account.");
+        }
+
+        Account accountSenderDto = accountService.findAccountByUserIdAndCurrency(user, currency);
+
+        TransactionPaymentRequestDto transactionPaymentRequestDto = new TransactionPaymentRequestDto(
+                transactionTransferRequestDto.getAmount(),
+                transactionTransferRequestDto.getDescription(),
+                accountSenderDto.getAccountId()
+        );
+
+        TransactionPaymentDto transactionPayment = createPayment(transactionPaymentRequestDto);
+
+        TransactionIncomeRequestDto transactionIncomeRequestDto = new TransactionIncomeRequestDto(
+                transactionTransferRequestDto.getAmount(),
+                transactionTransferRequestDto.getDescription(),
+                accountReceiverDto.id()
+        );
+        createIncome(transactionIncomeRequestDto);
+        return transactionMapper.convertPaymentDtoToDetailDto(transactionPayment);
+    }
+
+    @Override
     public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto) {
         Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
         accountService.reduceBalance(transactionPaymentRequestDto.getAccountId(), newTransactionAmount);
-
 
         AccountDto accountDto = accountService.getAccountById(transactionPaymentRequestDto.getAccountId());
         TransactionPaymentDto transactionPaymentDto = new TransactionPaymentDto(
@@ -114,11 +158,25 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionLimitExceededException("The transaction limit of " + accountDto.transactionLimit() + " was exceeded by a payment of " + newTransactionAmount);
         }
 
-
         transactionPaymentDto.setAccount(accountMapper.convertToEntity(accountDto));
         Transaction newTransaction = transactionRepository.save(transactionMapper.convertToEntity(transactionPaymentDto));
 
         return transactionMapper.convertToTransactionPaymentDto(newTransaction);
+    }
+
+    public TransactionDetailDto createIncome(TransactionIncomeRequestDto transactionIncomeRequestDto) {
+        Double newTransactionAmount = transactionIncomeRequestDto.getAmount();
+        accountService.increaseBalance(transactionIncomeRequestDto.getAccountId(), newTransactionAmount);
+
+        AccountDto accountDto = accountService.getAccountById(transactionIncomeRequestDto.getAccountId());
+        TransactionIncomeDto transactionIncomeDto = new TransactionIncomeDto(
+                newTransactionAmount,
+                transactionIncomeRequestDto.getDescription()
+        );
+
+        transactionIncomeDto.setAccount(accountMapper.convertToEntity(accountDto));
+        Transaction newTransaction = transactionMapper.convertToEntity(transactionIncomeDto);
+        return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(newTransaction));
     }
 
     public User getUserByTransactionId(Integer id) {

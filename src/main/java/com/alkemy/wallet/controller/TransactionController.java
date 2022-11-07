@@ -22,8 +22,8 @@ public class TransactionController {
 
     @GetMapping(value = "/detail/{id}")
     @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<TransactionDetailDto> getTransactionDetailById(@PathVariable("id") Integer id) throws Exception {
-        return ResponseEntity.ok(transactionService.getTransactionDetailById(id));
+    public ResponseEntity<TransactionDetailDto> getTransactionDetailById(@PathVariable("id") Integer transactionId, @RequestHeader("Authorization") String userToken ) throws Exception {
+        return ResponseEntity.ok(transactionService.getTransactionDetailById(transactionId, userToken));
     }
 
     @PostMapping( value = "/deposit" )

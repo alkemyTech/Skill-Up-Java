@@ -25,7 +25,7 @@ class UserController {
     @GetMapping( value = "/{id}")
     @PreAuthorize("hasRole('USER_ROLE')")
     public ResponseEntity<UserDetailDto> getUserDetailById(@PathVariable("id") Integer id, @RequestHeader("Authorization") String token ){
-       User user = userservice.getUser(id,token);
+       User user = userservice.matchUserToToken(id,token);
        return ResponseEntity.ok(userservice.getUserDetailById(user.getUserId()));
     }
 

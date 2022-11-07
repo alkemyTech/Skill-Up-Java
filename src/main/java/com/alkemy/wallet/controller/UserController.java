@@ -5,6 +5,7 @@ import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
 import com.alkemy.wallet.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,5 +29,10 @@ public class UserController {
     @GetMapping("/accounts/{userId}")
     public ResponseEntity<AccountSinUserResponseDto> getAccountUserById(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.getAccountUserById(userId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<UserResponseDto> deleteUserById(@PathVariable("id") Long userId) {
+        return new ResponseEntity<>(service.deleteUserById(userId), HttpStatus.OK);
     }
 }

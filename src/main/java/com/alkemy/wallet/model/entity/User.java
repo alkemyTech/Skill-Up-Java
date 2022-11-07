@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET soft_delete=true WHERE id=?")
+@SQLDelete(sql = "UPDATE users SET soft_delete=true WHERE user_id=?")
 @Where(clause = "soft_delete=false")
 public class User {
 

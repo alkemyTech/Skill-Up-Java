@@ -1,8 +1,11 @@
 package com.alkemy.wallet.model.entity;
+
+import com.alkemy.wallet.model.RoleEnum;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -18,7 +21,7 @@ public class RoleEntity {
 
     @Id
     @Column(name = "roleId")
-    private int roleId;
+    private Long roleId;
 
     @Column(name = "name")
     @NotNull

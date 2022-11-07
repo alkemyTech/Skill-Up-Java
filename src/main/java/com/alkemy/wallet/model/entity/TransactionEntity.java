@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model.entity;
 
+import com.alkemy.wallet.model.TypeEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.*;

@@ -1,7 +1,6 @@
 package com.alkemy.wallet.configuration;
 
 
-import com.alkemy.wallet.model.entity.RoleEnum;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.alkemy.wallet.model.RoleEnum.ADMIN;
+
 @Configuration
 public class Authentication extends GlobalAuthenticationConfigurerAdapter {
     @Autowired
@@ -25,7 +26,7 @@ public class Authentication extends GlobalAuthenticationConfigurerAdapter {
         auth.userDetailsService(email -> {
             UserEntity user = userRepository.findByEmail(email);
             if (user != null) {
-                if (user.getRole().getName().equals(RoleEnum.ADMIN.getName())) {
+                if (user.getRole().getName().equals(ADMIN.getName())) {
                     return new User(user.getEmail(), user.getPassword(), AuthorityUtils.createAuthorityList("ADMIN"));
                 }
                 return new User(user.getEmail(), user.getPassword(), AuthorityUtils.createAuthorityList("CLIENT"));

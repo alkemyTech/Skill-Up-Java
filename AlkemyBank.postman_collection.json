@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"nombre\": \"Paula\",\r\n    \"apellido\": \"Marin\",\r\n    \"email\": \"pbmarin2015@gmail.com\",\r\n    \"contraseña\": \"123456789\"\r\n}",
+					"raw": "{\r\n    \"firstName\": \"Paula\",\r\n    \"lastName\": \"Marin\",\r\n    \"email\": \"pbmarin2015@gmail.com\",\r\n    \"password\": \"123456789\",\r\n    \"roleId\": \"user\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -20,14 +20,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/auth/register",
+					"raw": "http://localhost:8080/auth/register",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8080",
 					"path": [
-						"api",
 						"auth",
 						"register"
 					]
@@ -38,8 +37,172 @@
 		{
 			"name": "Autenticacion",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/auth/login?email=pbmarin2015@gmail.com&password=123456789",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "pbmarin2015@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "123456789"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EliminarUsuario",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"1"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearDeposito",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"DEPOSIT\",\r\n    \"description\": \"prueba\",\r\n    \"amount\": 2000,\r\n    \"currency\": \"ars\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/transactions/deposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transactions",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearPago",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"payment\",\r\n    \"description\": \"prueba\",\r\n    \"amount\": 2000,\r\n    \"currency\": \"ars\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/transactions/payment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transactions",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearDepositoPlazoFijo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"amount\": 300.0,\r\n    \"closingDate\": \"2022-11-26\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/fixedDeposit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fixedDeposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EnviarPesos",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"destinationAccountId\": 2,\r\n    \"amount\": 500.0,\r\n    \"type\": \"income\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/transactions/sendArs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"transactions",
+						"sendArs"
+					]
+				}
 			},
 			"response": []
 		}

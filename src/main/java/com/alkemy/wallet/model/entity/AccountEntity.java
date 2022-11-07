@@ -14,12 +14,13 @@ import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE user_id=?")
 @Where(clause = "deleted=false")
 public class AccountEntity {
     private static final long serialVersionUID = 1L;
@@ -62,6 +63,5 @@ public class AccountEntity {
     private Set<TransactionEntity> transactions;
 
     @OneToMany(mappedBy="account")
-    private Set<FixedTermDeposit> fixedTermsDeposit;
-
+    private Set<FixedTermDepositEntity> fixedTermsDeposit;
 }

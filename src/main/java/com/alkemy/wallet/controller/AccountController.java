@@ -5,7 +5,6 @@ import com.alkemy.wallet.dto.BalanceResponseDTO;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +19,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody AccountDTO account){
-        accountService.createAccount(account);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return accountService.createAccount(account);
     }
 
     @GetMapping("/balance")

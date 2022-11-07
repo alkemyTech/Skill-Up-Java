@@ -2,6 +2,7 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositRequestDTO;
 import com.alkemy.wallet.dto.FixedTermDepositResponseDTO;
+import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.mapper.FixedTermDepositMapper;
 import com.alkemy.wallet.model.Account;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 
 @Service
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
@@ -41,10 +41,16 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
             throw new TransactionException("The minimum days is 30");
         }
 
-        // retrieve accounts by user and check if the user have a account with that currency
-        List<Account> accountsByUser = accountRepository.findByUser(userRepository.findById(1).get());
-        boolean userHaveAccountWithThatCurrency = accountsByUser.stream()
-                .anyMatch( account -> requestDTO.getCurrency().equals(account.getCurrency()) );
+        // retrieve user auth
+
+
+        // Retrieve account by currency;
+        Account account = accountRepository.findByCurrencyAndUserId(CurrencyList.valueOf(requestDTO.getCurrency()), 2);
+
+        // Validate amount
+        if(requestDTO.getAmount() > account.getBalance()) {
+            throw new TransactionException("Balance insufficient");
+        }
 
         FixedTermDepositResponseDTO responseDTO = new FixedTermDepositResponseDTO();
 
@@ -55,24 +61,17 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         // Calculate Interest
         Double interest = calculateInterest.getInterestPlusAmount(requestDTO.getAmount(), requestDTO.getDays());
 
-        // Debit money from the account
-        if(userHaveAccountWithThatCurrency) {
-            Account account = accountRepository.findByCurrency(requestDTO.getCurrency());
-            // Validate amount
-            if(requestDTO.getAmount() > account.getBalance()) {
-                throw new TransactionException("Balance insufficient");
-            }
-            // Response DTO
-            responseDTO.setAmount(requestDTO.getAmount());
-            responseDTO.setInterest(interest);
-            responseDTO.setCreationDate(dateFXD);
-            responseDTO.setClosingDate(closingDateFXD);
-            responseDTO.setAccount(account);
-            account.setBalance( account.getBalance() - requestDTO.getAmount() );
-        }
+        // Response DTO
+        responseDTO.setAmount(requestDTO.getAmount());
+        responseDTO.setInterest(interest);
+        responseDTO.setCreationDate(dateFXD);
+        responseDTO.setClosingDate(closingDateFXD);
+        responseDTO.setAccount(account);
+        account.setBalance( account.getBalance() - requestDTO.getAmount() );
         fixedTermDepositRepository.save(
                 fixedTermDepositMapper.dtoToEntity(responseDTO)
         );
+
         return responseDTO;
     }
 }

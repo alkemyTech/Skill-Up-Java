@@ -8,7 +8,7 @@ import com.alkemy.wallet.model.User;
 import java.util.List;
 
 public interface TransactionService {
-    TransactionDetailDto getTransactionDetailById (Integer Id) throws Exception;
+    TransactionDetailDto getTransactionDetailById (Integer Id, String token) throws Exception;
 
     TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto);
 

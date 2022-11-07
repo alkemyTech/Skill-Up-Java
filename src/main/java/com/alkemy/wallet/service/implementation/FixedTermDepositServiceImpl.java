@@ -9,13 +9,10 @@ import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.repository.FixedTermDepositRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.FixedTermDepositService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -50,13 +47,6 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
         fixedTermDepositRepository.save(fixedTermDeposit);
         return fixedTermDepositDto;
 
-    }
-
-    @Override
-    public List<FixedTermDepositDto> getAccountFixedTermDeposits(int accountId) {
-        Account account = new Account(accountId);
-        return fixedTermDepositRepository.findallByAccount(account).stream()
-                .map(mapper::convertToDto).collect(Collectors.toList());
     }
 
     @Override

@@ -16,7 +16,7 @@ public interface TransactionService {
 
     TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto);
 
-    TransactionDetailDto updateTransaction(TransactionPatchDto transaction, Integer Id) throws Exception;
+    TransactionDetailDto updateTransaction(TransactionPatchDto transaction, Integer Id, String userToken) throws Exception;
 
     List<TransactionDetailDto> getTransactions(Integer userId);
     List<TransactionDetailDto> getTransactionsByAccount(Integer accountId);

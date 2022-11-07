@@ -139,10 +139,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDetailDto updateTransaction(TransactionPatchDto transactionPatch, Integer Id) throws Exception {
-        var transaction = transactionRepository.findById(Id).orElseThrow(Exception::new);
-        transaction.setDescription(transactionPatch.description());
-
-        return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(transaction));
-    }
+    public TransactionDetailDto updateTransaction(TransactionPatchDto transactionPatch, Integer transactionId, String userToken) throws ResourceNotFoundException {
+        var transaction = transactionRepository.findById(transactionId);
+        if(transaction.isPresent()) {
+            userService.matchUserToToken(getUserByTransactionId(transactionId).getUserId(), userToken);
+            transaction.get().setDescription(transactionPatch.description());
+            return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(transaction.get()));
+        }else{
+            throw new ResourceNotFoundException("Transaction does not exist");
+        }
+        }
 }

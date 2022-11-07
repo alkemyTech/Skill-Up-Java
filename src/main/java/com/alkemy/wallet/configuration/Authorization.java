@@ -12,14 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@EnableWebSecurity
-@Configuration
 public class Authorization extends WebSecurityConfigurerAdapter {
+
+    /*
+    @EnableWebSecurity
+@Configuration
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/login").hasAnyAuthority("ADMIN", "CLIENT");
+                .antMatchers(HttpMethod.POST, "").hasAnyAuthority("ADMIN", "CLIENT");
 
         http.formLogin()
 
@@ -52,5 +54,5 @@ public class Authorization extends WebSecurityConfigurerAdapter {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 
         }
-    }
+    }*/
 }

@@ -32,7 +32,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public ResponseEntity<Object> createAccount(AccountDTO account){
         account.setTransactionLimit(TRANSACTION_LIMIT.get(account.getCurrency()));
-        UserEntity userEntity = bankDAO.getUserByEmail("pbmarin2015@gmail.com");
+        UserEntity userEntity = bankDAO.findUserByEmail("pbmarin2015@gmail.com");
         AccountEntity accountEntity = bankDAO.createAccount(account, userEntity);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

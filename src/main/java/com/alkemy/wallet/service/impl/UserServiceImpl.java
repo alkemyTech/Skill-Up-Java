@@ -38,7 +38,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request) {
 
-        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.getUserByEmail(request.getEmail()));
+        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findUserByEmail(request.getEmail()));
 
         if (userExists.isPresent()) {
             throw new BankException(MessageErrorEnum.USER_EXISTS.getMessage());
@@ -69,7 +69,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         UserResponseDTO response = UserResponseDTO.builder()
-                .user(userEntity.getEmail())
+                .user(userEntity.getUsername())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

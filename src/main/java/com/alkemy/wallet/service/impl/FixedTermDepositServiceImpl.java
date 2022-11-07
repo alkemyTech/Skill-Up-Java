@@ -47,7 +47,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         //Falta obtener UserId del usuario autenticado
         AccountEntity account = bankDAO.getAccount(1L, fixedTermDeposit.getCurrency().toUpperCase());
         Optional<UserEntity> user = bankDAO.getUserById(1L);
-        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user.orElseThrow(() -> new BankException("User does not exist")));
+        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user.orElseThrow(() -> new BankException("User does not exist DAO2")));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

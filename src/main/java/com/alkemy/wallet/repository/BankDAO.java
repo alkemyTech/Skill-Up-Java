@@ -1,9 +1,11 @@
 package com.alkemy.wallet.repository;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +28,8 @@ public class BankDAO {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findUserByEmail(email);
     }
 
     public Optional<UserEntity> getUserById(Long id) {

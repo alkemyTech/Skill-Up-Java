@@ -18,7 +18,7 @@ import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 
 @Configuration
 public class Authentication extends GlobalAuthenticationConfigurerAdapter {
-    @Autowired
+   /* @Autowired
     UserRepository userRepository;
 
     @Override
@@ -38,5 +38,5 @@ public class Authentication extends GlobalAuthenticationConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+    }*/
 }

@@ -8,6 +8,7 @@ import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.RoleEnum;
 import com.alkemy.wallet.model.TransactionLimitEnum;
+import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
@@ -87,5 +88,13 @@ public class UserServiceImpl implements IUserService {
         return bankDAO.getAllUsers();
     }
 
+    @Override
+    public Optional<UserEntity> findUserById(Long userId) {
+        return bankDAO.getUserById(userId);
+    }
 
+    @Override
+    public List<AccountEntity> showAccountsByUserId(Long userId) {
+        return bankDAO.showAccountsByUser(userId);
+    }
 }

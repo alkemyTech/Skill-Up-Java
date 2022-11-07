@@ -109,4 +109,8 @@ public class BankDAO {
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
+
+     public List<AccountEntity> showAccountsByUser(Long userId) {
+        return accountRepository.getAccountsByUserId(userId);
+    }
 }

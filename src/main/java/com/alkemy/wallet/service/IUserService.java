@@ -15,4 +15,6 @@ public interface IUserService {
 
     boolean deleteUserById(Integer id);
 
+    public List<UserDTO> getUsersByPage(Integer page);
+
 }

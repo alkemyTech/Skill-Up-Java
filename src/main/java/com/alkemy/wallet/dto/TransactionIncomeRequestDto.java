@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionPaymentRequestDto {
+public class TransactionIncomeRequestDto {
     @JsonProperty( "amount")
     @NotBlank( message = "Amount cannot be empty or null" )
     private Double amount;

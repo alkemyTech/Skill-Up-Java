@@ -1,9 +1,6 @@
 package com.alkemy.wallet.mapper;
 
-import com.alkemy.wallet.dto.TransactionDepositDto;
-import com.alkemy.wallet.dto.TransactionDetailDto;
-import com.alkemy.wallet.dto.TransactionPatchDto;
-import com.alkemy.wallet.dto.TransactionPaymentDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,7 +21,7 @@ public class TransactionMapper {
     public TransactionDepositDto convertToTransactionDepositDto(Transaction transaction){
         return mapper.map( transaction, TransactionDepositDto.class);
     }
-    
+
     public TransactionDetailDto transactionPatchToTransaction(TransactionPatchDto transactionPatchDto) {
         return mapper.map(transactionPatchDto,TransactionDetailDto.class);
     }
@@ -41,7 +38,25 @@ public class TransactionMapper {
         return mapper.map( transactionDepositDto, Transaction.class);
     }
 
-    public Transaction convertToEntity(TransactionPaymentDto transactionPaymentDto) {
+    public Transaction convertToEntity( TransactionTransferRequestDto transactionTransferRequestDto){
+        return mapper.map( transactionTransferRequestDto, Transaction.class);
+    }
+
+    public Transaction convertToEntity( TransactionPaymentDto transactionPaymentDto){
         return mapper.map( transactionPaymentDto, Transaction.class);
+    }
+
+    public Transaction convertToEntity( TransactionPaymentRequestDto transactionPaymentDto){
+        return mapper.map( transactionPaymentDto, Transaction.class);
+    }
+    public Transaction convertToEntity( TransactionIncomeRequestDto transactionIncomeRequestDto){
+        return mapper.map( transactionIncomeRequestDto, Transaction.class);
+    }
+    public Transaction convertToEntity( TransactionIncomeDto transactionIncomeDto){
+        return mapper.map( transactionIncomeDto, Transaction.class);
+    }
+
+    public TransactionDetailDto convertPaymentDtoToDetailDto( TransactionPaymentDto transactionPaymentDto){
+        return mapper.map( transactionPaymentDto, TransactionDetailDto.class);
     }
 }

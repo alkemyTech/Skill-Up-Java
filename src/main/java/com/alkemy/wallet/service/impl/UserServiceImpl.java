@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,4 +81,11 @@ public class UserServiceImpl implements IUserService {
         bankDAO.deleteByUserId(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Override
+    public List<UserEntity> showAllUsers() {
+        return bankDAO.getAllUsers();
+    }
+
+
 }

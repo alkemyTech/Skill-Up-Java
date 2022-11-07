@@ -2,6 +2,10 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.TransactionUpdateDTO;
+import com.alkemy.wallet.enumeration.TypeList;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
+import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
 import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;

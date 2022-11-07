@@ -12,9 +12,7 @@ import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.ITransactionService;
-
 import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

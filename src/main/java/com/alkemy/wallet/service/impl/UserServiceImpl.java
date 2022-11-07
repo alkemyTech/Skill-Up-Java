@@ -51,7 +51,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<UserDTO> getUsersByPage(Integer page) {
-        Pageable pageWithTenElements = PageRequest.of(page - 1, 3);
+        Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
         Page<User> users =  userRepository.findAll(pageWithTenElements);
 
         List<User> userList = users.getContent();

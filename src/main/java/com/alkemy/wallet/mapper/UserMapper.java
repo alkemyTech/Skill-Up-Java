@@ -1,5 +1,6 @@
 package com.alkemy.wallet.mapper;
 
+import com.alkemy.wallet.dto.UserDetailDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.model.User;
 import lombok.RequiredArgsConstructor;
@@ -18,4 +19,9 @@ public class UserMapper {
     public User convertToEntity( UserDto userDto ) {
         return mapper.map( userDto, User.class );
     }
+
+    public UserDetailDto convertToDetailDto(User user ) {
+        return mapper.map( user, UserDetailDto.class );
+    }
 }
+

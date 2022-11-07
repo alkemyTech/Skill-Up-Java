@@ -46,14 +46,14 @@ public class AccountServiceImpl implements AccountService {
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
 
         if(optionalAccount.isEmpty()){
-            throw new InvalidParameterException("Not found account.");
+            throw new ResourceNotFoundException("Not found account.");
         }
 
         Account updatedAccount = optionalAccount.get();
 
         double oldBalance = updatedAccount.getBalance();
         if(oldBalance < amount){
-            throw new InvalidParameterException("The amount to reduce is bigger than the current balance.");
+            throw new InvalidAmountException("The amount to reduce is bigger than the current balance.");
         }
         if(amount > updatedAccount.getTransactionLimit()) {
             throw new TransactionLimitExceededException("The balance reduction of " + amount + " exceeded the transaction limit of " + updatedAccount.getTransactionLimit());
@@ -61,6 +61,13 @@ public class AccountServiceImpl implements AccountService {
 
         updatedAccount.setBalance(oldBalance - amount);
         return accountMapper.convertToDto(accountRepository.save(updatedAccount));
+    }
+
+
+    public Account findAccountByUserIdAndCurrency(User user, Currency currency){
+
+        Account account=accountRepository.findAccountByUserIdAndCurrency(user,currency).get();
+        return account;
     }
 
     @Override
@@ -74,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
         double oldBalance = account.getBalance();
 
         if(amount <= 0){
-            throw new InvalidAmountException();
+            throw new InvalidAmountException("The amount must be greater than 0");
         }
         if(amount > account.getTransactionLimit()){
             throw new TransactionLimitExceededException("The balance increase of " + amount + " exceeded the transaction limit of " + account.getTransactionLimit());
@@ -94,6 +101,7 @@ public class AccountServiceImpl implements AccountService {
 
         return accountMapper.convertToDto(optionalAccountDto.get());
     }
+
 
     private double getTransactionLimitForCurrency(Currency currency){
         return switch (currency) {

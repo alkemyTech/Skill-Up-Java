@@ -1,5 +1,6 @@
 package com.alkemy.wallet.mapper;
 
+import com.alkemy.wallet.config.util.DateFormatUtil;
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.model.User;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,6 @@ public class UserMapper {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
-        user.setCreationDate(userDTO.getCreationDate());
-        user.setUpdateDate(userDTO.getUpdateDate());
         user.setSoftDelete(userDTO.isSoftDelete());
         user.setRole(userDTO.getRole());
         return user;
@@ -30,8 +29,8 @@ public class UserMapper {
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
-        userDTO.setCreationDate(user.getCreationDate());
-        userDTO.setUpdateDate(user.getUpdateDate());
+        userDTO.setCreationDate(DateFormatUtil.toCustomDate(user.getCreationDate()));
+        userDTO.setUpdateDate(DateFormatUtil.toCustomDate(user.getUpdateDate()));
         userDTO.setSoftDelete(user.isSoftDelete());
         userDTO.setRole(user.getRole());
         return userDTO;
@@ -51,6 +50,8 @@ public class UserMapper {
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
+        userDTO.setCreationDate(DateFormatUtil.toCustomDate(user.getCreationDate()));
+        userDTO.setUpdateDate(DateFormatUtil.toCustomDate(user.getUpdateDate()));
         userDTO.setRole(user.getRole());
         return userDTO;
     }

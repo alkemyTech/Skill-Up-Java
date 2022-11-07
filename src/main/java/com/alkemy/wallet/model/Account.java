@@ -3,7 +3,9 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.enumeration.CurrencyList;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -32,9 +34,11 @@ public class Account {
     private Double balance;
 
     @Column(name = "update_date")
+    @UpdateTimestamp
     private Instant updateDate;
 
     @Column(name = "creation_date")
+    @CreationTimestamp
     private Instant creationDate;
 
     @Column(name = "soft_delete")

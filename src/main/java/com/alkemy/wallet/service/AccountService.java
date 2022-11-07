@@ -20,7 +20,5 @@ public interface AccountService {
 
     List<AccountDto> getAccountsByUserId(int userId);
 
-    AccountDto getAccountByUserAndCurrency(int userId, CurrencyRequestDto currencyRequestDto);
-
     List<AccountBalanceDto> getUserBalance(String username);
 }

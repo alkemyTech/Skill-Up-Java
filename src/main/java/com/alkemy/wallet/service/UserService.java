@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
     List<UserDto> getAllUsers();
     UserDto createUser(UserRequestDto userRequestDto);
     UserDetailDto getUserDetailById(Integer Id);
-    User getUser(Integer id, String token) throws ForbiddenAccessException;
+    User matchUserToToken(Integer id, String token) throws ForbiddenAccessException;
     User loadUserByUsername(String email);
     User getUserById(Integer id);
 }

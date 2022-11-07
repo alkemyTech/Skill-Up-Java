@@ -10,8 +10,8 @@ public class UserDTO {
     String lastName;
     String email;
     String password;
-    Instant creationDate;
-    Instant updateDate;
+    String creationDate;
+    String updateDate;
     boolean softDelete;
     Role role;
 
@@ -62,21 +62,23 @@ public class UserDTO {
     public void setSoftDelete(boolean softDelete) {
         this.softDelete = softDelete;
     }
-    public Instant getCreationDate() {
+
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Instant creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Instant getUpdateDate() {
+    public String getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(Instant updateDate) {
+    public void setUpdateDate(String updateDate) {
         this.updateDate = updateDate;
     }
+
     public Role getRole() {
         return role;
     }

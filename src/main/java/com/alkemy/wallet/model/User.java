@@ -2,11 +2,13 @@ package com.alkemy.wallet.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.util.Date;
 
 @Setter
 @Getter
@@ -26,23 +28,24 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
-    @Column(name = "email", nullable = false, length = 100, unique = true    )
+    @Column(name = "email", nullable = false, length = 100, unique = true)
     private String email;
 
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "creation_date", nullable = false)
-    private Instant creationDate;
+    @Column(name = "creation_date")
+    @CreationTimestamp
+    private Date creationDate;
 
     @Column(name = "update_date")
-    private Instant updateDate;
+    @UpdateTimestamp
+    private Date updateDate;
 
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
     private Role role;
-
 }

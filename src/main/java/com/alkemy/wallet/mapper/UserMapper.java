@@ -1,6 +1,8 @@
 package com.alkemy.wallet.mapper;
 
+import com.alkemy.wallet.config.util.DateFormatUtil;
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.dto.UserRegisterDTO;
 import com.alkemy.wallet.model.User;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +18,11 @@ public class UserMapper {
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
-        user.setCreationDate(userDTO.getCreationDate());
-        user.setUpdateDate(userDTO.getUpdateDate());
         user.setSoftDelete(userDTO.isSoftDelete());
         user.setRole(userDTO.getRole());
         return user;
     }
+    
     public UserDTO userEntity2DTO(User user){
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
@@ -29,8 +30,8 @@ public class UserMapper {
         userDTO.setLastName(user.getLastName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
-        userDTO.setCreationDate(user.getCreationDate());
-        userDTO.setUpdateDate(user.getUpdateDate());
+        userDTO.setCreationDate(DateFormatUtil.toCustomDate(user.getCreationDate()));
+        userDTO.setUpdateDate(DateFormatUtil.toCustomDate(user.getUpdateDate()));
         userDTO.setSoftDelete(user.isSoftDelete());
         userDTO.setRole(user.getRole());
         return userDTO;
@@ -42,5 +43,15 @@ public class UserMapper {
             dtos.add(userEntity2DTO(user));
         }
         return dtos;
+    }
+
+    public UserRegisterDTO createUserEntity2DTOResponse(User user){
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
+        userRegisterDTO.setId(user.getId());
+        userRegisterDTO.setFirstName(user.getFirstName());
+        userRegisterDTO.setLastName(user.getLastName());
+        userRegisterDTO.setEmail(user.getEmail());
+        userRegisterDTO.setRole(user.getRole());
+        return userRegisterDTO;
     }
 }

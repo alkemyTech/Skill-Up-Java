@@ -3,9 +3,12 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.enumeration.RoleList;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -24,8 +27,10 @@ public class Role {
     private String description;
 
     @Column(name = "creation_date")
-    private Instant creationDate;
+    @CreationTimestamp
+    private Date creationDate;
 
     @Column(name = "update_date")
-    private Instant updateDate;
+    @UpdateTimestamp
+    private Date updateDate;
 }

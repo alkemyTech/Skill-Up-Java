@@ -46,6 +46,9 @@ public class TransactionService {
         if (accountTargetUser.isEmpty())
             return "La account con id " + idTargetUser + " no esta disponible";
 
+        if (!accountUser.get().getCurrency().equals(accountTargetUser.get().getCurrency()))
+            return "Error solo puede enviar dinero en peso Argentino(ARS)";
+
         if (accountUser.get().getBalance() < amount)
             return "Error valor disponible superado";
 

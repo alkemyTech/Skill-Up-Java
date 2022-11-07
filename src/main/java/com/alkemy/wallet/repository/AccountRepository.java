@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     List<Account> findByUser(User userId);
-    Account findByCurrency(String currency);
+    Account findByCurrencyAndUserId(Enum currency, Integer id);
 }

@@ -19,6 +19,7 @@ public interface TransactionService {
     TransactionDetailDto updateTransaction(TransactionPatchDto transaction, Integer Id) throws Exception;
 
     List<TransactionDetailDto> getTransactions(Integer userId);
+    List<TransactionDetailDto> getTransactionsByAccount(Integer accountId);
 
     TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto);
     User getUserByTransactionId(Integer id);

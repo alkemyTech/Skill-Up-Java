@@ -6,6 +6,7 @@ import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.TransactionRepository;
@@ -16,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
@@ -86,6 +87,12 @@ public class TransactionServiceImpl implements TransactionService {
         return convertTransactionListToDto(transactionsOfUser);
 
     }
+    @Override
+    public List<TransactionDetailDto> getTransactionsByAccount(Integer accountId) {
+        List<Transaction> transactionsOfAccount = transactionRepository.findAllByAccountId(new Account(accountId));
+        return convertTransactionListToDto(transactionsOfAccount);
+    }
+
 
     @Override
     public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto) {

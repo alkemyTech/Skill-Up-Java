@@ -1,11 +1,13 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.Account;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.Instant;
 
 public class FixedTermDepositResponseDTO {
     Double amount;
+    @JsonBackReference
     Account account;
     Double interest;
     Instant creationDate;

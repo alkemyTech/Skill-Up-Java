@@ -3,6 +3,7 @@ package com.alkemy.wallet.mapper;
 import com.alkemy.wallet.dto.TransactionDepositDto;
 import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.dto.TransactionPatchDto;
+import com.alkemy.wallet.dto.TransactionPaymentDto;
 import com.alkemy.wallet.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,10 @@ public class TransactionMapper {
         return mapper.map(transactionPatchDto,TransactionDetailDto.class);
     }
 
+    public TransactionPaymentDto convertToTransactionPaymentDto(Transaction transaction) {
+        return mapper.map( transaction, TransactionPaymentDto.class);
+    }
+
     public Transaction convertToEntity( TransactionDetailDto transactionDetailDto){
         return mapper.map( transactionDetailDto, Transaction.class);
     }
@@ -36,4 +41,7 @@ public class TransactionMapper {
         return mapper.map( transactionDepositDto, Transaction.class);
     }
 
+    public Transaction convertToEntity(TransactionPaymentDto transactionPaymentDto) {
+        return mapper.map( transactionPaymentDto, Transaction.class);
+    }
 }

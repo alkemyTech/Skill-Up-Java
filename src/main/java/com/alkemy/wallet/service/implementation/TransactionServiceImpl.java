@@ -1,10 +1,6 @@
 package com.alkemy.wallet.service.implementation;
 
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.TransactionDepositDto;
-import com.alkemy.wallet.dto.TransactionDepositRequestDto;
-import com.alkemy.wallet.dto.TransactionDetailDto;
-import com.alkemy.wallet.dto.TransactionPatchDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
@@ -60,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         // It would be nice to have an exception handler. We should implement it in a separate branch
         if(newTransactionAmount <= 0) {
-            throw new InvalidAmountException();
+            throw new InvalidAmountException("The amount must be greater than 0");
         }
 
         if(newTransactionAmount > accountDto.transactionLimit()){
@@ -83,11 +79,41 @@ public class TransactionServiceImpl implements TransactionService {
                         transaction.getAccount().getUser().getUserId().equals(userId))
                 .toList();
 
+        if(transactionsOfUser.isEmpty()){
+            throw new ResourceNotFoundException("The user with id " +  userId +" has no transactions");
+        }
+
         return convertTransactionListToDto(transactionsOfUser);
 
     }
 
     @Override
+    public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto) {
+        Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
+        accountService.reduceBalance(transactionPaymentRequestDto.getAccountId(), newTransactionAmount);
+
+
+        AccountDto accountDto = accountService.getAccountById(transactionPaymentRequestDto.getAccountId());
+        TransactionPaymentDto transactionPaymentDto = new TransactionPaymentDto(
+                newTransactionAmount,
+                transactionPaymentRequestDto.getDescription());
+
+        // It would be nice to have an exception handler. We should implement it in a separate branch
+        if (newTransactionAmount <= 0) {
+            throw new InvalidAmountException("The amount must be greater than 0");
+        }
+
+        if (newTransactionAmount > accountDto.transactionLimit()) {
+            throw new TransactionLimitExceededException("The transaction limit of " + accountDto.transactionLimit() + " was exceeded by a payment of " + newTransactionAmount);
+        }
+
+
+        transactionPaymentDto.setAccount(accountMapper.convertToEntity(accountDto));
+        Transaction newTransaction = transactionRepository.save(transactionMapper.convertToEntity(transactionPaymentDto));
+
+        return transactionMapper.convertToTransactionPaymentDto(newTransaction);
+    }
+
     public User getUserByTransactionId(Integer id) {
         var t = transactionRepository.findById(id);
         if(t.isPresent()){

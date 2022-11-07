@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TransactionController {
+
+    //TODO use the interface, not the implementation
     private final AccountBalanceService accountBalanceService;
 
+    //TODO use the @RequiredArgsConstructor from lombok to dependency injection and remove the constructor
     public TransactionController(AccountBalanceService accountBalanceService) {
         this.accountBalanceService = accountBalanceService;
     }

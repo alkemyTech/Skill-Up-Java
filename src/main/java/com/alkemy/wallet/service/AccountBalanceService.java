@@ -1,31 +1,27 @@
 package com.alkemy.wallet.service;
 
 
-import com.alkemy.wallet.model.AccountCurrencyEnum;
+import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
 import com.alkemy.wallet.model.dto.response.account.AccountBalanceDTO;
 import com.alkemy.wallet.model.entity.Account;
-import com.alkemy.wallet.model.entity.Transaction;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AccountBalanceService {
 
+    //TODO create an interface to put/create/add the necessary methods and implement the interface. Rename this class as AccountServiceImpl
     private final IAccountRepository accountRepository;
     private final ITransactionRepository iTransactionRepository;
 
-    public AccountBalanceService(IAccountRepository accountRepository, ITransactionRepository iTransactionRepository) {
-        this.accountRepository = accountRepository;
-        this.iTransactionRepository = iTransactionRepository;
-    }
-
-
+    //TODO as the user comes with the id in the parameters, use the AuthService and verify if the id is the same as the logged user
     public AccountBalanceDTO getAccountBalance(long idUser) {
         Optional<Account> account = accountRepository.findByFkUserId(idUser);
         if (account.isEmpty())

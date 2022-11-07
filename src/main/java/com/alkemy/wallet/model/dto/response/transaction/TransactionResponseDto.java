@@ -1,6 +1,6 @@
 package com.alkemy.wallet.model.dto.response.transaction;
 
-import com.alkemy.wallet.model.TransactionTypeEnum;
+import com.alkemy.wallet.model.entity.TransactionTypeEnum;
 import com.alkemy.wallet.model.dto.response.account.AccountResponseDto;
 import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
 import lombok.*;

@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ITransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByFkUserId(Long idUser);
+    List<Transaction> findByUserId(Long userId);
 }

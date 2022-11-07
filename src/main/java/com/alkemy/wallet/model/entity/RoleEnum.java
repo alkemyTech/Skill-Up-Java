@@ -1,4 +1,4 @@
-package com.alkemy.wallet.model;
+package com.alkemy.wallet.model.entity;
 
 public enum RoleEnum {
      ADMIN, USER

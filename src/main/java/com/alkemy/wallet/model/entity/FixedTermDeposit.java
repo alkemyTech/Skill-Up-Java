@@ -17,29 +17,27 @@ public class FixedTermDeposit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transactionsId;
+    private Long id;
 
     @Column(nullable = false)
     private Double amount;
-
-    private Long fkUserId;
-
-    private Long fkAccountId;
 
     @Column(nullable = false)
     private Double interest;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "created_at")
     private LocalDateTime creationDate;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "closing_date")
     private LocalDateTime closingDate;
 
     @ManyToOne
-    @JoinColumn(name = "fkAccountId", insertable = false, updatable = false)
+    @JoinColumn(name = "account_id")
     private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 }

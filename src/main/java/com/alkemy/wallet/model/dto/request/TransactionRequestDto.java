@@ -1,6 +1,6 @@
 package com.alkemy.wallet.model.dto.request;
 
-import com.alkemy.wallet.model.TransactionTypeEnum;
+import com.alkemy.wallet.model.entity.TransactionTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;

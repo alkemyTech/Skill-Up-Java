@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.dto.IBalance;
 import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
@@ -11,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
 import static com.alkemy.wallet.model.TypeEnum.*;
-import static com.alkemy.wallet.model.TypeEnum.DEPOSIT;
 
 @RequiredArgsConstructor
 @Service
@@ -33,8 +34,7 @@ public class TransactionServiceImpl implements ITransactionService {
             throw new BankException("Incorrect operation, only can be a deposit");
         }
         AccountEntity account = bankDAO.getAccount(1L, transaction.getCurrency().toUpperCase());
-        TypeEnum type = DEPOSIT;
-        return saveTransaction(transaction, type, account);
+        return saveTransaction(transaction, DEPOSIT, account);
     }
 
     @Override
@@ -45,9 +45,8 @@ public class TransactionServiceImpl implements ITransactionService {
         if(!transaction.getType().equalsIgnoreCase(PAYMENT.getType())) {
             throw new BankException("Incorrect operation, only can be a payment");
         }
-        TypeEnum type = PAYMENT;
         AccountEntity account = bankDAO.getAccount(1L, transaction.getCurrency().toUpperCase());
-        return saveTransaction(transaction, type, account);
+        return saveTransaction(transaction, PAYMENT, account);
     }
 
     @Override
@@ -55,13 +54,15 @@ public class TransactionServiceImpl implements ITransactionService {
         if(!transaction.getType().equalsIgnoreCase(INCOME.getType())) {
             throw new BankException("Incorrect operation, only can be an income");
         }
-        TypeEnum destionationType = INCOME;
-        TypeEnum sourceType = PAYMENT;
+
+        List<IBalance> transactionEntity = bankDAO.getBalance();
+        System.out.println("*************** " + transactionEntity.get(0).getSumIncome());
+
         Optional<AccountEntity> destinationAccount = bankDAO.getAccountById(transaction.getDestinationAccountId());
         //Falta obtener userId del usuario autenticado
         Optional<AccountEntity> sourceAccount = bankDAO.getAccountById(1L);
-        saveTransaction(transaction, sourceType , sourceAccount.orElseThrow(() -> new BankException("The account does not exist")));
-        return saveTransaction(transaction, destionationType, destinationAccount.orElseThrow(() -> new BankException("The account does not exist")));
+        saveTransaction(transaction, PAYMENT , sourceAccount.orElseThrow(() -> new BankException("Source account does not exist")));
+        return saveTransaction(transaction, INCOME, destinationAccount.orElseThrow(() -> new BankException("Destination account does not exist")));
     }
 
     private ResponseEntity<Object> saveTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {

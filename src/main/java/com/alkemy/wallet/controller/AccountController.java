@@ -5,7 +5,6 @@ import com.alkemy.wallet.dto.BalanceResponseDTO;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

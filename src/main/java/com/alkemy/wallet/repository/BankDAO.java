@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -25,10 +26,13 @@ public class BankDAO {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity findUserByEmail(String email) {
+    public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<UserEntity> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
     public AccountEntity getAccount(Long userId, String currency) {
         return accountRepository.getAccount(userId, currency);
     }
@@ -41,16 +45,8 @@ public class BankDAO {
         userRepository.deleteById(userId);
     }
 
-    public UserEntity createUser(UserRequestDTO user, RoleDTO role) {
-        RoleEntity roleEntity = getRole(role);
-        UserEntity userEntity = UserEntity.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .role(roleEntity)
-                .password(passwordEncoder.encode(user.getPassword()))
-                .build();
-        return userRepository.saveAndFlush(userEntity);
+    public List<IBalance> getBalance() {
+        return transactionRepository.getBalance("1");
     }
 
     public RoleEntity getRole(RoleDTO role) {
@@ -65,6 +61,18 @@ public class BankDAO {
             return roleEntityResponse;
         }
         return roleEntity.get();
+    }
+
+    public UserEntity createUser(UserRequestDTO user, RoleDTO role) {
+        RoleEntity roleEntity = getRole(role);
+        UserEntity userEntity = UserEntity.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(roleEntity)
+                .password(passwordEncoder.encode(user.getPassword()))
+                .build();
+        return userRepository.saveAndFlush(userEntity);
     }
 
     public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity) {
@@ -87,16 +95,13 @@ public class BankDAO {
         return transactionRepository.saveAndFlush(transactionEntity);
     }
 
-    public FixedTermDepositEntity createFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit) {
-        //Falta obtener UserId del usuario autenticado
-        AccountEntity account = getAccount(1L, fixedTermDeposit.getCurrency().toUpperCase());
-        Optional<UserEntity> user = userRepository.findById(1L);
+    public FixedTermDepositEntity createFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit, AccountEntity accountEntity, UserEntity userEntity) {
         FixedTermDepositEntity fixedTermDepositEntity = FixedTermDepositEntity.builder()
                 .amount(fixedTermDeposit.getAmount())
                 .closingDate(fixedTermDeposit.getClosingDate())
                 .interests(fixedTermDeposit.getInterests())
-                .account(account)
-                .user(user.get())
+                .account(accountEntity)
+                .user(userEntity)
                .build();
         return fixedTermDepositRepository.saveAndFlush(fixedTermDepositEntity);
     }

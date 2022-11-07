@@ -1,7 +1,8 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.entity.FixedTermDeposit;
+import com.alkemy.wallet.dto.FixedTermDepositDTO;
+import org.springframework.http.ResponseEntity;
 
 public interface IFixedTermDepositService {
-    public void saveFixedTermDeposit(FixedTermDeposit fixedTermDeposit);
+    public ResponseEntity<Object> saveFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit);
 }

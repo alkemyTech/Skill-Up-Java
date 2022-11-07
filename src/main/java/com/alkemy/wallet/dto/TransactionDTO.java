@@ -1,25 +1,24 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.TypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
 
-    private Long transactionId;
+    private Long destinationAccountId;
 
     @NotNull(message = "Transaction type")
     @NotBlank(message = "Transaction type")
-    private TypeEnum type;
+    private String type;
 
     @NotNull(message = "Transaction description")
     @NotBlank(message = "Transaction description")
@@ -29,6 +28,7 @@ public class TransactionDTO {
     @NotNull(message = "Transaction amount")
     private Double amount;
 
-    private LocalDateTime transactionDate;
+    private String currency;
 
+    private LocalDateTime transactionDate;
 }

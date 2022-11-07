@@ -1,11 +1,14 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.RoleDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.RoleEnum;
+import com.alkemy.wallet.model.TransactionLimitEnum;
+import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
@@ -20,6 +23,7 @@ import java.util.Optional;
 
 import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.RoleEnum.USER;
+import static com.alkemy.wallet.model.TransactionLimitEnum.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +40,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request) {
 
-        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findByEmail(request.getEmail()));
+        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findUserByEmail(request.getEmail()));
 
         if (userExists.isPresent()) {
             throw new BankException(MessageErrorEnum.USER_EXISTS.getMessage());
@@ -57,6 +61,14 @@ public class UserServiceImpl implements IUserService {
                 .build();
 
         UserEntity userEntity = bankDAO.createUser(request, role);
+
+        for (TransactionLimitEnum transactionLimitEnum: TransactionLimitEnum.values()) {
+            AccountDTO accountDTO = AccountDTO.builder()
+                    .currency(transactionLimitEnum.getCurrency())
+                    .transactionLimit(transactionLimitEnum.getAmount())
+                    .build();
+            bankDAO.createAccount(accountDTO, userEntity);
+        }
 
         UserResponseDTO response = UserResponseDTO.builder()
                 .user(userEntity.getEmail())

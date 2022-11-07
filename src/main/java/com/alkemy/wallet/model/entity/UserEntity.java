@@ -14,12 +14,13 @@ import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_Id = ?")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id = ?")
 @Where(clause = "deleted = false")
 public class UserEntity {
 
@@ -58,16 +59,9 @@ public class UserEntity {
 
     private boolean deleted = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<AccountEntity> account;
 
-    @OneToMany(mappedBy = "user")
-    private Set<FixedTermDeposit> fixedTermDeposit;
-
-    public UserEntity(String firstName, String lastName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<FixedTermDepositEntity> fixedTermDeposit;
 }

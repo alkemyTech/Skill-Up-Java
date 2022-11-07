@@ -1,13 +1,8 @@
 package com.alkemy.wallet.repository;
 
-import com.alkemy.wallet.dto.AccountDTO;
-import com.alkemy.wallet.dto.RoleDTO;
-import com.alkemy.wallet.dto.TransactionDTO;
-import com.alkemy.wallet.dto.UserRequestDTO;
-import com.alkemy.wallet.model.entity.AccountEntity;
-import com.alkemy.wallet.model.entity.RoleEntity;
-import com.alkemy.wallet.model.entity.TransactionEntity;
-import com.alkemy.wallet.model.entity.UserEntity;
+import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.model.TypeEnum;
+import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -30,18 +25,20 @@ public class BankDAO {
 
     private final PasswordEncoder passwordEncoder;
 
-    public RoleEntity getRole(RoleDTO role) {
-        Optional<RoleEntity> roleEntity = roleRepository.findByRoleId(role.getId());
-        if (!roleEntity.isPresent()) {
-            RoleEntity roleEntityResponse = RoleEntity.builder()
-                    .roleId(role.getId())
-                    .name(role.getName())
-                    .description(role.getDescription())
-                    .build();
-             roleRepository.saveAndFlush(roleEntityResponse);
-             return roleEntityResponse;
-        }
-        return roleEntity.get();
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public AccountEntity getAccount(Long userId, String currency) {
+        return accountRepository.getAccount(userId, currency);
+    }
+
+    public Optional<AccountEntity> getAccountById(Long accountId) {
+        return accountRepository.findById(accountId);
+    }
+
+    public void deleteByUserId(Long userId) {
+        userRepository.deleteById(userId);
     }
 
     public UserEntity createUser(UserRequestDTO user, RoleDTO role) {
@@ -56,16 +53,18 @@ public class BankDAO {
         return userRepository.saveAndFlush(userEntity);
     }
 
-    public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public TransactionEntity saveDeposit(TransactionDTO transaction) {
-        TransactionEntity transactionEntity = TransactionEntity.builder()
-                .amount(transaction.getAmount())
-                .description(transaction.getDescription())
-                .build();
-        return transactionRepository.saveAndFlush(transactionEntity);
+    public RoleEntity getRole(RoleDTO role) {
+        Optional<RoleEntity> roleEntity = roleRepository.findById(role.getId());
+        if (!roleEntity.isPresent()) {
+            RoleEntity roleEntityResponse = RoleEntity.builder()
+                    .roleId(role.getId())
+                    .name(role.getName())
+                    .description(role.getDescription())
+                    .build();
+            roleRepository.saveAndFlush(roleEntityResponse);
+            return roleEntityResponse;
+        }
+        return roleEntity.get();
     }
 
     public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity) {
@@ -78,7 +77,27 @@ public class BankDAO {
         return accountRepository.saveAndFlush(accountEntity);
     }
 
-    public void deleteByUserId(Long userId) {
-        userRepository.deleteById(userId);
+    public TransactionEntity createTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {
+        TransactionEntity transactionEntity = TransactionEntity.builder()
+                .type(type)
+                .amount(transaction.getAmount())
+                .description(transaction.getDescription())
+                .account(accountEntity)
+                .build();
+        return transactionRepository.saveAndFlush(transactionEntity);
+    }
+
+    public FixedTermDepositEntity createFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit) {
+        //Falta obtener UserId del usuario autenticado
+        AccountEntity account = getAccount(1L, fixedTermDeposit.getCurrency().toUpperCase());
+        Optional<UserEntity> user = userRepository.findById(1L);
+        FixedTermDepositEntity fixedTermDepositEntity = FixedTermDepositEntity.builder()
+                .amount(fixedTermDeposit.getAmount())
+                .closingDate(fixedTermDeposit.getClosingDate())
+                .interests(fixedTermDeposit.getInterests())
+                .account(account)
+                .user(user.get())
+               .build();
+        return fixedTermDepositRepository.saveAndFlush(fixedTermDepositEntity);
     }
 }

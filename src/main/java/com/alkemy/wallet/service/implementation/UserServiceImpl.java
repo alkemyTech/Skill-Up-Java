@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
         return optionalUser.get();
     }
 
-    public User getUser(Integer id, String token) throws ForbiddenAccessException {
+    public User matchUserToToken(Integer id, String token) throws ForbiddenAccessException {
         String jwt;
         jwt = token.substring(7);
         String email = jwtUtil.extractUserName(jwt);

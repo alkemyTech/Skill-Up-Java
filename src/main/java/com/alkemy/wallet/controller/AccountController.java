@@ -31,7 +31,7 @@ public class AccountController {
     return ResponseEntity.ok().body(listAccounts);
   }
 
-  @GetMapping("/balance")
+  @GetMapping("/balance/{id}")
   public ResponseEntity<List<AccountBasicDto>> getBalance(@Valid @PathVariable Long id) {
 
     List<AccountBasicDto> accounts = iuserService.getAccountsBalance(id);

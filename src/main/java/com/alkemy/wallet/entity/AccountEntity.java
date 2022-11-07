@@ -27,8 +27,8 @@ import org.hibernate.annotations.Where;
 @Setter
 @Entity
 @Table(name = "ACCOUNT")
-@SQLDelete(sql = "UPDATE accounts SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+@SQLDelete(sql = "UPDATE accounts SET SOFT_DELETE = true WHERE id=?")
+@Where(clause = "SOFT_DELETE=false")
 
 public class AccountEntity {
 

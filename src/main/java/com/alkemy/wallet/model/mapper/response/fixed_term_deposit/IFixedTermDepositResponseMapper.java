@@ -7,9 +7,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IFixedTermDepositResponseMapper {
-    @Mapping(target = "userResponseDto", source = "user")
+    //@Mapping(target = "userResponseDto", source = "user")
     @Mapping(target = "userId", source = "fkUserId")
-    @Mapping(target = "accountResponseDto", source = "account")
+    //@Mapping(target = "accountResponseDto", source = "account")
     @Mapping(target = "accountId", source = "fkAccountId")
     FixedTermDepositResponseDto fixedTermDepositToFixedTermDepositResponse(FixedTermDeposit fixedTermDeposit);
 }

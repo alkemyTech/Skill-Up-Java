@@ -2,7 +2,7 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositDto;
 import com.alkemy.wallet.entity.FixedTermDepositEntity;
-import com.alkemy.wallet.exception.MinDaysException;
+import com.alkemy.wallet.mapper.exception.MinDaysException;
 import com.alkemy.wallet.mapper.FixedTermDepositMap;
 import com.alkemy.wallet.repository.IFixedTermDepositRepository;
 import com.alkemy.wallet.service.IAccountService;

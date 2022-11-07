@@ -5,9 +5,11 @@ import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.entity.AccountEntity;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class AccountMap {
 
   @Autowired FixedTermDepositMap fixedTermDepositMap;
@@ -17,7 +19,7 @@ public class AccountMap {
     AccountDto accountDto;
     for (AccountEntity account: accounts) {
       accountDto = new AccountDto();
-      accountDto.setId(account.getId());
+      accountDto.setId(account.getAccountId());
       accountDto.setCurrency(account.getCurrency());
       accountDto.setTransactionLimit(account.getTransactionLimit());
       accountDto.setBalance(account.getBalance());
@@ -32,7 +34,7 @@ public class AccountMap {
 
     AccountBasicDto account = new AccountBasicDto();
 
-    account.setAccountId(entity.getId());
+    account.setAccountId(entity.getAccountId());
     account.setCurrency(entity.getCurrency());
     account.setBalance(0);
     account.setFixedTermDeposits(

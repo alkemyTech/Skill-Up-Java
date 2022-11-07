@@ -1,7 +1,7 @@
 package com.alkemy.wallet.entity;
 
 import com.alkemy.wallet.enumeration.Currency;
-import java.time.Instant;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +35,7 @@ public class AccountEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "ACCOUNT_ID", nullable = false)
-  private Long id;
+  private Long accountId;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "CURRENCY", nullable = false)
@@ -70,6 +70,8 @@ public class AccountEntity {
 
   private List<FixedTermDepositEntity> fixedTermDeposits=new ArrayList<>();
 
-  private TransactionEntity transaction;
+
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "accountId")
+  private List < TransactionEntity > transactionEntities = new ArrayList<>();
 
 }

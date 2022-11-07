@@ -105,4 +105,8 @@ public class BankDAO {
                .build();
         return fixedTermDepositRepository.saveAndFlush(fixedTermDepositEntity);
     }
+
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
+    }
 }

@@ -1,8 +1,6 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.dto.AccountBalanceDto;
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.CurrencyRequestDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,5 +26,10 @@ public class AccountController {
     @GetMapping("/balance")
     public ResponseEntity<List<AccountBalanceDto>> getBalance(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.getUserBalance(token));
+    }
+
+    @PatchMapping(value="/{id}")
+    ResponseEntity<AccountDetailDto> updateAccount(@RequestBody AccountPatchDto accountPatchDto, @PathVariable Integer id, @RequestHeader("Authorization") String userToken) throws Exception {
+        return ResponseEntity.ok(accountService.updateAccount(accountPatchDto, id, userToken));
     }
 }

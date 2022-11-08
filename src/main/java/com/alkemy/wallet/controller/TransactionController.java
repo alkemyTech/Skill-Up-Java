@@ -1,18 +1,23 @@
 package com.alkemy.wallet.controller;
 
+import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
 import com.alkemy.wallet.service.TransactionService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.alkemy.wallet.service.impl.AccountServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TransactionController {
 
     private final TransactionService service;
+    //TODO use the interface, not the implementation
+    private final AccountServiceImpl accountBalanceService;
 
-    public TransactionController(TransactionService service) {
+    //TODO use the @RequiredArgsConstructor from lombok to dependency injection and remove the constructor
+    public TransactionController(TransactionService service, AccountServiceImpl accountBalanceService) {
         this.service = service;
+        this.accountBalanceService = accountBalanceService;
     }
 
     @GetMapping
@@ -25,8 +30,16 @@ public class TransactionController {
 
     @PostMapping("/transactions/sendUsd")
     public String moneySendInUsd(@RequestParam("idUser") Long idUser,
-                                   @RequestParam("idTargetUser") Long idTargetUser,
-                                   @RequestParam("mount") Double mount) {
+                                 @RequestParam("idTargetUser") Long idTargetUser,
+                                 @RequestParam("mount") Double mount) {
         return service.moneySendInUsd(idUser, idTargetUser, mount);
+
+    }
+
+    @GetMapping("/account/balance/{idUser}")
+    public ResponseEntity<AccountBalanceDto> getAccountBalance(@PathVariable("idUser") Long idUser) {
+        return new ResponseEntity<>(accountBalanceService.getAccountBalance(idUser), HttpStatus.OK);
+
+
     }
 }

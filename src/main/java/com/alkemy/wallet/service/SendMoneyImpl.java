@@ -1,8 +1,7 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.AccountCurrencyEnum;
-import com.alkemy.wallet.model.TransactionTypeEnum;
 import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
 import com.alkemy.wallet.model.entity.Transaction;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -10,7 +9,6 @@ import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -66,8 +64,9 @@ public class SendMoneyImpl {
         accountUser.get().setBalance((balanceUser));
         accountTargetUser.get().setBalance(targetUserBalance);
 
-        Transaction transaction = new Transaction(null, amount, TransactionTypeEnum.INCOME,
-                "Transacción exitosa", idUser, idTargetUser, LocalDateTime.now(), null, null);
+        Transaction transaction = new Transaction();
+        //null, amount, TransactionTypeEnum.INCOME,
+         //       "Transacción exitosa", idUser, idTargetUser, LocalDateTime.now(), null, null);
 
         accountRepository.save(accountTargetUser.get());
         accountRepository.save(accountUser.get());

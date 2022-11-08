@@ -4,5 +4,5 @@ import com.alkemy.wallet.dto.FixedTermDepositDto;
 
 public interface IFixedTermDepositService {
 
-    FixedTermDepositDto createNewFixedTerm(FixedTermDepositDto dto);
+    FixedTermDepositDto createNewFixedTerm(String currency, FixedTermDepositDto dto);
 }

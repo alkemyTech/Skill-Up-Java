@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class TransactionDepositDto {
+public class TransactionPaymentDto {
     @JsonProperty( "id" )
     private Integer transactionID;
 
@@ -31,13 +31,11 @@ public class TransactionDepositDto {
 
     private Account account;
 
-    public TransactionDepositDto(Double amount, String description) {
+    public TransactionPaymentDto(Double amount, String description) {
         this.amount = amount;
-        this.type = TransactionType.DEPOSIT;
+        this.type = TransactionType.PAYMENT;
         this.description = description;
         this.transactionDate = new Timestamp(new Date().getTime());
     }
 
 }
-
-

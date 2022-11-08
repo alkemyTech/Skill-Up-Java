@@ -16,4 +16,6 @@ public interface UserService extends UserDetailsService {
     User matchUserToToken(Integer id, String token) throws ForbiddenAccessException;
     User loadUserByUsername(String email);
     User getUserById(Integer id);
+
+    UserRequestDto updateUser(Integer id,UserRequestDto userRequestDto, String token);
 }

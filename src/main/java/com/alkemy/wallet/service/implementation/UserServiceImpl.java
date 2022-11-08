@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,6 +106,8 @@ public class UserServiceImpl implements UserService {
         return optionalUser.get();
     }
 
+
+
     public User matchUserToToken(Integer id, String token) throws ForbiddenAccessException {
         String jwt;
         jwt = token.substring(7);
@@ -115,5 +118,21 @@ public class UserServiceImpl implements UserService {
         }else{
             throw new ForbiddenAccessException("Cannot access another user details");
         }
+    }
+
+    @Override
+    public UserRequestDto updateUser(Integer id,UserRequestDto userRequestDto, String token) {
+        User user=this.getUserById(id);
+        if(user.getEmail()!=jwtUtil.extractClaimUsername(token)){
+            throw new ResourceNotFoundException("you are trying to modify a user that is not you");
+        }
+        user.setFirstName(userRequestDto.getName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setPassword(userRequestDto.getPassword());
+        Timestamp timestamp=new Timestamp(new Date().getTime());
+        user.setUpdateDate(timestamp);
+        userRepository.save(user);
+
+
     }
 }

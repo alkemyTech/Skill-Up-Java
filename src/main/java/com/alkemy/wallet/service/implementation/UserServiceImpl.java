@@ -59,15 +59,12 @@ public class UserServiceImpl implements UserService {
         String passEncoded =passwordEncoder.encode(user.getPassword());
         user.setPassword(passEncoded);
 
-        UserDto userDto = entityToDTO(userRepository.save(user));
+        User userSaved = userRepository.save(user);
 
-        //ACCOUNT MUST BE CREATED WHEN CREATING A NEW USER
+        UserDto userDto = entityToDTO(userSaved);
 
-        /*CurrencyRequestDto currencyDtoARS = new CurrencyRequestDto();
-        CurrencyRequestDto currencyDtoUSD = new CurrencyRequestDto();
-
-        accountService.createAccount(userDto.token(), currencyDtoARS);
-        accountService.createAccount(userDto.token(), currencyDtoUSD);*/
+        accountService.createAccountByUserId(userSaved.getUserId(),Currency.ARS);
+        accountService.createAccountByUserId(userSaved.getUserId(),Currency.USD);
 
         return userDto;
     }

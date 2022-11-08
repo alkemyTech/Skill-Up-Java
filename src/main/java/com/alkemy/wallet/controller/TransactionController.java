@@ -4,6 +4,7 @@ import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.enumeration.TypeTransaction;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.service.ITransactionService;
+import java.security.PublicKey;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,13 @@ public class TransactionController {
       dto.setType(TypeTransaction.PAYMENT);
       TransactionDto transactionDto = transactionService.createTransaction(dto);
       return ResponseEntity.status(HttpStatus.CREATED).body(transactionDto);
+    }
+
+    @GetMapping("/{transactionId}")
+
+    public ResponseEntity<TransactionDto> getDetailTransaction(@PathVariable Long transactionId){
+      TransactionDto transaction = this.transactionService.getDetailById(transactionId);
+      return ResponseEntity.ok(transaction);
     }
 
 }

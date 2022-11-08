@@ -1,6 +1,6 @@
-package com.alkemy.wallet.model.mapper.response;
+package com.alkemy.wallet.model.dto.response.list;
 
-import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import lombok.*;
 
 import java.util.List;

@@ -1,11 +1,9 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.dto.response.transaction.TransactionResponseDto;
-
-import java.util.List;
+import com.alkemy.wallet.model.dto.response.list.TransactionListResponseDto;
 
 public interface ITransactionService {
 
-    public List<TransactionResponseDto> listTransactions(Long userId);
+    public TransactionListResponseDto listTransactions(Long userId);
 
 }

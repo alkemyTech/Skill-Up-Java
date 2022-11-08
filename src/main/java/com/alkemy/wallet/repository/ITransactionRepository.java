@@ -14,3 +14,5 @@ public interface ITransactionRepository extends JpaRepository<Transaction, Long>
     public List<Transaction> getByUserId(Long userId);
 
 }
+
+

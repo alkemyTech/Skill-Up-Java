@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.FixedTermDepositDto;
+import com.alkemy.wallet.dto.FixedTermDepositSimulateDto;
 import com.alkemy.wallet.exception.FixedTermDepositException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.FixedTermDepositMapper;
@@ -33,7 +34,7 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
 
     @Override
     public FixedTermDepositDto createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto, String token) throws FixedTermDepositException {
-        FixedTermDeposit fixedTermDeposit=new FixedTermDeposit(mapper.convertToEntity(fixedTermDepositDto));
+        FixedTermDeposit fixedTermDeposit=mapper.convertToEntity(fixedTermDepositDto);
         Timestamp timestamp=new Timestamp(new Date().getTime());
         fixedTermDeposit.setCreationDate(timestamp);
 
@@ -56,4 +57,21 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
                 .map(mapper::convertToDto).collect(Collectors.toList());
     }
 
+    @Override
+    public FixedTermDepositSimulateDto simulateFixedTermDepositDto(FixedTermDepositDto fixedTermDepositDto) {
+        FixedTermDepositSimulateDto fixedTermDepositSimulateDto=new FixedTermDepositSimulateDto();
+        Timestamp timestamp=new Timestamp(new Date().getTime());
+        fixedTermDepositSimulateDto.setCreationDate(timestamp);
+        fixedTermDepositSimulateDto.setClosingDate(fixedTermDepositDto.getClosingDate());
+        Long days= ((fixedTermDepositSimulateDto.getClosingDate().getTime())-fixedTermDepositSimulateDto.getCreationDate().getTime())/86400000 ;
+        if(days<30){
+            throw new FixedTermDepositException();
+        }
+        fixedTermDepositSimulateDto.setCurrency(fixedTermDepositDto.getCurrency());
+        fixedTermDepositSimulateDto.setInterest(0.5*days);
+        fixedTermDepositSimulateDto.setAmount(fixedTermDepositDto.getAmount());
+        fixedTermDepositSimulateDto.setTotalAmount(fixedTermDepositDto.getAmount()+((fixedTermDepositDto.getAmount()*fixedTermDepositSimulateDto.getInterest())/100));
+
+        return fixedTermDepositSimulateDto;
+    }
 }

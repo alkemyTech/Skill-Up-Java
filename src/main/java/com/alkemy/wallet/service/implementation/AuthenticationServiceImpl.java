@@ -8,6 +8,7 @@ import com.alkemy.wallet.security.AuthenticationResponse;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AuthenticationService;
 import com.alkemy.wallet.service.UserService;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
         //Check User already registered
-        if(userService.loadUserByUsername(user.email())!=null)
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        User u = (User) userService.loadUserByUsername(user.email());
+        if(u!=null) {
+            if (u.getSoftDelete() == Boolean.TRUE) {
+                u.setSoftDelete(Boolean.FALSE);
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            } else
+            {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            }
+        }
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }

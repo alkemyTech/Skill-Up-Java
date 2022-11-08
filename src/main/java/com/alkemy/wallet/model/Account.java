@@ -15,7 +15,7 @@ import java.time.Instant;
 @Setter
 @Entity
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET soft_delete = true WHERE id=?")
+@SQLDelete(sql = "UPDATE accounts SET soft_delete = true WHERE id_account=?")
 @Where(clause = "soft_delete=false")
 public class Account {
     @Id

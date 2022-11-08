@@ -1,11 +1,11 @@
 package com.alkemy.wallet.mapper;
 
-import com.alkemy.wallet.dto.AccountBalanceDto;
-import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Account;
 import lombok.RequiredArgsConstructor;
 
 import com.alkemy.wallet.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Component;
@@ -19,6 +19,10 @@ public class AccountMapper {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ModelMapper mapper;
+
     public AccountDto convertToDto(Account account) {
         return new AccountDto(
                 account.getAccountId(),
@@ -50,6 +54,9 @@ public class AccountMapper {
                 accountDto.balance(),
                 accountDto.currency()
         );
+    }
+    public AccountDetailDto convertToAccountDetailDto(Account account){
+        return mapper.map( account, AccountDetailDto.class);
     }
 
 }

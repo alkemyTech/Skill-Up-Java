@@ -108,6 +108,18 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public AccountDetailDto updateAccount(AccountPatchDto accountPatch, Integer Id, String userToken) throws ResourceNotFoundException {
+        var account = accountRepository.findById(Id);
+        if (account.isPresent()){
+            userService.matchUserToToken(account.get().getUser().getUserId(),userToken);
+            account.get().setTransactionLimit(accountPatch.transactionLimit());
+            return accountMapper.convertToAccountDetailDto(accountRepository.save(account.get()));
+        }else{
+            throw new ResourceNotFoundException("Account does not exist");
+        }
+    }
+
     private AccountBalanceDto getAccountBalance(AccountDto account) {
         AccountBalanceDto accountBalance = accountMapper.convertAccountDtoToAccountBalanceDto(account);
         accountBalance.setFixedTermDeposits(fixedTermDepositService.getAccountFixedTermDeposits(account.id()));

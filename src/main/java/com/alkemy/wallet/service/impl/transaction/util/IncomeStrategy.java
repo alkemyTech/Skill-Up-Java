@@ -13,11 +13,6 @@ public class IncomeStrategy implements ITransactionStrategy{
 
     @Override
     public void make(double amount, Account account) {
-        this.modifyAccountTransactionLimit(amount, account);
-        if(account.getBalance() < amount){
-            throw new TransactionException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
-        }else{
-            account.setBalance(account.getBalance()-amount);
-        }
+            account.setBalance(account.getBalance()+amount);
     }
 }

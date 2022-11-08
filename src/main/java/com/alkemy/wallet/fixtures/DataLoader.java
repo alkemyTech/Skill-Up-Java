@@ -20,13 +20,15 @@ public class DataLoader implements ApplicationRunner{
 
     @Override
     public void run(ApplicationArguments args) {
-        Role userRole = new Role();
-        userRole.setName(RoleList.USER);
-        userRole.setDescription("Created user with role USER");
-        Role adminRole = new Role();
-        adminRole.setName(RoleList.ADMIN);
-        adminRole.setDescription("Created user with role ADMIN");
-        roleRepository.save(userRole);
-        roleRepository.save(adminRole);
+        if (roleRepository.findByName(RoleList.ADMIN) == null && roleRepository.findByName(RoleList.USER) == null) {
+            Role userRole = new Role();
+            userRole.setName(RoleList.USER);
+            userRole.setDescription("Created user with role USER");
+            Role adminRole = new Role();
+            adminRole.setName(RoleList.ADMIN);
+            adminRole.setDescription("Created user with role ADMIN");
+            roleRepository.save(userRole);
+            roleRepository.save(adminRole);
+        }
     }
 }

@@ -1,12 +1,10 @@
 package com.alkemy.wallet.service.implementation;
 
-import com.alkemy.wallet.dto.UserDetailDto;
-import com.alkemy.wallet.dto.UserDto;
-import com.alkemy.wallet.dto.UserRequestDto;
-import com.alkemy.wallet.dto.UserUpdateDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
+import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.RoleName;
 import com.alkemy.wallet.model.User;
@@ -14,6 +12,7 @@ import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +29,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final JWTUtil jwtUtil;
+
+    @Autowired
+    private AccountServiceImpl accountService;
 
     @Override
     public List<UserDto> getAllUsers() {
@@ -57,7 +59,14 @@ public class UserServiceImpl implements UserService {
         String passEncoded =passwordEncoder.encode(user.getPassword());
         user.setPassword(passEncoded);
 
-        return entityToDTO(userRepository.save(user));
+        User userSaved = userRepository.save(user);
+
+        UserDto userDto = entityToDTO(userSaved);
+
+        accountService.createAccountByUserId(userSaved.getUserId(),Currency.ARS);
+        accountService.createAccountByUserId(userSaved.getUserId(),Currency.USD);
+
+        return userDto;
     }
 
     @Override

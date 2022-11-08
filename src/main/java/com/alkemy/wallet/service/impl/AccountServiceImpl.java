@@ -153,19 +153,19 @@ public class AccountServiceImpl implements IAccountService {
   }
 
   @Override
-  public ResponseEntity<AccountDto> updateAccount(Long id,Double transactionLimitUpdated) {
+  public AccountDto updateAccount(Long id,Double transactionLimitUpdated) {
 
-    UserAuthDto userAuth
-    AccountEntity entity=this.findEntityById(id);
-    entity.setTransactionLimit(transactionLimitUpdated);
-    AccountDto accountDto=accountMap.accountEntity2DTO(entity);
-    ResponseEntity<AccountDto> response;
-    if (//si la cuenta existe y es del usuario logeado)
-     response=ResponseEntity.ok().body(accountDto);
-    else
-      response=ResponseEntity.badRequest().body();
+    AccountEntity accountEntity=IAccountRepository.findById(id).orElseThrow(
+        ()-> new ParamNotFound("Account ID Invalid"));
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = this.IUserRepository.findByEmail(email);
+    List<AccountEntity> userAccounts = this.IAccountRepository.findAllByUser(user);
+    if (!userAccounts.contains(accountEntity))
+      throw new ParamNotFound("The Account doesn´t match with the User");
+    accountEntity.setTransactionLimit(transactionLimitUpdated);
+    AccountDto accountDto=accountMap.accountEntity2DTO(accountEntity);
 
-    return response;
+    return accountDto;
   }
 
 

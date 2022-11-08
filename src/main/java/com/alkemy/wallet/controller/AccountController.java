@@ -53,7 +53,8 @@ public class AccountController {
   @PutMapping("/{id}")
   public ResponseEntity<AccountDto> updateAccount(@PathVariable Long id,@RequestParam Double transactionLimitUpdated)
   {
-
+      AccountDto dto=iAccountService.updateAccount(id,transactionLimitUpdated);
+      return ResponseEntity.ok().body(dto);
   }
 
 }

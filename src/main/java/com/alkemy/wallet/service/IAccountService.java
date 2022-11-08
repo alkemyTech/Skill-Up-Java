@@ -20,5 +20,5 @@ public interface IAccountService {
 
   AccountDto createAccount(String currency);
 
-  ResponseEntity<AccountDto> updateAccount(Long id,Double transactionLimitUpdated);
+  AccountDto updateAccount(Long id,Double transactionLimitUpdated);
 }

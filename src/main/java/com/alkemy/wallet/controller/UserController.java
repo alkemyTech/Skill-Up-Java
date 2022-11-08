@@ -8,9 +8,11 @@ import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.AuthenticationResponse;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.service.impl.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +34,9 @@ public class UserController {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
+    @Autowired
+    private AuthenticationServiceImpl authenticationServiceImpl;
+
     @PostMapping("/auth/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO user) {
         //final String jwt = jwtTokenUtil.generateToken(user.getEmail());
@@ -44,21 +49,8 @@ public class UserController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUserName(), authenticationRequest.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            throw new BankException("Incorrect username or password");
-        }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUserName());
-
-        System.out.println("*123 " + userDetails.getUsername());
-
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest)  {
+        return authenticationServiceImpl.login(authenticationRequest);
     }
+
 }

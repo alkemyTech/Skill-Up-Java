@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum RoleEnum {
-    ADMIN("ADMIN", new Long(1)),
-    USER("USER",new Long(2));
+    ADMIN("ADMIN", 1L),
+    USER("USER",2L);
 
     private String name;
     private Long id;

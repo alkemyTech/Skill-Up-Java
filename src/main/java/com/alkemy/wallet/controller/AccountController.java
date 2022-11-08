@@ -6,8 +6,10 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+//@Secured({"ROLE_ADMIN","ROLE_USER"})
+@PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
 @RestController
 @RequestMapping("/account")
 public class AccountController {

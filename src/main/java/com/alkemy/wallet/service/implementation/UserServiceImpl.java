@@ -13,6 +13,7 @@ import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,7 +72,10 @@ public class UserServiceImpl implements UserService {
         //Mappers commented until they work automatically
 //        ModelMapper mapper = new ModelMapper();
 //        UserDto userDto = mapper.map(user,UserDto.class);
-        return new UserDto(user.getFirstName(),user.getFirstName(), user.getEmail());
+
+        final String jwt = jwtUtil.generateToken(user);
+
+        return new UserDto(user.getFirstName(),user.getFirstName(), user.getEmail(),jwt);
 
     }
 

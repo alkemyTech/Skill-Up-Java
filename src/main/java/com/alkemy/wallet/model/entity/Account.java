@@ -44,7 +44,7 @@ public class Account {
     private LocalDateTime updateDate;
 
     @Column(name = "deleted")
-    private Boolean softDelete = Boolean.FALSE;
+    private boolean softDelete = Boolean.FALSE;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")

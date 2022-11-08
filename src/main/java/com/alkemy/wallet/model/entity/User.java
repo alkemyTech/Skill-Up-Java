@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Getter
 @Setter
@@ -47,13 +49,13 @@ public class User {
     private LocalDateTime updateDate;
 
     @Column(name = "deleted")
-    private Boolean softDelete = Boolean.FALSE;
+    private boolean softDelete = Boolean.FALSE;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Account> accounts;
 
-    @ManyToMany
+    @ManyToMany(fetch = EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},

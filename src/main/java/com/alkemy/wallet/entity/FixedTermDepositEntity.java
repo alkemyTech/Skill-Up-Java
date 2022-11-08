@@ -18,19 +18,19 @@ public class FixedTermDepositEntity {
     @Column(name = "AMOUNT", nullable = false)
     private Double amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID",nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", insertable = false, updatable = false)
     private UserEntity userEntity;
 
-    @Column(name = "USER_ID", insertable = false, updatable = false)
+    @Column(name = "USER_ID", nullable = false)
     private Long userId;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOUNT_ID", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ACCOUNT_ID", insertable = false, updatable = false)
     private AccountEntity accountEntity;
 
-    @Column(name = "ACCOUNT_ID",insertable = false, updatable = false)
+    @Column(name = "ACCOUNT_ID", nullable = false)
     private Long accountId;
 
     @Column(name = "INTEREST", nullable = false)

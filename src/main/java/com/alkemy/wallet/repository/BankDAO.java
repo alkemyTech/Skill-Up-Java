@@ -4,6 +4,7 @@ import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -108,9 +109,5 @@ public class BankDAO {
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
-    }
-
-     public List<AccountEntity> showAccountsByUser(Long userId) {
-        return accountRepository.getAccountsByUserId(userId);
     }
 }

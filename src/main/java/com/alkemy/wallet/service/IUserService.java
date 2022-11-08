@@ -8,11 +8,12 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IUserService {
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request);
     public ResponseEntity<Object> deleteUser(Long userId);
     public List<UserEntity> showAllUsers();
     public Optional<UserEntity> findUserById(Long userId);
-    public List<AccountEntity> showAccountsByUserId(Long userId);
+    public ResponseEntity<Set<AccountEntity>> showAllAccountsByUserId(Long userId);
 }

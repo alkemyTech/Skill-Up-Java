@@ -26,8 +26,8 @@ public class AccountMapper {
 
     public List<AccountDTO> accountEntityList2DTOList(List<Account> accountList){
         List<AccountDTO> dtos = new ArrayList<>();
-        for(Account user: accountList){
-            dtos.add(convertToAccountDTO(user));
+        for(Account account: accountList){
+            dtos.add(convertToAccountDTO(account));
         }
         return dtos;
     }

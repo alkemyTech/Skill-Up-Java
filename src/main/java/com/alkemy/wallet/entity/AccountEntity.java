@@ -58,7 +58,6 @@ public class AccountEntity {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "USER_ID", nullable = false)
-
   private UserEntity user;
 
   @OneToMany(mappedBy = "accountId", fetch = FetchType.EAGER,

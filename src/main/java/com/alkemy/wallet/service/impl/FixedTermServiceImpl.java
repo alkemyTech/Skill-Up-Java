@@ -1,10 +1,13 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositDto;
+import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.FixedTermDepositEntity;
 import com.alkemy.wallet.entity.UserEntity;
+import com.alkemy.wallet.enumeration.Currency;
 import com.alkemy.wallet.mapper.exception.MinDaysException;
 import com.alkemy.wallet.mapper.FixedTermDepositMap;
+import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IFixedTermDepositRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -28,9 +31,11 @@ public class FixedTermServiceImpl implements IFixedTermDepositService {
 
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private IAccountRepository accountRepository;
 
     @Override
-    public FixedTermDepositDto createNewFixedTerm(FixedTermDepositDto dto) {
+    public FixedTermDepositDto createNewFixedTerm(String currency, FixedTermDepositDto dto) {
 
         FixedTermDepositEntity entity = fixedTermDepositMap.fixedTermDepositDto2Entity(dto);
 
@@ -38,8 +43,8 @@ public class FixedTermServiceImpl implements IFixedTermDepositService {
         UserEntity user = userRepository.findByEmail(email);
         entity.setUserId(user.getUserId());
 
-        entity.setAccountId(20L);
-
+        AccountEntity account = accountRepository.findByCurrencyAndUser(Currency.valueOf(currency), user);
+        entity.setAccountId(account.getAccountId());
         entity.setCreationDate(new Date());
 
         Long minDays = ((entity.getCreationDate().getTime() - entity.getClosingDate().getTime())
@@ -52,7 +57,7 @@ public class FixedTermServiceImpl implements IFixedTermDepositService {
 
         Long id = 20L;
 
-        accountService.updateBalance(id, entity.getAmount());
+        accountService.updateBalance(entity.getAccountId(), entity.getAmount());
         FixedTermDepositEntity CreatedFixedDeposit = fixedTermDepositRepository.save(entity);
         return fixedTermDepositMap.fixedTermDepositEntity2Dto(CreatedFixedDeposit);
     }

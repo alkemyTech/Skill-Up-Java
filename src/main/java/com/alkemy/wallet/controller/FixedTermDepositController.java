@@ -22,7 +22,7 @@ public class FixedTermDepositController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER_ROLE')")
-    public  ResponseEntity< FixedTermDepositDto > createFixedTermDeposit(@Validated @RequestBody FixedTermDepositDto fixedTermDepositDto, @RequestHeader String token) throws FixedTermDepositException {
+    public  ResponseEntity< FixedTermDepositDto > createFixedTermDeposit(@RequestBody FixedTermDepositDto fixedTermDepositDto, @RequestHeader("Authorization") String token) throws FixedTermDepositException {
         fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
         return ResponseEntity.ok(fixedTermDepositService.createFixedTermDeposit(fixedTermDepositDto, token));
 

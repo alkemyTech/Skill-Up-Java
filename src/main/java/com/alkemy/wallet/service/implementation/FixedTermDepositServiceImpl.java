@@ -42,7 +42,7 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
                throw new FixedTermDepositException();
            }
 
-        fixedTermDeposit.setAccount(accountService.findAccountByUserIdAndCurrency(userService.loadUserByUsername(jwtUtil.extractClaimUsername(token)),fixedTermDepositDto.getCurrency()));
+        fixedTermDeposit.setAccount(accountService.findAccountByUserIdAndCurrency(userService.loadUserByUsername(jwtUtil.extractClaimUsername(token.substring(7))),fixedTermDepositDto.getCurrency()));
         fixedTermDeposit.setInterest(0.5*days);
         fixedTermDepositRepository.save(fixedTermDeposit);
         return fixedTermDepositDto;

@@ -39,8 +39,8 @@ public class TransactionController {
     }
 
     @PatchMapping(value="/{id}")
-    ResponseEntity<TransactionDetailDto> updateTransaction(@RequestBody TransactionPatchDto transactionPatchDto, @PathVariable Integer id) throws Exception{
-        return ResponseEntity.ok(transactionService.updateTransaction(transactionPatchDto,id));
+    ResponseEntity<TransactionDetailDto> updateTransaction(@RequestBody TransactionPatchDto transactionPatchDto, @PathVariable Integer id, @RequestHeader("Authorization") String userToken) throws Exception{
+        return ResponseEntity.ok(transactionService.updateTransaction(transactionPatchDto,id,userToken));
     }
 
     @PostMapping( value = "/sendArs" )

@@ -15,5 +15,6 @@ public interface ITransactionStrategy {
             throw new TransactionException(ErrorList.TRANSACTION_LIMIT.getMessage());
         }
         account.setTransactionLimit(account.getTransactionLimit()-amount);
-    }
+    }/*
+    void make(double amount, Account accOrigin, Account accDestiny);*/
 }

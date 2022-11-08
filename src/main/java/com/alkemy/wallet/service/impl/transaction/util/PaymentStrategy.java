@@ -13,13 +13,19 @@ public class PaymentStrategy implements ITransactionStrategy{
         return TypeList.PAYMENT;
     }
 
-    @Override
+   /* @Override
     public void make(double amount, Account account) {
-        this.modifyAccountTransactionLimit(amount, account);
-        if(account.getBalance() < amount){
+        throw new TransactionException("Account Destiny not found");
+    }*/
+
+    @Override
+    public void make(double amount, Account accOrigin) {
+        //this.modifyAccountTransactionLimit(amount, account);
+        //TODO:  checkear trans limit
+        if(accOrigin.getBalance() < amount){
             throw new TransactionException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }else{
-            account.setBalance(account.getBalance()-amount);
+            accOrigin.setBalance(accOrigin.getBalance()-amount);
         }
     }
 }

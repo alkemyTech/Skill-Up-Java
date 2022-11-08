@@ -17,6 +17,7 @@ public interface ITransactionService {
 
     //Create
     void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy);
+    void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy,String accDestinyEmail);
 
     //Update
     void updateTransaction(TransactionUpdateDTO transDTO, Integer id);

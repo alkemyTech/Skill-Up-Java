@@ -8,8 +8,6 @@ import lombok.Data;
 import java.sql.Timestamp;
 @Data
 public class FixedTermDepositDto {
-    @JsonProperty("fixedTermDepositId")
-    private Integer fixedTermDepositId;
     @JsonProperty("amount")
     private Double amount;
     @JsonProperty("closingDate")

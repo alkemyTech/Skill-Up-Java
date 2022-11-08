@@ -13,7 +13,6 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -110,18 +109,12 @@ public class AccountServiceImpl implements IAccountService {
 
   @Override
   public void updateBalance(Long accountId, Double amount) {
-    AccountEntity accountEntity= this.findEntityById(accountId);
-    accountEntity.setBalance(accountEntity.getBalance()-amount);
-    IAccountRepository.save(accountEntity);
-  }
-
-  @Override
-  public AccountEntity findEntityById(Long accountId) {
-    Optional <AccountEntity> accountEntity = IAccountRepository.findById(accountId);
+    Optional<AccountEntity> accountEntity= IAccountRepository.findById(accountId);
     if (!accountEntity.isPresent()){
-      throw new ParamNotFound("Account not found");
+      throw new ParamNotFound("No id macth");
     }
-    return accountEntity.get();
+    accountEntity.get().setBalance(accountEntity.get().getBalance()-amount);
+    IAccountRepository.save(accountEntity.get());
   }
 
   @Override

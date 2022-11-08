@@ -2,6 +2,8 @@ package com.alkemy.wallet.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,10 +11,14 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Collection;
 
+import static java.lang.Boolean.FALSE;
+
 @Entity
 @Table( name = "USERS" )
 @Data
 @NoArgsConstructor
+@SQLDelete( sql = "UPDATE users SET soft_delete = true WHERE USER_ID=?" )
+@Where( clause = "soft_delete=false" )
 public class User implements UserDetails {
 
     @Id
@@ -41,9 +47,10 @@ public class User implements UserDetails {
     private Timestamp updateDate;
 
     // TODO: check soft delete rules
-    private Boolean softDelete;
+    @Column( name = "SOFT_DELETE" )
+    private Boolean softDelete = FALSE;
 
-    public User(int userId){
+    public User( int userId ) {
         this.userId = userId;
     }
 

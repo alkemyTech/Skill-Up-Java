@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,47 +30,48 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private JWTUtil jwtUtil;
 
     @Override
-    public ResponseEntity<UserDto> registerUser(UserRequestDto user){
+    public ResponseEntity<UserDto> registerUser( UserRequestDto user ) {
 
         //Check One or more fields are empty
-        if(user.name()==null || user.lastName()==null || user.email()==null || user.password()==null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        if ( user.name() == null || user.lastName() == null || user.email() == null || user.password() == null )
+            return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( null );
 
+        var existingUser = ( User ) userService.loadUserByUsername( user.email() );
         //Check User already registered
-        User u = (User) userService.loadUserByUsername(user.email());
-        if(u!=null) {
-            if (u.getSoftDelete() == Boolean.TRUE) {
-                u.setSoftDelete(Boolean.FALSE);
-                return ResponseEntity.status(HttpStatus.OK).body(null);
-            } else
-            {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        if ( existingUser != null ) {
+            if ( existingUser.getSoftDelete() == Boolean.TRUE) {
+                existingUser.setSoftDelete( Boolean.FALSE );
+                //Add UserService update
+                return ResponseEntity.status( HttpStatus.OK ).body( null );
+            }
+            else {
+                return ResponseEntity.status( HttpStatus.CONFLICT ).body(null);
             }
         }
 
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
+        return ResponseEntity.status( HttpStatus.CREATED ).body( userService.createUser( user ) );
     }
 
-    public ResponseEntity <AuthenticationResponse> loginUser(AuthenticationRequest authenticationRequest){
+    public ResponseEntity<AuthenticationResponse> loginUser( AuthenticationRequest authenticationRequest ) {
 
         String username = authenticationRequest.getEmail();
         String password = authenticationRequest.getPassword();
 
         //If one field is empty
-        if(username==null || password==null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        if ( username == null || password == null )
+            return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( null );
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
+        authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( username, password ) );
 
-        final UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getEmail());
+        final UserDetails userDetails = userService.loadUserByUsername( authenticationRequest.getEmail() );
 
-        if(userDetails==null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if ( userDetails == null )
+            return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
 
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final String jwt = jwtUtil.generateToken( userDetails );
 
-        return ResponseEntity.status(HttpStatus.OK).body(new AuthenticationResponse(jwt));
+        return ResponseEntity.status( HttpStatus.OK ).body( new AuthenticationResponse( jwt ) );
     }
 
 

@@ -3,6 +3,7 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.UserDetailDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.dto.UserUpdateDto;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
 import com.alkemy.wallet.model.User;
@@ -19,4 +20,6 @@ public interface UserService extends UserDetailsService {
     User getUserById(Integer id);
 
     UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token);
+
+    void deleteUser( Integer id ) throws ResourceNotFoundException;
 }

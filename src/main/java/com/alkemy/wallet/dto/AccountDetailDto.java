@@ -26,6 +26,4 @@ public class AccountDetailDto {
     @JsonProperty("creationDate") Timestamp creationDate;
 
     @JsonProperty("updateDate") Timestamp updateDate;
-
-    @JsonProperty("softDelete") Boolean softDelete;
 }

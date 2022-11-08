@@ -24,4 +24,7 @@ public interface TransactionService {
     TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto);
     User getUserByTransactionId(Integer id);
 
+    TransactionDetailDto sendArs(String token, TransactionTransferRequestDto transactionTransferRequestDto);
+    TransactionDetailDto sendUsd(String token, TransactionTransferRequestDto transactionTransferRequestDto);
+
 }

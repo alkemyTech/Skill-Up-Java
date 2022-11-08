@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.RoleEnum.USER;
@@ -94,7 +91,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<AccountEntity> showAccountsByUserId(Long userId) {
-        return bankDAO.showAccountsByUser(userId);
+    public ResponseEntity<Set<AccountEntity>> showAllAccountsByUserId(Long userId) {
+        Optional<UserEntity> opUser = bankDAO.getUserById(userId);
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user ID does not exist");
+        }
+
+        return ResponseEntity.ok(opUser.get().getAccount());
     }
 }

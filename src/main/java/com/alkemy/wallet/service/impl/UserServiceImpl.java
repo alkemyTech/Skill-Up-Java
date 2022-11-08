@@ -55,8 +55,7 @@ public class UserServiceImpl implements IUserService {
         Page<User> users =  userRepository.findAll(pageWithTenElements);
 
         List<User> userList = users.getContent();
-        List<UserDTO>  result  = userMapper.userEntityList2DTOList(userList);
-        return result;
+        return userMapper.userEntityList2DTOList(userList);
     }
 
     @Override
@@ -84,13 +83,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public boolean deleteUserById(Integer id) {
+    public void deleteUserById(Integer id) {
         try {
             userRepository.deleteById(id);
-            return true;
         }
         catch (Exception err){
-            return false;
+            throw new NotFoundException("Invalid ID");
         }
     }
 }

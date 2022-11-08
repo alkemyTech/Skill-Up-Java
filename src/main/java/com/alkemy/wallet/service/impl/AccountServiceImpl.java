@@ -56,4 +56,10 @@ public class AccountServiceImpl implements IAccountService {
         }
     }
 
+    @Override
+    public List<AccountDTO> getAccountsByUser(Integer id) {
+        List<Account> result = accountRepository.findByUserID(id);
+        return accountMapper.accountEntityList2DTOList(result);
+    }
+
 }

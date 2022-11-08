@@ -17,6 +17,5 @@ public interface IUserService {
 
     public UserDTO getUserDatail(Integer id);
 
-    public List<UserDTO> getUsersByPage(Integer page);
 
 }

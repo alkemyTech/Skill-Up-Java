@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 @Table(name = "accounts")
 @SQLDelete(sql = "UPDATE accounts SET deleted=true WHERE id=?")

@@ -1,12 +1,12 @@
-package com.alkemy.wallet.service;
+package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.dto.response.user.AccountSinUserResponseDto;
-import com.alkemy.wallet.model.dto.response.user.UserResponseDto;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.mapper.response.UserListResponseDto;
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.service.impl.IUserService;
+import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     //TODO move this method to AccountService
-    public AccountSinUserResponseDto getAccountUserById(Long userId) {
+    public AccountResponseDto getAccountUserById(Long userId) {
         Optional<User> user = repository.findById(userId);
         if (user.isEmpty())
             return null;

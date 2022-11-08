@@ -1,11 +1,14 @@
-package com.alkemy.wallet.service;
+package com.alkemy.wallet.service.impl;
 
 
+import com.alkemy.wallet.model.dto.request.AccountRequestDto;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
-import com.alkemy.wallet.model.dto.response.account.AccountBalanceDTO;
+import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
+import com.alkemy.wallet.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,27 +18,31 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AccountBalanceService {
+public class AccountServiceImpl implements IAccountService {
 
-    //TODO create an interface to put/create/add the necessary methods and implement the interface. Rename this class as AccountServiceImpl
     private final IAccountRepository accountRepository;
     private final ITransactionRepository iTransactionRepository;
 
+    @Override
+    public AccountResponseDto save(AccountRequestDto request) {
+        return null;
+    }
+
     //TODO as the user comes with the id in the parameters, use the AuthService and verify if the id is the same as the logged user
-    public AccountBalanceDTO getAccountBalance(long idUser) {
-        Optional<Account> account = accountRepository.findByFkUserId(idUser);
+    public AccountBalanceDto getAccountBalance(long idUser) {
+        Optional<Account> account = accountRepository.findByUserId(idUser);
         if (account.isEmpty())
             return null;
 
-        AccountBalanceDTO accountBalanceDTO = new AccountBalanceDTO();
+        AccountBalanceDto accountBalanceDTO = new AccountBalanceDto();
         if (account.get().getCurrency().equals(AccountCurrencyEnum.ARS)) {
-            accountBalanceDTO.setBalanceDollars(account.get().getBalance() / 282);
-            accountBalanceDTO.setBalancePesos(account.get().getBalance());
+            accountBalanceDTO.setBalanceUSD(account.get().getBalance() / 282);
+            accountBalanceDTO.setBalanceARS(account.get().getBalance());
         }
 
         if (account.get().getCurrency().equals(AccountCurrencyEnum.USD)) {
-            accountBalanceDTO.setBalancePesos(account.get().getBalance() * 282);
-            accountBalanceDTO.setBalanceDollars(account.get().getBalance());
+            accountBalanceDTO.setBalanceUSD(account.get().getBalance() * 282);
+            accountBalanceDTO.setBalanceARS(account.get().getBalance());
         }
 
         LocalDate dateDB = LocalDate.of
@@ -45,7 +52,7 @@ public class AccountBalanceService {
 
         Period duration = Period.between(dateDB, LocalDate.now());
         if (duration.getMonths() > 0){
-            accountBalanceDTO.setPlazoFijo(account.get().getBalance() * (282 * duration.getMonths()));
+            accountBalanceDTO.setFixedTermDeposit(account.get().getBalance() * (282 * duration.getMonths()));
         }
 
         return accountBalanceDTO;

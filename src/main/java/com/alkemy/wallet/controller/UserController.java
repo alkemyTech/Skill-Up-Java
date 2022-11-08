@@ -1,8 +1,8 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.dto.response.user.AccountSinUserResponseDto;
-import com.alkemy.wallet.model.mapper.response.UserListResponseDto;
-import com.alkemy.wallet.service.UserServiceImpl;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
+import com.alkemy.wallet.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class UserController {
 
     //TODO move this endpoint to AccountController
     @GetMapping("/accounts/{userId}")
-    public ResponseEntity<AccountSinUserResponseDto> getAccountUserById(@PathVariable("userId") Long userId) {
+    public ResponseEntity<AccountResponseDto> getAccountUserById(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.getAccountUserById(userId), HttpStatus.OK);
     }
 }

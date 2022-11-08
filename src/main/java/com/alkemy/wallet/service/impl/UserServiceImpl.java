@@ -91,13 +91,13 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseEntity<Set<AccountEntity>> showAllAccountsByUserId(Long userId) {
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId) {
         Optional<UserEntity> opUser = bankDAO.getUserById(userId);
 
         if(opUser.isEmpty()) {
             throw new BankException("The requested user ID does not exist");
         }
 
-        return ResponseEntity.ok(opUser.get().getAccount());
+        return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
     }
 }

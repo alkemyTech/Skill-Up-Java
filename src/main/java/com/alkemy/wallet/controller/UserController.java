@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/accounts/{userId}")
-    public ResponseEntity<Set<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {
         return userService.showAllAccountsByUserId(userId);
     }
 }

@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -109,5 +111,9 @@ public class BankDAO {
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<AccountEntity> getAllAccountByUser(UserEntity user) {
+        return new ArrayList<>(user.getAccount());
     }
 }

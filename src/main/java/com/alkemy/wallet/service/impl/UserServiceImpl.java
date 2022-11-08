@@ -3,7 +3,9 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.UserDto;
+import com.alkemy.wallet.entity.UserEntity;
 import com.alkemy.wallet.mapper.UserMap;
+import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IUserService;
 import java.util.List;
@@ -17,15 +19,21 @@ public class UserServiceImpl implements IUserService {
   private IUserRepository IUserRepository;
 
   @Autowired
-  AccountServiceImpl accountService;
+  private AccountServiceImpl accountService;
 
   @Autowired
   private UserMap userMap;
 
-  @Override
-  public UserDto findById(Long id){
 
-    return userMap.userEntity2Dto(IUserRepository.findByUserId(id));
+  @Override
+  public UserDto findById(Long id) {
+
+    UserEntity entity = IUserRepository.findById(id).orElseThrow(
+        () -> new ParamNotFound("User ID Invalid"));
+    UserDto dto = userMap.userEntity2Dto(entity);
+    return dto;
+
+
   }
 
   @Override
@@ -70,6 +78,6 @@ public class UserServiceImpl implements IUserService {
   }
 
 
-  }
+}
 
 

@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.auth.dto.UserAuthDto;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.FixedTermDepositBasicDto;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -155,6 +157,22 @@ public class AccountServiceImpl implements IAccountService {
     AccountDto result = accountMap.accountEntity2DTO(entitySaved);
 
     return result;
+  }
+
+  @Override
+  public ResponseEntity<AccountDto> updateAccount(Long id,Double transactionLimitUpdated) {
+
+    UserAuthDto userAuth
+    AccountEntity entity=this.findEntityById(id);
+    entity.setTransactionLimit(transactionLimitUpdated);
+    AccountDto accountDto=accountMap.accountEntity2DTO(entity);
+    ResponseEntity<AccountDto> response;
+    if (//si la cuenta existe y es del usuario logeado)
+     response=ResponseEntity.ok().body(accountDto);
+    else
+      response=ResponseEntity.badRequest().body();
+
+    return response;
   }
 
 

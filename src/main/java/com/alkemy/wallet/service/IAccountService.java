@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.entity.AccountEntity;
 
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public interface IAccountService {
 
@@ -19,4 +20,6 @@ public interface IAccountService {
   AccountEntity findEntityById (Long accountId);
 
   AccountDto createAccount(String currency);
+
+  ResponseEntity<AccountDto> updateAccount(Long id,Double transactionLimitUpdated);
 }

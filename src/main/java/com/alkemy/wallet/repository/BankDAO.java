@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,5 +113,17 @@ public class BankDAO {
 
      public List<AccountEntity> showAccountsByUser(Long userId) {
         return accountRepository.getAccountsByUserId(userId);
+    }
+
+    //CHEQUEAR SI EXISTE EL ID DEL USUARIO
+    public List<TransactionEntity> showTransactionsByUserId(Long userId) {
+        List<AccountEntity> accountsByUser = showAccountsByUser(userId);
+        List<TransactionEntity> transactionsByUser = new ArrayList<>();
+
+        for(AccountEntity account : accountsByUser){
+            transactionsByUser.addAll(account.getTransactions());
+        }
+
+        return transactionsByUser;
     }
 }

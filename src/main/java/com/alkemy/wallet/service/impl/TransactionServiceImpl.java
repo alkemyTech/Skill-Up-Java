@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
+import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,11 @@ public class TransactionServiceImpl implements ITransactionService {
         Optional<AccountEntity> sourceAccount = bankDAO.getAccountById(1L);
         saveTransaction(transaction, PAYMENT , sourceAccount.orElseThrow(() -> new BankException("Source account does not exist")));
         return saveTransaction(transaction, INCOME, destinationAccount.orElseThrow(() -> new BankException("Destination account does not exist")));
+    }
+
+    @Override
+    public List<TransactionEntity> showTransactionsByUserId(Long userId) {
+        return bankDAO.showTransactionsByUserId(userId);
     }
 
     private ResponseEntity<Object> saveTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {

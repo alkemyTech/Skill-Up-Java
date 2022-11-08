@@ -10,6 +10,7 @@ import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IUserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,7 +52,6 @@ public class UserServiceImpl implements IUserService {
     }
     return accounts;
   }
-
   @Override
   public List<UserDto> listAllUsers() {
 
@@ -64,18 +64,14 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public boolean deleteById(Long id) throws Exception {
-    try {
-      if (IUserRepository.existsById(id)) {
-        IUserRepository.deleteById(id);
-        return true;
-      } else {
-        throw new Exception();
-      }
-    } catch (Exception e) {
-      throw new Exception(e.getMessage());
-    }
-  }
+  public void delete(Long id) {
+
+    UserEntity entity = this.IUserRepository.findById(id).orElseThrow(
+        ()->new ParamNotFound("invalid Id"));
+    this.IUserRepository.deleteById(id);
+
+}
+
 
 
 }

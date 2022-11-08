@@ -3,18 +3,20 @@ package com.alkemy.wallet.service.impl;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
-import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.TransactionEntity;
 import com.alkemy.wallet.enumeration.TypeTransaction;
 import com.alkemy.wallet.mapper.TransactionMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
+import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,6 +33,9 @@ public class TransactionsServiceImpl implements ITransactionService {
 
   @Autowired
   private IAccountRepository accountRepository;
+
+  @Autowired
+  private IUserRepository userRepository;
 
   @Override
   public List<TransactionDto> getByAccountAndType(Long accountId, String type) {
@@ -61,7 +66,6 @@ public class TransactionsServiceImpl implements ITransactionService {
       return dto;
     }
   }
-
   @Override
   public List<TransactionDto> transactionsById(Long userId) {
 
@@ -74,6 +78,16 @@ public class TransactionsServiceImpl implements ITransactionService {
     }
     return dtoList;
   }
-
-
+  @Override
+  public TransactionDto getDetailById(Long transactionId) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    Long userId = this.userRepository.findByEmail(email).getUserId();
+    Optional<TransactionEntity> transaction = this.ITransactionRepository.findById(transactionId);
+    if (!transaction.isPresent()){
+      throw new ParamNotFound("id transaction invalid");
+    }
+    //TODO: FALTA VALIDAR SI EL USUARIO ES EL DUEÑO DEL ID DE TRANSACCION
+    TransactionDto transactionDto = this.transactionMap.transactionEntity2Dto(transaction.get());
+    return transactionDto;
+  }
 }

@@ -15,5 +15,5 @@ public interface IUserService {
     public ResponseEntity<Object> deleteUser(Long userId);
     public List<UserEntity> showAllUsers();
     public Optional<UserEntity> findUserById(Long userId);
-    public ResponseEntity<Set<AccountEntity>> showAllAccountsByUserId(Long userId);
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId);
 }

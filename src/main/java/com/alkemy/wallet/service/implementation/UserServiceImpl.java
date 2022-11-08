@@ -3,6 +3,7 @@ package com.alkemy.wallet.service.implementation;
 import com.alkemy.wallet.dto.UserDetailDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.dto.UserUpdateDto;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
@@ -125,18 +126,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRequestDto updateUser(Integer id,UserRequestDto userRequestDto, String token) {
+    public UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token) {
         User user=this.getUserById(id);
-        if(user.getEmail()!=jwtUtil.extractClaimUsername(token)){
+        User userToken=loadUserByUsername(jwtUtil.extractClaimUsername(token.substring(7)));
+        if(user.getUserId()!=userToken.getUserId()){
+
             throw new ResourceNotFoundException("you are trying to modify a user that is not you");
         }
-        user.setFirstName(userRequestDto.getName());
-        user.setLastName(userRequestDto.getLastName());
-        user.setPassword(userRequestDto.getPassword());
+        user.setFirstName(userUpdateDto.getFirstName());
+        user.setLastName(userUpdateDto.getLastName());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String passEncoded =passwordEncoder.encode(userUpdateDto.getPassword());
+        user.setPassword(passEncoded);
         Timestamp timestamp=new Timestamp(new Date().getTime());
         user.setUpdateDate(timestamp);
         userRepository.save(user);
-
+        return userMapper.convertToUpdateDto(user);
 
     }
 }

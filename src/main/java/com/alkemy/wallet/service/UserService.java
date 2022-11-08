@@ -3,6 +3,7 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.UserDetailDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.dto.UserUpdateDto;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
 import com.alkemy.wallet.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,5 +18,5 @@ public interface UserService extends UserDetailsService {
     User loadUserByUsername(String email);
     User getUserById(Integer id);
 
-    UserRequestDto updateUser(Integer id,UserRequestDto userRequestDto, String token);
+    UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token);
 }

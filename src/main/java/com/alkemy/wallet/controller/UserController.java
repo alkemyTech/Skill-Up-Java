@@ -3,6 +3,7 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.dto.UserDetailDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.dto.UserUpdateDto;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +31,10 @@ class UserController {
        return ResponseEntity.ok(userservice.getUserDetailById(user.getUserId()));
     }
 
-    @PatchMapping()
+    @PatchMapping("/{id}")
     @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<UserRequestDto> updateUser(@PathVariable("id") Integer id,@RequestBody UserRequestDto userRequestDto, @RequestHeader String token){
-
-        return ResponseEntity.ok(userservice.updateUser(id,userRequestDto,token));
+    public ResponseEntity<UserUpdateDto> updateUser(@PathVariable("id") Integer id, @RequestBody UserUpdateDto userUpdateDto, @RequestHeader("Authorization") String token){
+        return ResponseEntity.ok(userservice.updateUser(id,userUpdateDto,token));
     }
 
 }

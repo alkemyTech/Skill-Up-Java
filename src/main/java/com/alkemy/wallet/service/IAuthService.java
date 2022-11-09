@@ -15,6 +15,8 @@ public interface IAuthService {
 
     User getByEmail(String email);
 
+    User getUserFromToken(String token);
+
     Role getRoleById(Long roleId);
 
     Role getRoleByName(String name);

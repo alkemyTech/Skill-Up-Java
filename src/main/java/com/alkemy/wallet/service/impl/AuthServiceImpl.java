@@ -13,6 +13,7 @@ import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAuthService;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,13 +76,20 @@ public class AuthServiceImpl implements IAuthService {
                 .build();
     }
 
-
     @Override
     public User getByEmail(String email) {
         Optional<User> response = repository.findByEmail(email);
         if (response.isEmpty())
             throw new UsernameNotFoundException(String.format("User with email %s not found in the data base", email));
         return response.get();
+    }
+
+    @Override
+    public User getUserFromToken(String token) {
+        if (!token.contains("Bearer "))
+            throw new MalformedJwtException("Invalid token");
+        String email = jwtUtils.extractUsername(token.substring(7));
+        return getByEmail(email);
     }
 
     @Override

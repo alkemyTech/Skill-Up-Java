@@ -32,10 +32,8 @@ public class TransactionController {
         return transactionService.sendArs(transactionDTO);
     }
 
-    // VER QUE PASA SI EL ID NO EXISTE
-    // ¿LISTA VACIA Y EXCEPTION O EXCEPTION EN BANKDAO?
     @GetMapping("/{userId}")
-    public List<TransactionEntity> showTransactionsByUserId(@PathVariable Long userId){
-        return transactionService.showTransactionsByUserId(userId);
+    public ResponseEntity<List<TransactionEntity>> showAllTransactionsByUserId(@PathVariable Long userId){
+        return transactionService.showAllTransactionsByUserId(userId);
     }
 }

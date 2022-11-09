@@ -36,6 +36,7 @@ public class BankDAO {
     public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
+
     public AccountEntity getAccount(Long userId, String currency) {
         return accountRepository.getAccount(userId, currency);
     }
@@ -115,5 +116,9 @@ public class BankDAO {
 
     public List<AccountEntity> getAllAccountByUser(UserEntity user) {
         return new ArrayList<>(user.getAccount());
+    }
+
+    public List<TransactionEntity> getAllTransactionByAccount(AccountEntity account) {
+        return new ArrayList<>(account.getTransactions());
     }
 }

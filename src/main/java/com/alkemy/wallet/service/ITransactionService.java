@@ -10,5 +10,5 @@ public interface ITransactionService {
      ResponseEntity<Object> saveDeposit(TransactionDTO transaction);
      ResponseEntity<Object> savePayment(TransactionDTO transaction);
      ResponseEntity<Object> sendArs(TransactionDTO transaction);
-     List<TransactionEntity> showTransactionsByUserId(Long userId);
+     ResponseEntity<List<TransactionEntity>> showAllTransactionsByUserId(Long userId);
 }

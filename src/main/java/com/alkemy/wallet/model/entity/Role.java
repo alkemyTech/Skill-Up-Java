@@ -1,6 +1,5 @@
 package com.alkemy.wallet.model.entity;
 
-import com.alkemy.wallet.model.RoleEnum;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,17 +17,18 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roleId;
+    private Long id;
 
-    @Column(nullable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private RoleEnum name;
+    @Column(nullable = false)
+    private String name;
 
     private String description;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "created_at")
     private LocalDateTime creationDate;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "updated_at")
     private LocalDateTime updateDate;
 }

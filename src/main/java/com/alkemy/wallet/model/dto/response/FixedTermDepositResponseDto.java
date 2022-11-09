@@ -1,4 +1,4 @@
-package com.alkemy.wallet.model.dto.request;
+package com.alkemy.wallet.model.dto.response;
 
 import lombok.*;
 
@@ -10,11 +10,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class FixedTermDepositRequestDto {
+public class FixedTermDepositResponseDto {
+    private Long id;
     private Double amount;
     private Long userId;
     private Long accountId;
     private Double interest;
-    private LocalDateTime creationDate;
+    private LocalDateTime createdAt;
     private LocalDateTime closingDate;
 }

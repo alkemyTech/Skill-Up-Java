@@ -2,8 +2,6 @@ package com.alkemy.wallet.model.dto.request;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Data
 @Getter
 @Setter

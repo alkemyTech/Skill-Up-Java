@@ -1,10 +1,9 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +34,5 @@ public class UserServiceImpl implements IUserService {
         if (users.getUsers().isEmpty())
             throw new IllegalArgumentException(String.format("List is empty or null: %s", users.getUsers()));
         return users;
-    }
-
-    //TODO move this method to AccountService
-    public AccountResponseDto getAccountUserById(Long userId) {
-        Optional<User> user = repository.findById(userId);
-        if (user.isEmpty())
-            return null;
-        return null;
     }
 }

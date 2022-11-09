@@ -161,11 +161,13 @@ public class AccountServiceImpl implements IAccountService {
     UserEntity user = this.IUserRepository.findByEmail(email);
     List<AccountEntity> userAccounts = this.IAccountRepository.findAllByUser(user);
     if (!userAccounts.contains(accountEntity))
-      throw new ParamNotFound("The Account doesn´t match with the User");
+      throw new ParamNotFound("The Account doesn't match with the User");
     accountEntity.setTransactionLimit(transactionLimitUpdated);
-    AccountDto accountDto=accountMap.accountEntity2DTO(accountEntity);
+    accountEntity.setUpdateDate(new Date());
+    AccountEntity entitySaved=IAccountRepository.save(accountEntity);
+    AccountDto result=accountMap.accountEntity2DTO(entitySaved);
 
-    return accountDto;
+    return result;
   }
 
 

@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
 import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
@@ -60,21 +61,16 @@ public class TransactionController {
      return new ResponseEntity<>( HttpStatus.CREATED);
 
     }
-/*
-
 
     @PatchMapping("/{transactionId}")
     ResponseEntity<?> transactionModification(@PathVariable Integer transactionId , @RequestBody TransactionUpdateDTO transactionUpdateDTO){
-             if( !transactionService.transactionById(transactionId).isPresent()){
-                 throw new ResourceNotFoundException("transaction which id is  : " + transactionId + " wasn't found");
-        }
+
         transactionService.updateTransaction(transactionUpdateDTO,transactionId);
         return ResponseEntity.ok().build();
-         asdasdasdasdasdasdasdasd
 
     }
 
-*/
+
 
 
 

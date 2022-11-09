@@ -48,16 +48,16 @@ public class UserServiceImpl implements IUserService {
         List<UserDTO>  result  = userMapper.userEntityList2DTOList(users);
         return result;
     }
-    /*@Override
-    public List<UserDTO> getUsersForPage(Integer page) {
-        Pageable pageWithTenElements = PageRequest.of(0, 10);
 
+    @Override
+    public List<UserDTO> getUsersByPage(Integer page) {
+        Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
         Page<User> users =  userRepository.findAll(pageWithTenElements);
+
         List<User> userList = users.getContent();
         List<UserDTO>  result  = userMapper.userEntityList2DTOList(userList);
         return result;
     }
-     */
 
     @Override
     public UserRegisterDTO createUser(UserDTO userDTO) {
@@ -75,7 +75,12 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public boolean deleteUserById(Integer id) {
-       userRepository.deleteById(id);
-       return true;
+        try {
+            userRepository.deleteById(id);
+            return true;
+        }
+        catch (Exception err){
+            return false;
+        }
     }
 }

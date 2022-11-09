@@ -9,19 +9,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("users")
+@RequestMapping("/users")
 public class UserController {
     @Autowired
     private IUserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers(){
-        List<UserDTO> users =  userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
+        List<UserDTO> users;
+        users =  page !=null ? userService.getUsersByPage(page) : userService.getAllUsers();
         return ResponseEntity.ok().body(users);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Integer> deleteUserById(@PathVariable Integer id){
-        userService.deleteUserById(id);
-        return ResponseEntity.ok().build();
+        if(userService.deleteUserById(id)){
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 }

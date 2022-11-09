@@ -12,9 +12,7 @@ import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.ITransactionService;
-
 import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +57,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy) {
-
+        //EN DTO VIENE LA CUENTA ORIGEN DEL PAYMENT / DESTINO DEL DEPOSIT
         Optional<Account> optAcc = accountRepository.findById(transDTO.getAccount_id());
         if (optAcc.isEmpty()){
             throw new TransactionException(ErrorList.OBJECT_NOT_FOUND.getMessage());
@@ -68,6 +66,25 @@ public class TransactionServiceImpl implements ITransactionService {
 
         strategy.make(transDTO.getAmount(), account);
         Transaction newTrans = transactionMapper.transCreateDTO2Entity(transDTO);
+        newTrans.setType(strategy.type());
+        transactionRepository.save(newTrans);
+    }
+    @Override
+    public void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy,String accDestinyEmail) {
+        // EN DTO VIENE LA CUENTA ORIGEN DEL INCOME
+        Optional<Account> optAcc = accountRepository.findById(transDTO.getAccount_id());
+        if (optAcc.isEmpty()){
+            throw new TransactionException(ErrorList.OBJECT_NOT_FOUND.getMessage());
+        }
+        Account accDestiny = optAcc.get();
+        if(!accountRepository.findById(1).get().getCurrency().name()
+                .equals(accountRepository.findById(transDTO.getAccount_id()).get().getCurrency().name())){
+            throw new TransactionException(ErrorList.ACCOUNTS_DIFERENT_CURRENCY.getMessage());
+        };
+
+        strategy.make(transDTO.getAmount(), accountRepository.findById(1).get());//accDestiny
+        Transaction newTrans = transactionMapper.transCreateDTO2Entity(transDTO);
+        newTrans.setAccount_id(1);
         newTrans.setType(strategy.type());
         transactionRepository.save(newTrans);
     }
@@ -81,5 +98,8 @@ public class TransactionServiceImpl implements ITransactionService {
         String newDescription = transDTO.getDescription();
         transactionRepository.updateDescription(id , newDescription);
     }
+    /*
 
+
+    */
 }

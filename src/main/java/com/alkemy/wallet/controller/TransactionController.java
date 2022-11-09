@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -72,8 +73,8 @@ public class TransactionController {
     //end Swagger notation
     @GetMapping(value = "/all/{userId}")
 //    @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<List<TransactionDetailDto>> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId) {
-        return ResponseEntity.ok(transactionService.getTransactions(userId));
+    public ResponseEntity<List<TransactionDetailDto>> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page) {
+        return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page,userId));
     }
 
 
@@ -118,4 +119,10 @@ public class TransactionController {
                                                         @Parameter(description = "authentication token") @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(transactionService.sendUsd(token, transactionTransferRequestDto));
     }
+
+    @GetMapping
+    public ResponseEntity <List <TransactionDetailDto> > paginateTransactionsByUser(@Param("page") Integer page, @Param("userId") Integer userId){
+        return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page, userId));
+    }
+
 }

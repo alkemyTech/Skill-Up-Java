@@ -19,7 +19,12 @@ import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -207,4 +212,22 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResourceNotFoundException("Transaction does not exist");
         }
         }
+
+    @Override
+    public List<TransactionDetailDto> paginateTransactionsByUser(Integer page, Integer userId) {
+
+        Pageable pageable = PageRequest.of(page,10);
+
+        List<Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
+        List<TransactionDetailDto> finalList = new ArrayList<>();
+
+        System.out.println(pagination);
+
+        for(Transaction transaction: pagination)
+        {
+            finalList.add(transactionMapper.convertToTransactionDetailDto(transaction));
+        }
+
+        return finalList;
+    }
 }

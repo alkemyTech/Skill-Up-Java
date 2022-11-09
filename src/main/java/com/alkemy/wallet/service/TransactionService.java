@@ -9,6 +9,7 @@ import com.alkemy.wallet.dto.TransactionDetailDto;
 import com.alkemy.wallet.dto.TransactionPatchDto;
 import com.alkemy.wallet.model.User;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface TransactionService {
@@ -26,5 +27,7 @@ public interface TransactionService {
 
     TransactionDetailDto sendArs(String token, TransactionTransferRequestDto transactionTransferRequestDto);
     TransactionDetailDto sendUsd(String token, TransactionTransferRequestDto transactionTransferRequestDto);
+
+    List <TransactionDetailDto> paginateTransactionsByUser(Integer page, Integer userId);
 
 }

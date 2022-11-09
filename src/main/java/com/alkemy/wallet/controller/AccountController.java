@@ -1,15 +1,12 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
+import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,9 +16,9 @@ import java.util.List;
 public class AccountController {
     private final IAccountService service;
 
-    @GetMapping("/balance/{idUser}")
-    public ResponseEntity<List<AccountBalanceDto>> getAccountBalance(@PathVariable("idUser") Long idUser) {
-        return new ResponseEntity<>(service.getAccountBalance(idUser, 0), HttpStatus.OK);
+    @GetMapping("/balance")
+    public ResponseEntity<List<AccountBalanceResponseDto>> getAccountBalance( @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(service.getAccountBalance(token), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")

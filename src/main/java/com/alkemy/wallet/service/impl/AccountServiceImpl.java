@@ -3,7 +3,7 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.controller.exception.Mistake;
 import com.alkemy.wallet.model.dto.request.AccountRequestDto;
-import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
+import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.*;
 import com.alkemy.wallet.model.mapper.AccountMapper;
@@ -11,6 +11,7 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
+import com.alkemy.wallet.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class AccountServiceImpl implements IAccountService {
     private final ITransactionRepository transactionRepository;
     private final IUserRepository userRepository;
     private final AccountMapper accountMapper;
+    private final IAuthService authService;
 
     @Override
     public AccountResponseDto save(AccountRequestDto request) {
@@ -37,15 +39,16 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<AccountBalanceDto> getAccountBalance(long idUser, int na) {
+    public List<AccountBalanceResponseDto> getAccountBalance(String token) {
+        long idUser = authService.getUserFromToken(token).getId();
         List<Account> account = accountRepository.findAccountByUserId(idUser);
         if (account.isEmpty())
             throw new Mistake("Usuario no disponible");
 
-        List<AccountBalanceDto> accountBalanceList = new ArrayList<>();
+        List<AccountBalanceResponseDto> accountBalanceList = new ArrayList<>();
 
         for (Account value : account) {
-            AccountBalanceDto accountBalanceDTO = null;
+            AccountBalanceResponseDto accountBalanceResponseDTO;
 
             LocalDate dateDB = LocalDate.of
                     (value.getCreationDate().getYear(),
@@ -53,20 +56,20 @@ public class AccountServiceImpl implements IAccountService {
                             value.getCreationDate().getDayOfWeek().getValue());
 
             Period duration = Period.between(dateDB, LocalDate.now());
-            accountBalanceDTO = new AccountBalanceDto();
+            accountBalanceResponseDTO = new AccountBalanceResponseDto();
             if (duration.getMonths() > 0) {
-                accountBalanceDTO.setFixedTermDeposit(value.getBalance() * (282 * duration.getMonths()));
+                accountBalanceResponseDTO.setFixedTermDeposit(value.getBalance() * (282 * duration.getMonths()));
             }
             if (value.getCurrency().equals(AccountCurrencyEnum.ARS)) {
-                accountBalanceDTO.setBalanceUSD(value.getBalance() / 282);
-                accountBalanceDTO.setBalanceARS(value.getBalance());
-                accountBalanceList.add(accountBalanceDTO);
+                accountBalanceResponseDTO.setBalanceUsd(value.getBalance() / 282);
+                accountBalanceResponseDTO.setBalanceArs(value.getBalance());
+                accountBalanceList.add(accountBalanceResponseDTO);
             }
 
             if (value.getCurrency().equals(AccountCurrencyEnum.USD)) {
-                accountBalanceDTO.setBalanceUSD(value.getBalance() * 282);
-                accountBalanceDTO.setBalanceARS(value.getBalance());
-                accountBalanceList.add(accountBalanceDTO);
+                accountBalanceResponseDTO.setBalanceUsd(value.getBalance() * 282);
+                accountBalanceResponseDTO.setBalanceArs(value.getBalance());
+                accountBalanceList.add(accountBalanceResponseDTO);
             }
         }
         return accountBalanceList;
@@ -81,8 +84,9 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public String sendMoney(long idUser, long idTargetUser, double amount, String money, int typeMoney, String type) {
+    public String sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token) {
         String noDisponible = " no esta disponible";
+        long idUser = authService.getUserFromToken(token).getId();
         if (idTargetUser == idUser)
             throw new Mistake("Error no se puede enviar dinero al mismo usuario");
 

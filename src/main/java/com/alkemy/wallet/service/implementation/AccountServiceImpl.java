@@ -120,6 +120,13 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
+    public boolean hasUserAccountById(Integer userId, Integer accountId) {
+        AccountDto accountDto = getAccountById(accountId);
+
+        return accountDto.userId().equals(userId);
+    }
+
     private AccountBalanceDto getAccountBalance(AccountDto account) {
         AccountBalanceDto accountBalance = accountMapper.convertAccountDtoToAccountBalanceDto(account);
         accountBalance.setFixedTermDeposits(fixedTermDepositService.getAccountFixedTermDeposits(account.id()));

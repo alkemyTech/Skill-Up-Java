@@ -18,4 +18,5 @@ public interface AccountService {
     List<AccountDto> getAccountsByUserId(int userId);
     List<AccountBalanceDto> getUserBalance(String username);
     AccountDetailDto updateAccount(AccountPatchDto account, Integer Id, String userToken) throws Exception;
+    boolean hasUserAccountById(Integer userId, Integer accountId);
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
     List<UserDto> getAllUsers();
-    UserDto createUser(UserRequestDto userRequestDto);
+    User createUser(UserRequestDto userRequestDto);
     UserDetailDto getUserDetailById(Integer Id);
     User matchUserToToken(Integer id, String token) throws ForbiddenAccessException;
     User loadUserByUsername(String email);

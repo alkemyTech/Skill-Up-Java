@@ -37,13 +37,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         var users = userRepository.findAll();
-        return users.stream().map( this::entityToDTO ).toList();
+        return users.stream().map(userMapper::convertToDto).toList();
     }
 
     @Override
-    public UserDto createUser( UserRequestDto userRequestDto ) {
+    public User createUser( UserRequestDto userRequestDto ) {
 
-        User user = DtoToEntity( userRequestDto );
+        User user = userMapper.convertRequestDtoToEntity(userRequestDto);
 
         //SET ROLE TO USER
         //THIS ROLE CREATION MUST BE DELETED IN THE FUTURE
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         String passEncoded = passwordEncoder.encode( user.getPassword() );
         user.setPassword( passEncoded );
 
-        return entityToDTO( userRepository.save( user ) );
+        return userRepository.save(user);
     }
 
     @Override
@@ -78,31 +78,6 @@ public class UserServiceImpl implements UserService {
         }else{
             throw new ResourceNotFoundException("User does not exist");
         }
-    }
-
-    public UserDto entityToDTO( User user ) {
-        //Mappers commented until they work automatically
-//        ModelMapper mapper = new ModelMapper();
-//        UserDto userDto = mapper.map(user,UserDto.class);
-
-        final String jwt = jwtUtil.generateToken(user);
-
-        return new UserDto(user.getFirstName(),user.getFirstName(), user.getEmail(),jwt);
-
-    }
-
-    public User DtoToEntity( UserRequestDto userDto ) {
-        //Mappers commented until they work automatically
-//        ModelMapper mapper = new ModelMapper();
-//        User user = mapper.map(userDto,User.class);
-        User user = new User();
-
-        user.setPassword( userDto.password() );
-        user.setEmail( userDto.email() );
-        user.setFirstName( userDto.name() );
-        user.setLastName( userDto.lastName() );
-
-        return user;
     }
 
     @Override

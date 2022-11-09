@@ -5,7 +5,7 @@ import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 
 public interface IUserService {
 
-    UserResponseDto getUserById(Long id);
+    UserResponseDto getUserById(Long id, String token);
 
     UserListResponseDto getUsers();
 }

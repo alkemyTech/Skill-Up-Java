@@ -16,6 +16,7 @@ import com.alkemy.wallet.service.IAuthService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -88,7 +89,10 @@ public class AuthServiceImpl implements IAuthService {
     public User getUserFromToken(String token) {
         if (!token.contains("Bearer "))
             throw new MalformedJwtException("Invalid token");
-        String email = jwtUtils.extractUsername(token.substring(7));
+        String cleanToken = token.substring(7);
+        String email = jwtUtils.extractUsername(cleanToken);
+        if (!jwtUtils.validateToken(cleanToken, userDetailsCustomService.loadUserByUsername(email)))
+            throw new AccessDeniedException("Invalid token, not from logged user. JWT validity cannot be asserted and should not be trusted");
         return getByEmail(email);
     }
 

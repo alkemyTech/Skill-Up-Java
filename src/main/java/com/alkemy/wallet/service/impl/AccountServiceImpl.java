@@ -33,8 +33,13 @@ public class AccountServiceImpl implements IAccountService {
     private final AccountMapper accountMapper;
     private final IAuthService authService;
 
+    //ToDo: Guardar una cuenta y editar el balance
     @Override
     public AccountResponseDto save(AccountRequestDto request) {
+        return null;
+    }
+    @Override
+    public  AccountRequestDto editAccountBalance(long idAccount, Double balance){
         return null;
     }
 

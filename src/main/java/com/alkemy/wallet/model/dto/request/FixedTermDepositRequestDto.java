@@ -15,6 +15,4 @@ public class FixedTermDepositRequestDto {
     private Long userId;
     private Long accountId;
     private Double interest;
-    private LocalDateTime creationDate;
-    private LocalDateTime closingDate;
 }

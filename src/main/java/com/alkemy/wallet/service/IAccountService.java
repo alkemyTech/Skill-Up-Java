@@ -10,6 +10,8 @@ public interface IAccountService {
 
     AccountResponseDto save(AccountRequestDto request);
 
+    AccountRequestDto editAccountBalance(long idAccount, Double balance);
+
     List<AccountBalanceResponseDto> getAccountBalance(String token);
 
     List<AccountResponseDto> getAccountUserById(long idUser);

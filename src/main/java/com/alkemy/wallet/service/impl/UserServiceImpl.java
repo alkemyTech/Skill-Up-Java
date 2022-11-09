@@ -8,6 +8,7 @@ import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.RoleEnum;
 import com.alkemy.wallet.model.TransactionLimitEnum;
+import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.RoleEnum.USER;
@@ -87,5 +85,19 @@ public class UserServiceImpl implements IUserService {
         return bankDAO.getAllUsers();
     }
 
+    @Override
+    public Optional<UserEntity> findUserById(Long userId) {
+        return bankDAO.getUserById(userId);
+    }
 
+    @Override
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId) {
+        Optional<UserEntity> opUser = bankDAO.getUserById(userId);
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user ID does not exist");
+        }
+
+        return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
+    }
 }

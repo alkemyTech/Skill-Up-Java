@@ -5,6 +5,8 @@ import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
+import com.alkemy.wallet.model.entity.TransactionEntity;
+import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +66,23 @@ public class TransactionServiceImpl implements ITransactionService {
         Optional<AccountEntity> sourceAccount = bankDAO.getAccountById(1L);
         saveTransaction(transaction, PAYMENT , sourceAccount.orElseThrow(() -> new BankException("Source account does not exist")));
         return saveTransaction(transaction, INCOME, destinationAccount.orElseThrow(() -> new BankException("Destination account does not exist")));
+    }
+
+    @Override
+    public ResponseEntity<List<TransactionEntity>> showAllTransactionsByUserId(Long userId) {
+        Optional<UserEntity> opUser = bankDAO.getUserById(userId);
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user ID does not exist");
+        }
+
+        List<AccountEntity> accounts = bankDAO.getAllAccountByUser(opUser.get());
+        List<TransactionEntity> transactions = new ArrayList<>();
+        for(AccountEntity account : accounts) {
+            transactions.addAll(bankDAO.getAllTransactionByAccount(account));
+        }
+
+        return ResponseEntity.ok(transactions);
     }
 
     private ResponseEntity<Object> saveTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {

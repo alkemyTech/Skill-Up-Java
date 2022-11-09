@@ -4,11 +4,14 @@ import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -33,6 +36,7 @@ public class BankDAO {
     public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
+
     public AccountEntity getAccount(Long userId, String currency) {
         return accountRepository.getAccount(userId, currency);
     }
@@ -108,5 +112,13 @@ public class BankDAO {
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<AccountEntity> getAllAccountByUser(UserEntity user) {
+        return new ArrayList<>(user.getAccount());
+    }
+
+    public List<TransactionEntity> getAllTransactionByAccount(AccountEntity account) {
+        return new ArrayList<>(account.getTransactions());
     }
 }

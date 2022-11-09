@@ -25,8 +25,8 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     @Autowired
     AccountRepository accountRepository;
 
-    @Autowired
-    UserRepository userRepository;
+//    @Autowired
+//    UserRepository userRepository;
 
     @Autowired
     CalculateInterest calculateInterest;
@@ -71,7 +71,6 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         fixedTermDepositRepository.save(
                 fixedTermDepositMapper.dtoToEntity(responseDTO)
         );
-
         return responseDTO;
     }
 }

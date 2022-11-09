@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto getUserById(Long id, String token) {
         User userFromToken = authService.getUserFromToken(token);
-        Optional<User> dbResponse =  repository.findById(id);
+        Optional<User> dbResponse = repository.findById(id);
         if (dbResponse.isEmpty())
             throw new EntityNotFoundException(String.format("User not found for id %s", id));
         if (!userFromToken.equals(dbResponse.get()))
@@ -41,5 +42,21 @@ public class UserServiceImpl implements IUserService {
         if (users.getUsers().isEmpty())
             throw new IllegalArgumentException(String.format("List is empty or null: %s", users.getUsers()));
         return users;
+    }
+
+    @Override
+    public UserResponseDto deleteUserById(Long userId) {
+        if (repository.existsById(userId)) {
+            User deletedUser = repository.findById(userId).get();
+            deletedUser.setUpdateDate(LocalDateTime.now());
+            repository.save(deletedUser);
+            deletedUser.setSoftDelete(true);
+
+            repository.deleteById(userId);
+            return mapper.entity2Dto(deletedUser);
+        } else {
+            throw new EntityNotFoundException(String.format("User with id: %s was not found or was already deleted", userId.toString()));
+        }
+
     }
 }

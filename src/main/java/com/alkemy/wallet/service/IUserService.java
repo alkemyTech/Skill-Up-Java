@@ -8,4 +8,6 @@ public interface IUserService {
     UserResponseDto getUserById(Long id, String token);
 
     UserListResponseDto getUsers();
+    UserResponseDto deleteUserById(Long id);
+
 }

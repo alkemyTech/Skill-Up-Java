@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted=true WHERE id=?")
-@Where(clause = "deleted=false")
+@Where(clause = "deleted=true")
 public class User {
 
     @Id

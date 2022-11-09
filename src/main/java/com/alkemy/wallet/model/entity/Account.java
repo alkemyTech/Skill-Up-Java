@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 @Table(name = "accounts")
 @SQLDelete(sql = "UPDATE accounts SET deleted=true WHERE id=?")
-@Where(clause = "deleted=false")
+@Where(clause = "deleted=true")
 public class Account {
 
     @Id

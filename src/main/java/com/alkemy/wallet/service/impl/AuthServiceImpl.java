@@ -62,7 +62,7 @@ public class AuthServiceImpl implements IAuthService {
         roles.add(role);
         User entity = mapper.dto2Entity(request, roles);
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-        entity.setSoftDelete(true);
+        entity.setSoftDelete(false);
         return mapper.entity2Dto(repository.save(entity));
     }
 

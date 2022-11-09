@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.EAGER;
 @Builder
 @Table(name = "users")
 @SQLDelete(sql = "UPDATE users SET deleted=true WHERE id=?")
-@Where(clause = "deleted=true")
+@Where(clause = "deleted=false")
 public class User {
 
     @Id

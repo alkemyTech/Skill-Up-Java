@@ -5,8 +5,10 @@ import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,14 +19,19 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
 
     private final IUserRepository repository;
+
     private final UserMapper mapper;
 
+    private final IAuthService authService;
+
     @Override
-    public UserResponseDto getUserById(Long id) {
-        //TODO add logic to check if the ID is the same as the logged user (AuthService)
+    public UserResponseDto getUserById(Long id, String token) {
+        User userFromToken = authService.getUserFromToken(token);
         Optional<User> dbResponse =  repository.findById(id);
         if (dbResponse.isEmpty())
             throw new EntityNotFoundException(String.format("User not found for id %s", id));
+        if (!userFromToken.equals(dbResponse.get()))
+            throw new AccessDeniedException("Access denied");
         return mapper.entity2Dto(dbResponse.get());
     }
 

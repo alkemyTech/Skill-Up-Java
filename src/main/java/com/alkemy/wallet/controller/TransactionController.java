@@ -19,6 +19,7 @@ public class TransactionController {
     private ITransactionService transactionService;
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/deposit")
     public ResponseEntity<Object> deposit(@RequestBody TransactionDTO transactionDTO) {
         return transactionService.saveDeposit(transactionDTO);

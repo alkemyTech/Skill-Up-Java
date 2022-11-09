@@ -14,7 +14,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
@@ -47,7 +54,30 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.logout().logoutUrl("/auth/logout");
+
+        http.csrf().disable();
+
+        http.headers().frameOptions().disable();
+
+        http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+        http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+
+        http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
     }
+    @Override
+    private void clearAuthenticationAttributes(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+
+            session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+
+        }
 
     @Override
     @Bean

@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.auth.dto.UserAuthDto;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.FixedTermDepositBasicDto;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -146,6 +148,24 @@ public class AccountServiceImpl implements IAccountService {
 
     AccountEntity entitySaved = this.IAccountRepository.save(accountEntity);
     AccountDto result = accountMap.accountEntity2DTO(entitySaved);
+
+    return result;
+  }
+
+  @Override
+  public AccountDto updateAccount(Long id,Double transactionLimitUpdated) {
+
+    AccountEntity accountEntity=IAccountRepository.findById(id).orElseThrow(
+        ()-> new ParamNotFound("Account ID Invalid"));
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = this.IUserRepository.findByEmail(email);
+    List<AccountEntity> userAccounts = this.IAccountRepository.findAllByUser(user);
+    if (!userAccounts.contains(accountEntity))
+      throw new ParamNotFound("The Account doesn't match with the User");
+    accountEntity.setTransactionLimit(transactionLimitUpdated);
+    accountEntity.setUpdateDate(new Date());
+    AccountEntity entitySaved=IAccountRepository.save(accountEntity);
+    AccountDto result=accountMap.accountEntity2DTO(entitySaved);
 
     return result;
   }

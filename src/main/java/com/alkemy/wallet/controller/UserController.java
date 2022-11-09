@@ -22,6 +22,8 @@ public class UserController {
 
   @Autowired
   private IUserService userService;
+  @Autowired
+  IUserService iUserService;
 
 
   @GetMapping()
@@ -29,6 +31,12 @@ public class UserController {
   {
     List<UserDto> users= userService.listAllUsers();
     return ResponseEntity.ok().body(users);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDto> search(@PathVariable("id") Long id){
+    UserDto dto = iUserService.findById(id);
+    return ResponseEntity.ok().body(dto);
   }
 
   @DeleteMapping("/{id}")

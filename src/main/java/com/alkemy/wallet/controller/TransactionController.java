@@ -1,27 +1,28 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
-import com.alkemy.wallet.service.impl.AccountServiceImpl;
+import com.alkemy.wallet.service.TransactionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    //TODO use the interface, not the implementation
-    private final AccountServiceImpl accountBalanceService;
+    private final TransactionService service;
 
-    //TODO use the @RequiredArgsConstructor from lombok to dependency injection and remove the constructor
-    public TransactionController(AccountServiceImpl accountBalanceService) {
-        this.accountBalanceService = accountBalanceService;
+    @PostMapping("/sendArs")
+    public ResponseEntity<String> moneySendInPesos(@RequestParam("idTargetUser") Long idTargetUser, @RequestParam("mount") Double mount,
+                                                   @RequestParam("type") String type, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(service.moneySendInPesos(idTargetUser, mount, type, token), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/account/balance/{idUser}")
-    public ResponseEntity<AccountBalanceDto> getAccountBalance(@PathVariable("idUser") Long idUser){
-        return new ResponseEntity<>(accountBalanceService.getAccountBalance(idUser), HttpStatus.OK);
+    @PostMapping("/sendUsd")
+    public ResponseEntity<String> moneySendInUsd(@RequestParam("idTargetUser") Long idTargetUser, @RequestParam("mount") Double mount,
+                                                 @RequestParam("type") String type, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(service.moneySendInUsd(idTargetUser, mount, type, token), HttpStatus.ACCEPTED);
 
     }
 }

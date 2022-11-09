@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model.mapper;
 
 import com.alkemy.wallet.model.dto.request.AccountRequestDto;
-import com.alkemy.wallet.model.dto.response.list.AccountListResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
@@ -9,8 +8,8 @@ import com.alkemy.wallet.model.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class AccountMapper {
@@ -37,9 +36,9 @@ public class AccountMapper {
                 .build();
     }
 
-    public AccountListResponseDto entityList2DtoList(List<Account> entityList) {
-        return AccountListResponseDto.builder()
-                .accounts(entityList.stream().map(this::entity2Dto).collect(Collectors.toList()))
-                .build();
+    public List<AccountResponseDto> entityList2DtoList(List<Account> entityList) {
+        List<AccountResponseDto> list = new ArrayList<>();
+        entityList.forEach(account -> list.add(entity2Dto(account)));
+        return list;
     }
 }

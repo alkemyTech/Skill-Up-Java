@@ -1,8 +1,8 @@
 package com.alkemy.wallet.model.mapper;
 
-import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
-import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
-import com.alkemy.wallet.model.dto.response.list.TransactionListResponseDto;
+import com.alkemy.wallet.model.request.TransactionRequestDto;
+import com.alkemy.wallet.model.response.TransactionResponseDto;
+import com.alkemy.wallet.model.response.list.TransactionListResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
 import com.alkemy.wallet.model.entity.TransactionTypeEnum;

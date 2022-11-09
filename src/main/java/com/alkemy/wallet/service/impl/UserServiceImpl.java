@@ -1,10 +1,10 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.dto.response.AccountResponseDto;
-import com.alkemy.wallet.model.dto.response.UserResponseDto;
+import com.alkemy.wallet.model.response.AccountResponseDto;
+import com.alkemy.wallet.model.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
+import com.alkemy.wallet.model.response.list.UserListResponseDto;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;

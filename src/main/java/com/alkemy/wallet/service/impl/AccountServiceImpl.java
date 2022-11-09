@@ -1,10 +1,10 @@
 package com.alkemy.wallet.service.impl;
 
 
-import com.alkemy.wallet.model.dto.request.AccountRequestDto;
-import com.alkemy.wallet.model.dto.response.AccountResponseDto;
+import com.alkemy.wallet.model.request.AccountRequestDto;
+import com.alkemy.wallet.model.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
-import com.alkemy.wallet.model.dto.response.AccountBalanceDto;
+import com.alkemy.wallet.model.response.AccountBalanceDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;

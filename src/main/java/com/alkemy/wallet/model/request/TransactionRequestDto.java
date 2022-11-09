@@ -1,4 +1,4 @@
-package com.alkemy.wallet.model.dto.request;
+package com.alkemy.wallet.model.request;
 
 import lombok.*;
 

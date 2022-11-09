@@ -1,6 +1,5 @@
 package com.alkemy.wallet.model.entity;
 
-import com.alkemy.wallet.model.AccountCurrencyEnum;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -15,38 +14,40 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @ToString
 @Table(name = "accounts")
-@SQLDelete(sql = "UPDATE accounts SET soft_delete=true WHERE id=?")
-@Where(clause = "soft_delete=false")
+@SQLDelete(sql = "UPDATE accounts SET deleted=true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long accountId;
+    private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AccountCurrencyEnum currency;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "transaction_limit")
     private Double transactionLimit;
 
     @Column(nullable = false)
     private Double balance;
 
-    private Long fkUserId;
-
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "created_at")
     private LocalDateTime creationDate;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "updated_at")
     private LocalDateTime updateDate;
 
-    private Boolean softDelete = Boolean.FALSE;
+    @Column(name = "deleted")
+    private boolean softDelete = Boolean.FALSE;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "fkUserId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)

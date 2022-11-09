@@ -8,6 +8,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
+import static javax.persistence.FetchType.EAGER;
 
 @Entity
 @Getter
@@ -15,44 +18,50 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET soft_delete=true WHERE id=?")
-@Where(clause = "soft_delete=false")
+@SQLDelete(sql = "UPDATE users SET deleted=true WHERE id=?")
+@Where(clause = "deleted=false")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, name = "first_name")
     private String firstName;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, name = "last_name")
     private String lastName;
 
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
-    private Long fkRoleId;
-
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "created_at")
     private LocalDateTime creationDate;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
+    @Column(name = "updated_at")
     private LocalDateTime updateDate;
 
-    private Boolean softDelete = Boolean.FALSE;
+    @Column(name = "deleted")
+    private boolean softDelete = Boolean.FALSE;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Account> accounts;
 
-    @OneToOne
-    @JoinColumn(name = "fkRoleId", insertable = false, updatable = false)
-    private Role role;
+    @ManyToMany(fetch = EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    @ToString.Exclude
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude

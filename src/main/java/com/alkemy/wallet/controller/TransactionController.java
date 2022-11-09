@@ -44,8 +44,8 @@ public class TransactionController {
     })
     //end Swagger notation
     @PostMapping( value = "/deposit" )
-    public ResponseEntity<TransactionDepositDto> createDeposit(@RequestBody TransactionDepositRequestDto transactionDepositRequestDto) {
-        return ResponseEntity.ok(transactionService.createDeposit(transactionDepositRequestDto));
+    public ResponseEntity<TransactionDepositDto> createDeposit(@RequestBody TransactionDepositRequestDto transactionDepositRequestDto, @RequestHeader("Authorization") String userToken) {
+        return ResponseEntity.ok(transactionService.createDeposit(transactionDepositRequestDto, userToken));
     }
 
     //Swagger Notation createPayment
@@ -57,8 +57,8 @@ public class TransactionController {
     })
     //end Swagger notation
     @PostMapping( value = "/payment" )
-    public ResponseEntity<TransactionPaymentDto> createPayment(@RequestBody TransactionPaymentRequestDto transactionPaymentRequestDto) {
-        return ResponseEntity.ok(transactionService.createPayment(transactionPaymentRequestDto));
+    public ResponseEntity<TransactionPaymentDto> createPayment(@RequestBody TransactionPaymentRequestDto transactionPaymentRequestDto, @RequestHeader("Authorization") String userToken) {
+        return ResponseEntity.ok(transactionService.createPayment(transactionPaymentRequestDto, userToken));
     }
 
 

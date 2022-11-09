@@ -1,10 +1,7 @@
 package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.exception.InvalidAccountCurrencyException;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
-import com.alkemy.wallet.exception.InvalidAmountException;
-import com.alkemy.wallet.exception.TransactionLimitExceededException;
+import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
@@ -52,17 +49,25 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto) {
-        Double newTransactionAmount = transactionDepositRequestDto.getAmount();
-        accountService.increaseBalance(transactionDepositRequestDto.getAccountId(), newTransactionAmount);
-
-
+    public TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto, String token) {
         AccountDto accountDto = accountService.getAccountById(transactionDepositRequestDto.getAccountId());
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+
+        if(!accountService.hasUserAccountById(user.getUserId(), accountDto.id())){
+            throw new ForbiddenAccessException("The user with id " + user.getUserId() + " has no permission to access account with id " + accountDto.id());
+        }
+
+        Double newTransactionAmount = transactionDepositRequestDto.getAmount();
+        accountDto = accountService.increaseBalance(accountDto.id(), newTransactionAmount);
+
+
+
         TransactionDepositDto transactionDepositDto = new TransactionDepositDto(
                 newTransactionAmount,
                 transactionDepositRequestDto.getDescription());
 
-        // It would be nice to have an exception handler. We should implement it in a separate branch
+
         if(newTransactionAmount <= 0) {
             throw new InvalidAmountException("The amount must be greater than 0");
         }
@@ -128,7 +133,7 @@ public class TransactionServiceImpl implements TransactionService {
                 accountSenderDto.getAccountId()
         );
 
-        TransactionPaymentDto transactionPayment = createPayment(transactionPaymentRequestDto);
+        TransactionPaymentDto transactionPayment = createPayment(transactionPaymentRequestDto, token);
 
         TransactionIncomeRequestDto transactionIncomeRequestDto = new TransactionIncomeRequestDto(
                 transactionTransferRequestDto.getAmount(),
@@ -140,16 +145,23 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto) {
-        Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
-        accountService.reduceBalance(transactionPaymentRequestDto.getAccountId(), newTransactionAmount);
-
+    public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto, String token) {
         AccountDto accountDto = accountService.getAccountById(transactionPaymentRequestDto.getAccountId());
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+
+        if(!accountService.hasUserAccountById(user.getUserId(), accountDto.id())){
+            throw new ForbiddenAccessException("The user with id " + user.getUserId() + " has no permission to access account with id " + accountDto.id());
+        }
+
+        Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
+        accountDto = accountService.reduceBalance(accountDto.id(), newTransactionAmount);
+
         TransactionPaymentDto transactionPaymentDto = new TransactionPaymentDto(
                 newTransactionAmount,
                 transactionPaymentRequestDto.getDescription());
 
-        // It would be nice to have an exception handler. We should implement it in a separate branch
+
         if (newTransactionAmount <= 0) {
             throw new InvalidAmountException("The amount must be greater than 0");
         }

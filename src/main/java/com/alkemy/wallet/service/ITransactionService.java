@@ -13,4 +13,6 @@ public interface ITransactionService {
 
 
   TransactionDto getDetailById(Long transactionId);
+
+    TransactionDto refreshValues(Long id, TransactionDto transactionDto);
 }

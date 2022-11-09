@@ -4,6 +4,7 @@ import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.entity.TransactionEntity;
+import com.alkemy.wallet.entity.UserEntity;
 import com.alkemy.wallet.enumeration.TypeTransaction;
 import com.alkemy.wallet.mapper.TransactionMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
@@ -14,6 +15,7 @@ import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -89,5 +91,22 @@ public class TransactionsServiceImpl implements ITransactionService {
     //TODO: FALTA VALIDAR SI EL USUARIO ES EL DUEÑO DEL ID DE TRANSACCION
     TransactionDto transactionDto = this.transactionMap.transactionEntity2Dto(transaction.get());
     return transactionDto;
+  }
+
+  @Override
+  public TransactionDto refreshValues(Long id, TransactionDto transactionDto) {
+    Optional<TransactionEntity> transaction = ITransactionRepository.findById(id);
+    if (!transaction.isPresent()){
+      throw new ParamNotFound("Transaction Id not found");
+    }
+
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = userRepository.findByEmail(email);
+    if (!Objects.equals(user.getUserId(), transaction.get().getId())){
+      throw new ParamNotFound("the Transaction id don't below to user");
+    }
+    transactionMap.updateDescription(transaction,transactionDto.getDescription());
+    TransactionEntity transactionUpdated = ITransactionRepository.save(transaction.get());
+    return transactionMap.transactionEntity2Dto(transactionUpdated);
   }
 }

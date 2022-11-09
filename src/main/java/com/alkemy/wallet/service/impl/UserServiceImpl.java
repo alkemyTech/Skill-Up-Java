@@ -20,15 +20,21 @@ public class UserServiceImpl implements IUserService {
   private IUserRepository IUserRepository;
 
   @Autowired
-  AccountServiceImpl accountService;
+  private AccountServiceImpl accountService;
 
   @Autowired
   private UserMap userMap;
 
-  @Override
-  public UserDto findById(Long id){
 
-    return userMap.userEntity2Dto(IUserRepository.findByUserId(id));
+  @Override
+  public UserDto findById(Long id) {
+
+    UserEntity entity = IUserRepository.findById(id).orElseThrow(
+        () -> new ParamNotFound("User ID Invalid"));
+    UserDto dto = userMap.userEntity2Dto(entity);
+    return dto;
+
+
   }
 
   @Override
@@ -64,7 +70,7 @@ public class UserServiceImpl implements IUserService {
         ()->new ParamNotFound("invalid Id"));
     this.IUserRepository.deleteById(id);
 
-  }
+}
 
 
 

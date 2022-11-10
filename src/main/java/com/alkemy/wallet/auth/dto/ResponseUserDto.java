@@ -2,6 +2,7 @@ package com.alkemy.wallet.auth.dto;
 
 import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.RoleEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotNull;

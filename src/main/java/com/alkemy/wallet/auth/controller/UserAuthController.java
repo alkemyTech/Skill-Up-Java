@@ -3,6 +3,7 @@ package com.alkemy.wallet.auth.controller;
 
 import com.alkemy.wallet.auth.dto.AuthenticationRequest;
 import com.alkemy.wallet.auth.dto.AuthenticationResponse;
+import com.alkemy.wallet.auth.dto.ResponseUserDto;
 import com.alkemy.wallet.auth.dto.UserAuthDto;
 import com.alkemy.wallet.auth.service.JwtUtils;
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
@@ -41,9 +42,8 @@ public class UserAuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> signUp(@Valid @RequestBody UserAuthDto user) {
-    this.userDetailsServices.save(user);
-    User
+  public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody ResponseUserDto user) {
+    ResponseUserDto userRegister = this.userDetailsServices.save(user);
     return ResponseEntity.status(HttpStatus.CREATED).body(userRegister);
   }
 

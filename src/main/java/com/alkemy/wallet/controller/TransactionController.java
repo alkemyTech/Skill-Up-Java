@@ -66,7 +66,7 @@ public class TransactionController {
     //Swagger Notation ListTransactions
     @Operation(summary = "List of transactions by id user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = " found transactions",
+            @ApiResponse(responseCode = "200", description = "Found transactions",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TransactionPaymentDto.class)) })
     })
@@ -81,7 +81,7 @@ public class TransactionController {
     //Swagger Notation updateTransaction
     @Operation(summary = "Update transaction")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = " transaction update succesfull",
+            @ApiResponse(responseCode = "200", description = "Transaction update successful",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = TransactionDetailDto.class)) })
     })

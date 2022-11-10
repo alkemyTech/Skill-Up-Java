@@ -32,26 +32,28 @@ public class UserController {
     }
     
     @GetMapping("/current")
-    @Operation(summary = "Get information from currently authenticated user")
+    @Operation(summary = "Get information from the currently authenticated user")
     public ResponseEntity<UserDto> getCurrent() {
         return ResponseEntity.ok().body(userService.getCurrent());
     }
 
     @DeleteMapping("/{userId}")
-    @Operation(summary = "Delete a user by providing an user ID",
+    @Operation(summary = "Delete a user",
                description = "As an ADMIN, can delete any user. As a USER, can only delete themself.")
     public ResponseEntity<String> deleteById(@PathVariable("userId") Long id) {
         return ResponseEntity.ok().body(userService.deleteById(id));
     }
 
-
     @PatchMapping("/{id}")
+    @Operation(summary = "Update a user",
+               description = "Can't modify \"mail\" nor \"role\" fields.")
     public ResponseEntity<UserDto> UpdateUser(@PathVariable("id") Long id,
                                               @RequestBody UserUpdateDto userUpdateDto){
         return ResponseEntity.ok().body(userService.updateUser(id, userUpdateDto));
     }
         
     @GetMapping("/{id}")
+    @Operation(summary = "Get user information from provided ID")
     public ResponseEntity<UserDto> getById(@PathVariable Long id){
         return ResponseEntity.ok().body(userService.getById(id));
     }

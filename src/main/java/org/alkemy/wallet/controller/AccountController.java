@@ -1,6 +1,7 @@
 package org.alkemy.wallet.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.alkemy.wallet.dto.AccountBalanceDto;
 import org.alkemy.wallet.dto.AccountDto;
 import org.alkemy.wallet.model.Currency;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Tag(name = "Accounts", description = "AccountController")
 @RequestMapping("/accounts")
 public class AccountController {
 
@@ -68,8 +70,8 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Update an existing account",
-               description = "The account must be from currently authenticated user. " +
+    @Operation(summary = "Update an account",
+               description = "The account must be from the currently authenticated user. " +
                              "Can only modify \"transaction limit\" field.")
     public ResponseEntity<AccountDto> editById(@PathVariable("id") Long id,
                                            @RequestBody Map<String, Double> requestBody){

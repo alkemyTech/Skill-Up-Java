@@ -2,6 +2,7 @@ package com.alkemy.wallet.entity;
 
 import com.alkemy.wallet.enumeration.Currency;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,7 @@ public class AccountEntity {
 
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "USER_ID", nullable = false)
+
   private UserEntity user;
 
   @OneToMany(mappedBy = "accountId", fetch = FetchType.EAGER,

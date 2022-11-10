@@ -20,6 +20,7 @@ import java.util.Set;
 
 
 @Setter
+@Getter
 @ToString
 @Builder(toBuilder = true)
 @NoArgsConstructor

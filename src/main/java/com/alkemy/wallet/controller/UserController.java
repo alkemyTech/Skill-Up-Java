@@ -55,9 +55,6 @@ public class UserController {
     public ResponseEntity<Object> updateUser(@PathVariable Long id,@RequestBody UserRequestDTO user, AuthenticationRequest aut){
         return  userService.updateUserId(id, user, aut);
     }
-
-
-
     @GetMapping("/accounts/{userId}")
     public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {
         return userService.showAllAccountsByUserId(userId);

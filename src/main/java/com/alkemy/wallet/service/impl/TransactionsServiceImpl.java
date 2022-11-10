@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.entity.TransactionEntity;
 import com.alkemy.wallet.enumeration.TypeTransaction;
+import com.alkemy.wallet.exception.AmountException;
 import com.alkemy.wallet.mapper.TransactionMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -89,5 +90,17 @@ public class TransactionsServiceImpl implements ITransactionService {
     //TODO: FALTA VALIDAR SI EL USUARIO ES EL DUEÑO DEL ID DE TRANSACCION
     TransactionDto transactionDto = this.transactionMap.transactionEntity2Dto(transaction.get());
     return transactionDto;
+  }
+
+  @Override
+  public TransactionDto createNewDeposit(TransactionDto dto) {
+    TransactionEntity deposit = transactionMap.transactionDto2Entity(dto);
+    Double depositAmount = deposit.getAmount();
+
+    if(depositAmount < 0){
+      throw new AmountException("the amount must be greater than zero");
+    }
+    TransactionEntity createdDeposit = ITransactionRepository.save(deposit);
+    return transactionMap.transactionEntity2Dto(createdDeposit);
   }
 }

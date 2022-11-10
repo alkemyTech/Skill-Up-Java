@@ -30,7 +30,7 @@ public class AccountServiceImpl implements IAccountService {
     public AccountDTO createAccount(int userId, String currency) {
         // Encuentro la lista de cuentas con el UserId pasado por parametro
         List<Account> accountsByUserId = this.accountRepository.findByUser(userRepository.findById(userId).get());
-
+        //List<Account> accountsByUserId = this.accountRepository.findByUserID(userId); TODO:Probar metodo para remplazar el de arriba
         // Busco si alguna de las cuentas pertenecientes al UserId ya tiene la currency igual a la pasada por parametro
         boolean repeatedAccount = accountsByUserId.stream()
                 .anyMatch(i -> currency.equals(i.getCurrency().name()));
@@ -58,7 +58,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public List<AccountDTO> getAccountsByUser(Integer id) {
-        List<Account> result = accountRepository.findByUserID(id);
+        List<Account> result = accountRepository.findAccountsByUserID(id);
         return accountMapper.accountEntityList2DTOList(result);
     }
 

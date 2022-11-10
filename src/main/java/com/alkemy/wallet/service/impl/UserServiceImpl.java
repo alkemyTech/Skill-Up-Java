@@ -57,15 +57,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserDTO> getAllUsers() {
         List<User>  users =  userRepository.findAll();
-        List<UserDTO>  result  = userMapper.userEntityList2DTOList(users);
-        return result;
+        return userMapper.userEntityList2DTOList(users);
     }
 
     @Override
     public List<UserDTO> getUsersByPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
         Page<User> users =  userRepository.findAll(pageWithTenElements);
-
         List<User> userList = users.getContent();
         return userMapper.userEntityList2DTOList(userList);
     }

@@ -13,5 +13,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     List<Account> findByUser(User userId);
     Account findByCurrency(String currency);
     @Query(value = "SELECT * FROM accounts t WHERE t.user_id = ?1 ;", nativeQuery = true)
-    List<Account> findByUserID(Integer user_id);
+    List<Account> findAccountsByUserID(Integer user_id);
 }

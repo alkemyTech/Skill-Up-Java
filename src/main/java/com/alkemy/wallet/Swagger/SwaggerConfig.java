@@ -1,5 +1,6 @@
 package com.alkemy.wallet.Swagger;
 
+import com.alkemy.wallet.Swagger.SwaggerConfig.EnableSwagger2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration;
 
 // 自定义swagger3文档信息
+@EnableSwagger2
 @Configuration
 @ConditionalOnProperty(value = "springfox.documentation.enabled", havingValue = "true", matchIfMissing = true)
 public class SwaggerConfig {

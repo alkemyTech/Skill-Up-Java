@@ -69,16 +69,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDTO getUserDatail(Integer id) {
-        Optional<User> entity =userRepository.findById(id);
-        if(entity.isEmpty()){
-            throw new NotFoundException("Invalid ID");
-        }
-        return userMapper.userEntity2DTO(entity.get());
-        //TODO: modify dto to return
-    }
-
-    @Override
     public UserRegisterDTO createUser(UserDTO userDTO) {
         String encodedPassword = this.passwordEncoder.encode(userDTO.getPassword());
         userDTO.setPassword(encodedPassword);

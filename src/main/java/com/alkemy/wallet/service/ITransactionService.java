@@ -13,4 +13,6 @@ public interface ITransactionService {
 
 
   TransactionDto getDetailById(Long transactionId);
+
+  TransactionDto createNewDeposit(TransactionDto dto);
 }

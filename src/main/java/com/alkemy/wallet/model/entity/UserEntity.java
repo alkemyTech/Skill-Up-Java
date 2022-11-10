@@ -112,5 +112,7 @@ public class UserEntity implements UserDetails {
         return false;
     }
 
-
+    public Set<AccountEntity> getAccount() {
+        return account;
+    }
 }

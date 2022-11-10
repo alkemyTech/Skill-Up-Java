@@ -8,6 +8,4 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface IAuthenticationService {
     public ResponseEntity<AuthenticationResponse> login(AuthenticationRequest authenticationRequest);
-
-
 }

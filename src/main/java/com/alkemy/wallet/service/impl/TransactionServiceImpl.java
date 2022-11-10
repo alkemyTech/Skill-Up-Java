@@ -7,7 +7,6 @@ import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
-import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;

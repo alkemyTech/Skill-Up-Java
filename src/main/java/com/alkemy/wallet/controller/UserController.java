@@ -28,7 +28,7 @@ import java.util.Set;
 public class UserController {
 
     private final IUserService userService;
-    private final IUserService userService;
+
     @Autowired
     private AuthenticationServiceImpl authenticationServiceImpl;
 
@@ -56,7 +56,7 @@ public class UserController {
         return  userService.updateUserId(id, user, aut);
     }
 
-}
+
 
     @GetMapping("/accounts/{userId}")
     public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {

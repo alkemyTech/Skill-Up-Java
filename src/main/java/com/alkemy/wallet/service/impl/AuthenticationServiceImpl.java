@@ -26,7 +26,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
-
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
             String username = authenticationRequest.getEmail();
             String password = authenticationRequest.getPassword();
@@ -44,6 +43,4 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         return ResponseEntity.status(HttpStatus.OK).body(new AuthenticationResponse(jwt));
     }
-
-
 }

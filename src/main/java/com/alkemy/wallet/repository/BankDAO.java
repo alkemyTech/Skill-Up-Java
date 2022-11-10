@@ -32,7 +32,7 @@ public class BankDAO {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity getUserByEmail(String email) {
+    public UserEntity findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
 

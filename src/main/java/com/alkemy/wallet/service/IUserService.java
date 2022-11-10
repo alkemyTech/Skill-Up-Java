@@ -12,12 +12,9 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface IUserService {
-    ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request);
-     ResponseEntity<Object> deleteUser(Long userId);
      ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut);
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request);
     public ResponseEntity<Object> deleteUser(Long userId);
     public List<UserEntity> showAllUsers();
-    public Optional<UserEntity> findUserById(Long userId);
     public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId);
 }

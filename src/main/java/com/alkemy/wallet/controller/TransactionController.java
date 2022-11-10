@@ -47,4 +47,9 @@ public class TransactionController {
       return ResponseEntity.ok(transaction);
     }
 
+  @PostMapping("/transactions/deposit")
+  public ResponseEntity<TransactionDto> deposit(@RequestBody TransactionDto dto){
+    TransactionDto newDeposit = transactionService.createNewDeposit(dto);
+    return ResponseEntity.ok().body(dto);
+  }
 }

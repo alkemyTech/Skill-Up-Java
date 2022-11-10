@@ -40,6 +40,15 @@ public class BankDAO {
         return userRepository.findById(id);
     }
 
+    public Optional<TransactionEntity> getTransactionId(Long id){
+        return transactionRepository.findById(id);
+    }
+    public TransactionEntity updateTransaction(Long id, TransactionDTO transactionDTO){
+        Optional<TransactionEntity> transaction = getTransactionId(id);
+        transaction.get().setDescription(transactionDTO.getDescription());
+        return  transactionRepository.saveAndFlush(transaction.get());
+    }
+
     public AccountEntity getAccount(Long userId, String currency) {
         return accountRepository.getAccount(userId, currency);
     }

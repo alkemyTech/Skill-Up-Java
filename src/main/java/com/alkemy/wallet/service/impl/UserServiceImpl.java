@@ -87,11 +87,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Optional<UserEntity> findUserById(Long userId) {
-        return bankDAO.getUserById(userId);
-    }
-
-    @Override
     public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId) {
         Optional<UserEntity> opUser = bankDAO.getUserById(userId);
 

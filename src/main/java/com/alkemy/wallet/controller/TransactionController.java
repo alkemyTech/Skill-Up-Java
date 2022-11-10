@@ -5,6 +5,7 @@ import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.service.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,6 @@ public class TransactionController {
 
     @Autowired
     private ITransactionService transactionService;
-
-
 
     @PostMapping("/deposit")
     public ResponseEntity<Object> deposit(@RequestBody TransactionDTO transactionDTO) {
@@ -32,9 +31,16 @@ public class TransactionController {
     public ResponseEntity<Object> sendArs(@RequestBody TransactionDTO transactionDTO) {
         return transactionService.sendArs(transactionDTO);
     }
-
+    @PostMapping("/sendUsd")
+    public ResponseEntity<Object> sendUsd(@RequestBody TransactionDTO transactionDTO) {
+        return transactionService.sendUsd(transactionDTO);
+    }
     @GetMapping("/{userId}")
     public ResponseEntity<List<TransactionEntity>> showAllTransactionsByUserId(@PathVariable Long userId){
         return transactionService.showAllTransactionsByUserId(userId);
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateTransaction(@PathVariable Long id, @RequestBody TransactionDTO description){
+        return transactionService.updateTransaction(id, description);
     }
 }

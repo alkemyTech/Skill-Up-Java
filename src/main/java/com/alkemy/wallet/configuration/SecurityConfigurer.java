@@ -34,7 +34,8 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-       /* http.csrf().disable()
+       http.cors();
+       http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/auth/**")
                 .permitAll()
@@ -47,17 +48,24 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE,"/users/**")
                 .hasAnyRole("ADMIN")
                 .and()
-                .httpBasic();*/
+                .httpBasic()
+                .and()
+                .logout()
+                .logoutUrl("/auth/logout")
+                ;
+
+                http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
         //cambios
-        http.cors();
+       /* http.cors();
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .antMatchers("/transactions/").hasRole(ADMIN.getName())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

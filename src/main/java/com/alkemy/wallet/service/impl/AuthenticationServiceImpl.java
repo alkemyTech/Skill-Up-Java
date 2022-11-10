@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,4 +44,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         return ResponseEntity.status(HttpStatus.OK).body(new AuthenticationResponse(jwt));
     }
+
+
 }

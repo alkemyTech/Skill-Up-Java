@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 class UserController {
     private final UserService userservice;
 
-    //Swagger Notation getTransactionDetailById
+    //Swagger Notation getAll
     @Operation(summary = "Get all Users")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found Users Info",
@@ -42,7 +41,7 @@ class UserController {
         return userservice.getAllUsers();
     }
 
-    //Swagger Notation getTransactionDetailById
+    //Swagger Notation getUserDetailById
     @Operation(summary = "Get User detail by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the User",
@@ -58,7 +57,7 @@ class UserController {
        return ResponseEntity.ok(userservice.getUserDetailById(user.getUserId()));
     }
 
-    //Swagger Notation getTransactionDetailById
+    //Swagger Notation updateUser
     @Operation(summary = "Update User")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User update successful",
@@ -73,7 +72,7 @@ class UserController {
         return ResponseEntity.ok(userservice.updateUser(id,userUpdateDto,token));
     }
 
-    //Swagger Notation getTransactionDetailById
+    //Swagger Notation deleteById
     @Operation(summary = "Deletes User by Id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User deleted successful",

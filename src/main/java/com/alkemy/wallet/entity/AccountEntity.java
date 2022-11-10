@@ -56,7 +56,7 @@ public class AccountEntity {
   @Column(name = "SOFT_DELETE")
   private boolean softDelete = Boolean.FALSE;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "USER_ID", nullable = false)
   private UserEntity user;
 

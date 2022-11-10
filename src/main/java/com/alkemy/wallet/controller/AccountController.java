@@ -52,7 +52,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getUserBalance(token));
     }
 
-    //Swagger Notation getBalance
+    //Swagger Notation updateAccount
     @Operation(summary = "Updates TransactionLimit of a Account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Update successful",

@@ -48,6 +48,7 @@ public class UserMapper {
             entity2Return.setLastName(dto.getLastName());
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty())
             entity2Return.setPassword(dto.getPassword());
+        entity2Return.setUpdateDate(LocalDateTime.now());
         return entity2Return;
     }
 

@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements ITransactionService {
         if(transaction.getAmount() <= 0){
             return new ResponseEntity<>("amount invalid", HttpStatus.FORBIDDEN);
         }
-        UserEntity user = bankDAO.findUserByEmail(returnUserName());
+        UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         AccountEntity account = bankDAO.getAccount(user.getUserId(), transaction.getCurrency().toUpperCase());
         account.setBalance(account.getBalance() + transaction.getAmount());
         return saveTransaction(transaction, DEPOSIT, account);
@@ -50,7 +50,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> savePayment(TransactionDTO transaction) {
-        UserEntity user = bankDAO.findUserByEmail(returnUserName());
+        UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         AccountEntity account = bankDAO.getAccount(user.getUserId(), transaction.getCurrency().toUpperCase());
         if(!transaction.getCurrency().equalsIgnoreCase(ARS.getCurrency()) && !transaction.getCurrency().equalsIgnoreCase(USD.getCurrency()) ) {
             throw  new BankException("Currency not permitted");
@@ -76,7 +76,7 @@ public class TransactionServiceImpl implements ITransactionService {
         if(transaction.getAmount() <= 0){
             return new ResponseEntity<>("amount invalid", HttpStatus.FORBIDDEN);
         }
-        UserEntity user = bankDAO.findUserByEmail(returnUserName());
+        UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Optional<AccountEntity> destinationAccount = bankDAO.getAccountById(transaction.getDestinationAccountId());
 
         if(destinationAccount.isPresent()){
@@ -98,7 +98,7 @@ public class TransactionServiceImpl implements ITransactionService {
         if(transaction.getAmount() <= 0){
             return new ResponseEntity<>("amount invalid", HttpStatus.FORBIDDEN);
         }
-        UserEntity user = bankDAO.findUserByEmail(returnUserName());
+        UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Optional<AccountEntity> destinationAccount = bankDAO.getAccountById(transaction.getDestinationAccountId());
 
         if(destinationAccount.isPresent()){
@@ -141,8 +141,8 @@ public class TransactionServiceImpl implements ITransactionService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    public String returnUserName() {
+  /*  public String returnUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
-    }
+    }*/
 }

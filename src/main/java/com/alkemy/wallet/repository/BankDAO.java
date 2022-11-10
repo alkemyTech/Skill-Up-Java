@@ -6,6 +6,8 @@ import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -144,5 +146,9 @@ public class BankDAO {
                 userUpdate.get().setLastName(user.getLastName());
                 userUpdate.get().setPassword(user.getPassword());
         return userRepository.saveAndFlush(userUpdate.get());
+    }
+    public String returnUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }

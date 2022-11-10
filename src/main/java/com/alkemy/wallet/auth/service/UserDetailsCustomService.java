@@ -52,7 +52,6 @@ public class UserDetailsCustomService implements UserDetailsService {
     this.accountService.addAccount(entitySaved.getEmail(), new CurrencyDto(Currency.USD));
     this.accountService.addAccount(entitySaved.getEmail(), new CurrencyDto(Currency.ARS));
     ResponseUserDto responseUserDto = userMap.userAuthEntity2Dto(entitySaved);
-    AuthenticationRequest authenticationRequest = new AuthenticationRequest(userDto.getEmail(),userDto.getPassword());
     return responseUserDto;
 
 

@@ -6,6 +6,7 @@ import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.entity.TransactionEntity;
 import com.alkemy.wallet.entity.UserEntity;
 import com.alkemy.wallet.enumeration.TypeTransaction;
+import com.alkemy.wallet.exception.AmountException;
 import com.alkemy.wallet.mapper.TransactionMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -112,5 +113,16 @@ public class TransactionsServiceImpl implements ITransactionService {
     transactionMap.updateDescription(transaction,transactionDto.getDescription());
     TransactionEntity transactionUpdated = ITransactionRepository.save(transaction.get());
     return transactionMap.transactionEntity2Dto(transactionUpdated);
+
+  public TransactionDto createNewDeposit(TransactionDto dto) {
+    TransactionEntity deposit = transactionMap.transactionDto2Entity(dto);
+    Double depositAmount = deposit.getAmount();
+
+    if(depositAmount < 0){
+      throw new AmountException("the amount must be greater than zero");
+    }
+    TransactionEntity createdDeposit = ITransactionRepository.save(deposit);
+    return transactionMap.transactionEntity2Dto(createdDeposit);
+
   }
 }

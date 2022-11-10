@@ -14,5 +14,9 @@ public interface ITransactionService {
 
   TransactionDto getDetailById(Long transactionId);
 
-    TransactionDto refreshValues(Long id, TransactionDto transactionDto);
+
+  TransactionDto refreshValues(Long id, TransactionDto transactionDto);
+
+  TransactionDto createNewDeposit(TransactionDto dto);
+
 }

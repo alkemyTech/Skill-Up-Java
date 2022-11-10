@@ -42,10 +42,18 @@ public class TransactionController {
       return ResponseEntity.ok(transaction);
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<TransactionDto> updateTransaction(@PathVariable Long id, @RequestBody TransactionDto transactionDto) {
       TransactionDto transactionUpdatedDto = transactionService.refreshValues(id, transactionDto);
       return ResponseEntity.ok().body(transactionUpdatedDto);
     }
+
+
+  @PostMapping("/transactions/deposit")
+  public ResponseEntity<TransactionDto> deposit(@RequestBody TransactionDto dto){
+    TransactionDto newDeposit = transactionService.createNewDeposit(dto);
+    return ResponseEntity.ok().body(dto);
+  }
 
 }

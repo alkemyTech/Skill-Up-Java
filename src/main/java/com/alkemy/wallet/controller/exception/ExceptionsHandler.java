@@ -135,7 +135,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         Map<String, String> messages=new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(NO_CONTENT.value()));
-        return new ResponseEntity<>(messages, NO_CONTENT);
+        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 }

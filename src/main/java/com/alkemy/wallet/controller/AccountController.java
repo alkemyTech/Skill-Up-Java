@@ -3,12 +3,15 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.CurrencyDto;
+import com.alkemy.wallet.dto.PageDto;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,6 +64,12 @@ public class AccountController {
   {
       AccountDto dto=iAccountService.updateAccount(id,transactionLimitUpdated);
       return ResponseEntity.ok().body(dto);
+  }
+
+  @GetMapping()
+  public ResponseEntity<PageDto<AccountDto>> getAllAccount (@PageableDefault(size = 10 )Pageable page, HttpServletRequest request){
+    PageDto<AccountDto> pageDto = iAccountService.findAllAccounts(page,request);
+    return ResponseEntity.ok().body(pageDto);
   }
 
 }

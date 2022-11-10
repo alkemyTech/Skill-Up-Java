@@ -6,6 +6,7 @@ import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
+import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.RoleEnum;
 import com.alkemy.wallet.model.TransactionLimitEnum;
 import com.alkemy.wallet.model.entity.UserEntity;
@@ -79,5 +80,14 @@ public class UserServiceImpl implements IUserService {
     public ResponseEntity<Object> deleteUser(Long userId) {
         bankDAO.deleteByUserId(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut) {
+           bankDAO.updateUser(id, userRequestDTO);
+        if(userRequestDTO.getPassword().isEmpty() || userRequestDTO.getFirstName().isEmpty() || userRequestDTO.getLastName().isEmpty()){
+            return new ResponseEntity<>("missing data",HttpStatus.FORBIDDEN);
+        }
+           return new ResponseEntity<>("updated User",HttpStatus.OK);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public interface IAccountService {
-    public ResponseEntity<Object> createAccount(AccountDTO account);
-
+   ResponseEntity<Object> createAccount(AccountDTO account);
+   ResponseEntity<Object> updateAccountId(Long id, AccountDTO account);
 
 }

@@ -1,10 +1,10 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.configuration.JwtUtil;
-import com.alkemy.wallet.configuration.MyUserDetailsService;
+import com.alkemy.wallet.service.IAuthenticationService;
+import com.alkemy.wallet.service.impl.MyUserDetailsService;
 import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
-import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.AuthenticationResponse;
 import com.alkemy.wallet.service.IUserService;
@@ -12,11 +12,7 @@ import com.alkemy.wallet.service.impl.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -24,16 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final IUserService userService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtUtil jwtTokenUtil;
-
     @Autowired
     private AuthenticationServiceImpl authenticationServiceImpl;
 
@@ -52,5 +38,8 @@ public class UserController {
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest)  {
         return authenticationServiceImpl.login(authenticationRequest);
     }
-
+    @PatchMapping("/users/update/{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable Long id,@RequestBody UserRequestDTO user, AuthenticationRequest aut){
+        return  userService.updateUserId(id, user, aut);
+    }
 }

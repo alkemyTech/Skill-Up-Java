@@ -1,4 +1,4 @@
-package com.alkemy.wallet.configuration;
+package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.entity.UserEntity;
@@ -25,8 +25,6 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findUserByEmail(username);
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        return new User(userEntity.getUsername(), userEntity.getPassword(), grantedAuthorities);
-         }
+        return new User(userEntity.getUsername(), userEntity.getPassword(), userEntity.getAuthorities());
+    }
 }

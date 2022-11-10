@@ -2,6 +2,8 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.BalanceResponseDTO;
+import com.alkemy.wallet.dto.UserRequestDTO;
+import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +29,10 @@ public class AccountController {
     @GetMapping("/balance")
     public ResponseEntity<BalanceResponseDTO> getBalance() {
         return balanceService.getBalance();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> updateAccount(@PathVariable Long id, @RequestBody AccountDTO account){
+        return  accountService.updateAccountId(id, account);
     }
 }

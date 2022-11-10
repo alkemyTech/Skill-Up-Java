@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AuthenticationResponse {
-    private final String jwt;
+    private final String token;
 }

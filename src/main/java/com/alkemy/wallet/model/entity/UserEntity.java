@@ -3,15 +3,15 @@ package com.alkemy.wallet.model.entity;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,6 +88,10 @@ public class UserEntity implements UserDetails {
         return email;
     }
 
+    public Long getUserId(){return userId;}
+
+    public RoleEntity getRole(){return role;}
+
     @Override
     public boolean isAccountNonExpired() {
         return false;
@@ -107,4 +111,6 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return false;
     }
+
+
 }

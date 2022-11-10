@@ -1,32 +1,27 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.auth.dto.UserAuthDto;
-import com.alkemy.wallet.dto.AccountBasicDto;
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.CurrencyDto;
-import com.alkemy.wallet.dto.FixedTermDepositBasicDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.UserEntity;
-import com.alkemy.wallet.enumeration.Currency;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.mapper.AccountMap;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
-import com.sun.jdi.Value;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
-import org.aspectj.weaver.ast.Instanceof;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -41,6 +36,7 @@ public class AccountServiceImpl implements IAccountService {
   private IUserRepository IUserRepository;
   @Autowired
   private IAccountService accountService;
+
 
 
   @Override
@@ -181,5 +177,24 @@ public class AccountServiceImpl implements IAccountService {
 
   }
 
+  @Override
+  public PageDto<AccountDto> findAllAccounts(Pageable page, HttpServletRequest request) {
+    PageDto<AccountDto> pageDto = new PageDto<>();
+    Map<String,String> links = new HashMap<>();
+    List<AccountDto> listDtos = new ArrayList<>();
+    Page<AccountEntity> elements = IAccountRepository.findAll(page);
 
-}
+    elements.getContent().forEach(element -> listDtos.add(accountMap.accountEntity2DTO(element)));
+    links.put("next",elements.hasNext()?makePaginationLink(request,page.getPageNumber()+1):"");
+    links.put("previous",elements.hasPrevious()?makePaginationLink(request,page.getPageNumber()-1):"");
+
+    pageDto.setContent(listDtos);
+    pageDto.setLinks(links);
+
+    return pageDto;
+  }
+  private String makePaginationLink(HttpServletRequest request, int page) {
+    return String.format("%s?page=%d", request.getRequestURI(), page);
+  }
+  }
+

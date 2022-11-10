@@ -22,7 +22,7 @@ public class UserDetailsCustomService implements UserDetailsService {
   @Autowired
   private IUserRepository IUserRepository;
   @Autowired
-  IRoleRepository iRoleRepository;
+  private IRoleRepository iRoleRepository;
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -44,8 +44,8 @@ public class UserDetailsCustomService implements UserDetailsService {
     userEntity.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
     userEntity.setFirstName(userDto.getFirstName());
     userEntity.setLastName(userDto.getLastName());
-    userEntity.setRole(iRoleRepository.findByName("USER"));
-    userEntity = this.IUserRepository.save(userEntity);
+   // userEntity.setRole(iRoleRepository.findByName("USER"));
+    IUserRepository.save(userEntity);
 
   }
 

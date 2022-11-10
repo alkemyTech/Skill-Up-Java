@@ -82,13 +82,17 @@ public class TransactionsServiceImpl implements ITransactionService {
   }
   @Override
   public TransactionDto getDetailById(Long transactionId) {
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    Long userId = this.userRepository.findByEmail(email).getUserId();
+
     Optional<TransactionEntity> transaction = this.ITransactionRepository.findById(transactionId);
     if (!transaction.isPresent()){
       throw new ParamNotFound("id transaction invalid");
     }
-    //TODO: FALTA VALIDAR SI EL USUARIO ES EL DUEÑO DEL ID DE TRANSACCION
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = userRepository.findByEmail(email);
+    if (!Objects.equals(user.getUserId(), transaction.get().getUserEntity().getUserId())){
+      throw new ParamNotFound("the Transaction id don't below to user");
+    }
+
     TransactionDto transactionDto = this.transactionMap.transactionEntity2Dto(transaction.get());
     return transactionDto;
   }
@@ -102,7 +106,7 @@ public class TransactionsServiceImpl implements ITransactionService {
 
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     UserEntity user = userRepository.findByEmail(email);
-    if (!Objects.equals(user.getUserId(), transaction.get().getId())){
+    if (!Objects.equals(user.getUserId(), transaction.get().getUserEntity().getUserId())){
       throw new ParamNotFound("the Transaction id don't below to user");
     }
     transactionMap.updateDescription(transaction,transactionDto.getDescription());

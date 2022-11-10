@@ -3,6 +3,7 @@ package com.alkemy.wallet.service.impl;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
+import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.TransactionEntity;
 import com.alkemy.wallet.entity.UserEntity;
 import com.alkemy.wallet.enumeration.TypeTransaction;
@@ -41,10 +42,11 @@ public class TransactionsServiceImpl implements ITransactionService {
   private IUserRepository userRepository;
 
   @Override
-  public List<TransactionDto> getByAccountAndType(Long accountId, String type) {
+  public List<TransactionDto> getByAccountAndType(Long accountId, TypeTransaction type) {
 
-    List<TransactionEntity> entities = ITransactionRepository.findByAccountIdAndType(accountId,
-        TypeTransaction.valueOf(type));
+    AccountEntity account = accountRepository.findByAccountId(accountId);
+
+    List<TransactionEntity> entities = ITransactionRepository.findAllByAccountIdAndType(account, type);
 
     List<TransactionDto> dtoList = transactionMap.transactionEntityList2DtoList(entities);
 
@@ -58,10 +60,13 @@ public class TransactionsServiceImpl implements ITransactionService {
       throw new ParamNotFound("The amount must be greater than 0");
     } else {
       TransactionEntity transactionEntity = transactionMap.transactionDto2Entity(dto);
+      AccountEntity accountEntity = accountRepository.findByAccountId(dto.getAccountId());
+
 
       transactionEntity.setAmount(dto.getAmount());
       transactionEntity.setType(dto.getType());
-      transactionEntity.setAccountId(accountRepository.getById(dto.getAccountDto().getId()));
+      transactionEntity.setAccountId(accountEntity);
+      transactionEntity.setUserEntity(accountEntity.getUser());
       transactionEntity.setDescription(dto.getDescription());
 
       ITransactionRepository.save(transactionEntity);

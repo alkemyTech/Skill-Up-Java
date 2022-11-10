@@ -1,12 +1,14 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -22,9 +24,12 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Integer> deleteUserById(@PathVariable Integer id){
-        if(userService.deleteUserById(id)){
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+       userService.deleteUserById(id);
+       return ResponseEntity.ok().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserDetail(@PathVariable Integer id){
+        UserDTO userDTO = userService.getUserDatail(id);
+        return ResponseEntity.ok().body(userDTO);
     }
 }

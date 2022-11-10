@@ -2,6 +2,7 @@ package com.alkemy.wallet.repository;
 
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("SELECT t FROM Transaction t WHERE t.account = ?1")
     List<Transaction> findAllByAccountId(Account account);
 
-    List<Transaction> findByAccount_User_UserId(Integer userId, Pageable pageable);
+    Page<Transaction> findByAccount_User_UserId(Integer userId, Pageable pageable);
+
+
+
 
 
 }

@@ -226,11 +226,11 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
     @Override
-    public List<TransactionDetailDto> paginateTransactionsByUser(Integer page, Integer userId) {
+    public TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId) {
 
         Pageable pageable = PageRequest.of(page,10);
 
-        List<Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
+        Page <Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
         List<TransactionDetailDto> finalList = new ArrayList<>();
 
         System.out.println(pagination);
@@ -240,6 +240,22 @@ public class TransactionServiceImpl implements TransactionService {
             finalList.add(transactionMapper.convertToTransactionDetailDto(transaction));
         }
 
-        return finalList;
+
+        TransactionPaginatedDto transactionPaginatedDto = new TransactionPaginatedDto();
+        transactionPaginatedDto.setTransactionDetailDtoList(finalList);
+
+        String url = "http://localhost:8080/transactions/all/"+userId+"?page=";
+
+        if(pagination.hasNext())
+            transactionPaginatedDto.setUrlNext(url+(page+1));
+        else
+            transactionPaginatedDto.setUrlNext("");
+
+        if(pagination.hasPrevious())
+            transactionPaginatedDto.setUrlPrevious(url+(page-1));
+        else
+            transactionPaginatedDto.setUrlPrevious("");
+
+        return transactionPaginatedDto;
     }
 }

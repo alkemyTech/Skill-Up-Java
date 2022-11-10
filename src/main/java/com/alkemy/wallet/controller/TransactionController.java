@@ -73,7 +73,7 @@ public class TransactionController {
     //end Swagger notation
     @GetMapping(value = "/all/{userId}")
 //    @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<List<TransactionDetailDto>> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page) {
+    public ResponseEntity<TransactionPaginatedDto> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page) {
         return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page,userId));
     }
 
@@ -121,7 +121,7 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity <List <TransactionDetailDto> > paginateTransactionsByUser(@Param("page") Integer page, @Param("userId") Integer userId){
+    public ResponseEntity <TransactionPaginatedDto> paginateTransactionsByUser(@Param("page") Integer page, @Param("userId") Integer userId){
         return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page, userId));
     }
 

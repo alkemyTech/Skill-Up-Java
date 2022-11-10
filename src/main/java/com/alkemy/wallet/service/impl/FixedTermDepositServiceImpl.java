@@ -2,7 +2,10 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositRequestDTO;
 import com.alkemy.wallet.dto.FixedTermDepositResponseDTO;
+import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.enumeration.CurrencyList;
+import com.alkemy.wallet.enumeration.ErrorList;
+import com.alkemy.wallet.exception.FixedTermException;
 import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.mapper.FixedTermDepositMapper;
 import com.alkemy.wallet.model.Account;
@@ -10,6 +13,10 @@ import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.FixedTermDepositRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.IFixedTermDepositService;
+import com.alkemy.wallet.service.ITransactionService;
+import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.InvestStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
 import com.alkemy.wallet.util.CalculateInterest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +31,8 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    ITransactionService transactionService;
 
 //    @Autowired
 //    UserRepository userRepository;
@@ -38,18 +47,18 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     public FixedTermDepositResponseDTO createFXD(FixedTermDepositRequestDTO requestDTO) {
         // Validate minimum days
         if(requestDTO.getDays() < 30) {
-            throw new TransactionException("The minimum days is 30");
+            throw new FixedTermException(ErrorList.MINIMUN_DAYS_FXD.getMessage());
         }
 
         // retrieve user auth
 
 
         // Retrieve account by currency;
-        Account account = accountRepository.findByCurrencyAndUserId(CurrencyList.valueOf(requestDTO.getCurrency()), 2);
+        Account account = accountRepository.findByCurrencyAndUserId(CurrencyList.valueOf(requestDTO.getCurrency()), 1);
 
         // Validate amount
         if(requestDTO.getAmount() > account.getBalance()) {
-            throw new TransactionException("Balance insufficient");
+            throw new FixedTermException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }
 
         FixedTermDepositResponseDTO responseDTO = new FixedTermDepositResponseDTO();
@@ -67,7 +76,9 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         responseDTO.setCreationDate(dateFXD);
         responseDTO.setClosingDate(closingDateFXD);
         responseDTO.setAccount(account);
-        account.setBalance( account.getBalance() - requestDTO.getAmount() );
+        //Create Transaction
+        transactionService.makeTransaction(new InvestStrategy(),account, requestDTO.getAmount());
+
         fixedTermDepositRepository.save(
                 fixedTermDepositMapper.dtoToEntity(responseDTO)
         );

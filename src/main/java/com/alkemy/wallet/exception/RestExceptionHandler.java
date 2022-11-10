@@ -33,6 +33,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return handleExceptionInternal(ex, errorDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = FixedTermException.class)
+    protected ResponseEntity<Object> handleFixedTermException(RuntimeException ex, WebRequest request) {
+        ApiErrorDTO errorDTO = new ApiErrorDTO(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                Arrays.asList(ErrorList.REQUEST_FAILED.getMessage())
+        );
+        return handleExceptionInternal(ex, errorDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 
 
 }

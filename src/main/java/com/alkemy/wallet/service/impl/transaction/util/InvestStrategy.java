@@ -5,18 +5,16 @@ import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.model.Account;
 
-public class PaymentStrategy implements ITransactionStrategy{
-
+public class InvestStrategy implements ITransactionStrategy{
 
     @Override
     public TypeList type() {
-        return TypeList.PAYMENT;
+        return TypeList.INVEST;
     }
 
     @Override
     public void make(double amount, Account accOrigin) {
         this.modifyAccountTransactionLimit(amount, accOrigin);
-        //TODO:  checkear trans limit
         if(accOrigin.getBalance() < amount){
             throw new TransactionException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }else{

@@ -1,8 +1,6 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.AccountBalanceDto;
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.CurrencyRequestDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.User;
@@ -17,8 +15,8 @@ public interface AccountService {
     Account findAccountByUserIdAndCurrency(User user, Currency currency);
     AccountDto increaseBalance(int accountId, double amount);
     AccountDto getAccountById(Integer accountId);
-
     List<AccountDto> getAccountsByUserId(int userId);
-
     List<AccountBalanceDto> getUserBalance(String username);
+    AccountDetailDto updateAccount(AccountPatchDto account, Integer Id, String userToken) throws Exception;
+    boolean hasUserAccountById(Integer userId, Integer accountId);
 }

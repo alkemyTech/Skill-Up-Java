@@ -1,23 +1,30 @@
 package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
-import com.alkemy.wallet.exception.InvalidAmountException;
-import com.alkemy.wallet.exception.TransactionLimitExceededException;
+import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.TransactionRepository;
+import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
 import com.alkemy.wallet.service.TransactionService;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -31,6 +38,8 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountMapper accountMapper;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @Override
     public TransactionDetailDto getTransactionDetailById(Integer transactionId, String userToken ) throws ResourceNotFoundException {
@@ -45,17 +54,25 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto) {
-        Double newTransactionAmount = transactionDepositRequestDto.getAmount();
-        accountService.increaseBalance(transactionDepositRequestDto.getAccountId(), newTransactionAmount);
-
-
+    public TransactionDepositDto createDeposit(TransactionDepositRequestDto transactionDepositRequestDto, String token) {
         AccountDto accountDto = accountService.getAccountById(transactionDepositRequestDto.getAccountId());
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+
+        if(!accountService.hasUserAccountById(user.getUserId(), accountDto.id())){
+            throw new ForbiddenAccessException("The user with id " + user.getUserId() + " has no permission to access account with id " + accountDto.id());
+        }
+
+        Double newTransactionAmount = transactionDepositRequestDto.getAmount();
+        accountDto = accountService.increaseBalance(accountDto.id(), newTransactionAmount);
+
+
+
         TransactionDepositDto transactionDepositDto = new TransactionDepositDto(
                 newTransactionAmount,
                 transactionDepositRequestDto.getDescription());
 
-        // It would be nice to have an exception handler. We should implement it in a separate branch
+
         if(newTransactionAmount <= 0) {
             throw new InvalidAmountException("The amount must be greater than 0");
         }
@@ -95,17 +112,61 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto) {
-        Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
-        accountService.reduceBalance(transactionPaymentRequestDto.getAccountId(), newTransactionAmount);
+    public TransactionDetailDto sendArs(String token, TransactionTransferRequestDto transactionTransferRequestDto) {
+        return sendCurrency(token, transactionTransferRequestDto, Currency.ARS);
+    }
 
+    @Override
+    public TransactionDetailDto sendUsd(String token, TransactionTransferRequestDto transactionTransferRequestDto) {
+        return sendCurrency(token, transactionTransferRequestDto, Currency.USD);
+    }
 
+    private TransactionDetailDto sendCurrency(String token, TransactionTransferRequestDto transactionTransferRequestDto, Currency currency){
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+        AccountDto accountReceiverDto = accountService.getAccountById(transactionTransferRequestDto.getAccountId());
+
+        if(!accountReceiverDto.currency().equals(currency)){
+            throw new InvalidAccountCurrencyException("The transfer currency must be equal to the currency of the receiver account.");
+        }
+
+        Account accountSenderDto = accountService.findAccountByUserIdAndCurrency(user, currency);
+
+        TransactionPaymentRequestDto transactionPaymentRequestDto = new TransactionPaymentRequestDto(
+                transactionTransferRequestDto.getAmount(),
+                transactionTransferRequestDto.getDescription(),
+                accountSenderDto.getAccountId()
+        );
+
+        TransactionPaymentDto transactionPayment = createPayment(transactionPaymentRequestDto, token);
+
+        TransactionIncomeRequestDto transactionIncomeRequestDto = new TransactionIncomeRequestDto(
+                transactionTransferRequestDto.getAmount(),
+                transactionTransferRequestDto.getDescription(),
+                accountReceiverDto.id()
+        );
+        createIncome(transactionIncomeRequestDto);
+        return transactionMapper.convertPaymentDtoToDetailDto(transactionPayment);
+    }
+
+    @Override
+    public TransactionPaymentDto createPayment(TransactionPaymentRequestDto transactionPaymentRequestDto, String token) {
         AccountDto accountDto = accountService.getAccountById(transactionPaymentRequestDto.getAccountId());
+        String username = jwtUtil.extractClaimUsername(token.substring(7));
+        User user = userService.loadUserByUsername(username);
+
+        if(!accountService.hasUserAccountById(user.getUserId(), accountDto.id())){
+            throw new ForbiddenAccessException("The user with id " + user.getUserId() + " has no permission to access account with id " + accountDto.id());
+        }
+
+        Double newTransactionAmount = transactionPaymentRequestDto.getAmount();
+        accountDto = accountService.reduceBalance(accountDto.id(), newTransactionAmount);
+
         TransactionPaymentDto transactionPaymentDto = new TransactionPaymentDto(
                 newTransactionAmount,
                 transactionPaymentRequestDto.getDescription());
 
-        // It would be nice to have an exception handler. We should implement it in a separate branch
+
         if (newTransactionAmount <= 0) {
             throw new InvalidAmountException("The amount must be greater than 0");
         }
@@ -114,11 +175,25 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionLimitExceededException("The transaction limit of " + accountDto.transactionLimit() + " was exceeded by a payment of " + newTransactionAmount);
         }
 
-
         transactionPaymentDto.setAccount(accountMapper.convertToEntity(accountDto));
         Transaction newTransaction = transactionRepository.save(transactionMapper.convertToEntity(transactionPaymentDto));
 
         return transactionMapper.convertToTransactionPaymentDto(newTransaction);
+    }
+
+    public TransactionDetailDto createIncome(TransactionIncomeRequestDto transactionIncomeRequestDto) {
+        Double newTransactionAmount = transactionIncomeRequestDto.getAmount();
+        accountService.increaseBalance(transactionIncomeRequestDto.getAccountId(), newTransactionAmount);
+
+        AccountDto accountDto = accountService.getAccountById(transactionIncomeRequestDto.getAccountId());
+        TransactionIncomeDto transactionIncomeDto = new TransactionIncomeDto(
+                newTransactionAmount,
+                transactionIncomeRequestDto.getDescription()
+        );
+
+        transactionIncomeDto.setAccount(accountMapper.convertToEntity(accountDto));
+        Transaction newTransaction = transactionMapper.convertToEntity(transactionIncomeDto);
+        return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(newTransaction));
     }
 
     public User getUserByTransactionId(Integer id) {
@@ -139,10 +214,46 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionDetailDto updateTransaction(TransactionPatchDto transactionPatch, Integer Id) throws Exception {
-        var transaction = transactionRepository.findById(Id).orElseThrow(Exception::new);
-        transaction.setDescription(transactionPatch.description());
+    public TransactionDetailDto updateTransaction(TransactionPatchDto transactionPatch, Integer transactionId, String userToken) throws ResourceNotFoundException {
+        var transaction = transactionRepository.findById(transactionId);
+        if(transaction.isPresent()) {
+            userService.matchUserToToken(getUserByTransactionId(transactionId).getUserId(), userToken);
+            transaction.get().setDescription(transactionPatch.description());
+            return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(transaction.get()));
+        }else{
+            throw new ResourceNotFoundException("Transaction does not exist");
+        }
+        }
 
-        return transactionMapper.convertToTransactionDetailDto(transactionRepository.save(transaction));
+    @Override
+    public TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId) {
+
+        Pageable pageable = PageRequest.of(page,10);
+
+        Page <Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
+        List<TransactionDetailDto> finalList = new ArrayList<>();
+
+        for(Transaction transaction: pagination)
+        {
+            finalList.add(transactionMapper.convertToTransactionDetailDto(transaction));
+        }
+
+
+        TransactionPaginatedDto transactionPaginatedDto = new TransactionPaginatedDto();
+        transactionPaginatedDto.setTransactionDetailDtoList(finalList);
+
+        String url = "http://localhost:8080/transactions/all/"+userId+"?page=";
+
+        if(pagination.hasNext())
+            transactionPaginatedDto.setUrlNext(url+(page+1));
+        else
+            transactionPaginatedDto.setUrlNext("");
+
+        if(pagination.hasPrevious())
+            transactionPaginatedDto.setUrlPrevious(url+(page-1));
+        else
+            transactionPaginatedDto.setUrlPrevious("");
+
+        return transactionPaginatedDto;
     }
 }

@@ -8,7 +8,6 @@ import com.alkemy.wallet.dto.CurrencyRequestDto;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.*;
 import com.alkemy.wallet.repository.AccountRepository;
-import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
 import com.alkemy.wallet.service.FixedTermDepositService;
@@ -30,7 +29,6 @@ public class AccountServiceImpl implements AccountService {
     private final JWTUtil jwtUtil;
     private final AccountMapper accountMapper;
     private final UserService userService;
-    private final TransactionRepository transactionRepository;
     private final FixedTermDepositService fixedTermDepositService;
 
     @Override
@@ -110,20 +108,27 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
-    private AccountBalanceDto getAccountBalance(AccountDto account) {
-        AccountBalanceDto accountBalance = new AccountBalanceDto();
-        accountBalance.setId(account.id());
-        accountBalance.setCurrency(account.currency());
-        var transactions = transactionRepository.findAllByAccountId(new Account(account.id()));
-        double balance = account.balance();
-        for (Transaction tr : transactions) {
-            if (tr.getType() == TransactionType.INCOME) {
-                balance += tr.getAmount();
-            } else if (tr.getType() == TransactionType.PAYMENT) {
-                balance -= tr.getAmount();
-            }
+    @Override
+    public AccountDetailDto updateAccount(AccountPatchDto accountPatch, Integer Id, String userToken) throws ResourceNotFoundException {
+        var account = accountRepository.findById(Id);
+        if (account.isPresent()){
+            userService.matchUserToToken(account.get().getUser().getUserId(),userToken);
+            account.get().setTransactionLimit(accountPatch.transactionLimit());
+            return accountMapper.convertToAccountDetailDto(accountRepository.save(account.get()));
+        }else{
+            throw new ResourceNotFoundException("Account does not exist");
         }
-        accountBalance.setBalance(balance);
+    }
+
+    @Override
+    public boolean hasUserAccountById(Integer userId, Integer accountId) {
+        AccountDto accountDto = getAccountById(accountId);
+
+        return accountDto.userId().equals(userId);
+    }
+
+    private AccountBalanceDto getAccountBalance(AccountDto account) {
+        AccountBalanceDto accountBalance = accountMapper.convertAccountDtoToAccountBalanceDto(account);
         accountBalance.setFixedTermDeposits(fixedTermDepositService.getAccountFixedTermDeposits(account.id()));
         return accountBalance;
     }

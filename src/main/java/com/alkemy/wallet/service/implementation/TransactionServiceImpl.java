@@ -233,8 +233,6 @@ public class TransactionServiceImpl implements TransactionService {
         Page <Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
         List<TransactionDetailDto> finalList = new ArrayList<>();
 
-        System.out.println(pagination);
-
         for(Transaction transaction: pagination)
         {
             finalList.add(transactionMapper.convertToTransactionDetailDto(transaction));

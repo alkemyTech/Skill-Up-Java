@@ -34,8 +34,6 @@ public class UserController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO user) {
-    public ResponseEntity<UserResponseDTO> register(@RequestBody UserRequestDTO user) {
-        //final String jwt = jwtTokenUtil.generateToken(user.getEmail());
         return userService.createUser(user);
     }
 

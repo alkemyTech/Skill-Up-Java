@@ -3,6 +3,7 @@ package com.alkemy.wallet.service.impl;
 import com.alkemy.wallet.auth.dto.UserAuthDto;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.CurrencyDto;
 import com.alkemy.wallet.dto.FixedTermDepositBasicDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.entity.AccountEntity;
@@ -14,11 +15,14 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
+import com.sun.jdi.Value;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.aspectj.weaver.ast.Instanceof;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -120,36 +124,19 @@ public class AccountServiceImpl implements IAccountService {
   }
 
   @Override
-  public AccountDto createAccount(String currency) {
-    //encuentro el usuario que esta logeado
-    String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    UserEntity user = this.IUserRepository.findByEmail(email);
-    List<AccountEntity> accounts = this.IAccountRepository.findAllByUser(user);
-    if (user == null) {
-      throw new ParamNotFound("ID invalid");
-    }
-    // comparo si tiene una cuenta con la misma currency
-    accounts.forEach(account -> {
-      if (accounts.stream()
-          .anyMatch(i -> currency.equals(i.getCurrency().name()))) {
-        throw new BadCredentialsException("The account of this currency already exists");
-      }
-    });
+  public AccountEntity createAccount(CurrencyDto currencyDto) {
+
     AccountEntity accountEntity = new AccountEntity();
-    accountEntity.setCurrency(Currency.valueOf(currency));
+    accountEntity.setCurrency(currencyDto.getCurrency());
     accountEntity.setCreationDate(new Date());
     accountEntity.setBalance(0.0);
-    if (currency.equals("ARS")) {
+    if (currencyDto.equals("ARS")) {
       accountEntity.setTransactionLimit(300000.00);
     } else {
       accountEntity.setTransactionLimit(1000.00);
     }
     accountEntity.setUpdateDate(new Date());
-
-    AccountEntity entitySaved = this.IAccountRepository.save(accountEntity);
-    AccountDto result = accountMap.accountEntity2DTO(entitySaved);
-
-    return result;
+    return accountEntity;
   }
 
   @Override
@@ -168,6 +155,30 @@ public class AccountServiceImpl implements IAccountService {
     AccountDto result=accountMap.accountEntity2DTO(entitySaved);
 
     return result;
+  }
+
+  @Override
+  public String addAccount(String email, CurrencyDto currencyDto) {
+    //encuentro el usuario que esta logeado
+    String Useremail = SecurityContextHolder.getContext().getAuthentication().getName();
+    UserEntity user = this.IUserRepository.findByEmail(email);
+    List<AccountEntity> accounts = this.IAccountRepository.findAllByUser(user);
+    if (user == null) {
+      throw new ParamNotFound("ID invalid");
+    }
+    // comparo si tiene una cuenta con la misma currency
+    accounts.forEach(account -> {
+      if (accounts.stream()
+          .anyMatch(i -> currencyDto.equals(i.getCurrency().name()))) {
+        throw new BadCredentialsException("The account of this currency already exists");
+      }
+    });
+    AccountEntity account = createAccount(currencyDto);
+    UserEntity log = this.IUserRepository.findByEmail(email);
+    account.setUser(log);
+    this.IAccountRepository.save(account);
+    return HttpStatus.CREATED.getReasonPhrase();
+
   }
 
 

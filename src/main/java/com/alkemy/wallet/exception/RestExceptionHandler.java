@@ -33,6 +33,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return handleExceptionInternal(ex, errorDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
-
+    @org.springframework.web.bind.annotation.ExceptionHandler(value = NotFoundException.class)
+    protected ResponseEntity<Object> notFoundException(RuntimeException ex, WebRequest request) {
+        ApiErrorDTO errorDTO = new ApiErrorDTO(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                Arrays.asList(ErrorList.OBJECT_NOT_FOUND.getMessage())
+        );
+        return handleExceptionInternal(ex, errorDTO, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
 
 }

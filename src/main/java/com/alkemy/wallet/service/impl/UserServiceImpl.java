@@ -2,8 +2,8 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.dto.UserRegisterDTO;
-import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.enumeration.RoleList;
+import com.alkemy.wallet.exception.NotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
@@ -57,6 +57,16 @@ public class UserServiceImpl implements IUserService {
         List<User> userList = users.getContent();
         List<UserDTO>  result  = userMapper.userEntityList2DTOList(userList);
         return result;
+    }
+
+    @Override
+    public UserDTO getUserDatail(Integer id) {
+        Optional<User> entity =userRepository.findById(id);
+        if(entity.isEmpty()){
+            throw new NotFoundException("Invalid ID");
+        }
+        return userMapper.userEntity2DTO(entity.get());
+        //TODO: modify dto to return
     }
 
     @Override

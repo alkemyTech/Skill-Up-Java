@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.model.entity.User;
@@ -26,14 +27,34 @@ public class UserServiceImpl implements IUserService {
     private final IAuthService authService;
 
     @Override
-    public UserResponseDto getUserById(Long id, String token) {
+    public UserResponseDto update(Long id, String token, UserRequestDto request) {
         User userFromToken = authService.getUserFromToken(token);
+        User dbUser = getEntityById(id);
+        if (!userFromToken.equals(dbUser))
+            throw new AccessDeniedException("Access denied");
+        if ((request.getEmail() != null && !request.getEmail().isEmpty()) || request.getRoleId() != null)
+            throw new IllegalArgumentException("Cannot modify the email and the role");
+        dbUser = mapper.refreshValues(request, dbUser);
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty())
+            dbUser.setPassword(authService.encode(request.getPassword()));
+        return mapper.entity2Dto(repository.save(dbUser));
+    }
+
+    @Override
+    public User getEntityById(Long id) {
         Optional<User> dbResponse = repository.findById(id);
         if (dbResponse.isEmpty())
             throw new EntityNotFoundException(String.format("User not found for id %s", id));
-        if (!userFromToken.equals(dbResponse.get()))
+        return dbResponse.get();
+    }
+
+    @Override
+    public UserResponseDto getUserDetails(Long id, String token) {
+        User userFromToken = authService.getUserFromToken(token);
+        User dbUser = getEntityById(id);
+        if (!userFromToken.equals(dbUser))
             throw new AccessDeniedException("Access denied");
-        return mapper.entity2Dto(dbResponse.get());
+        return mapper.entity2Dto(dbUser);
     }
 
     @Override

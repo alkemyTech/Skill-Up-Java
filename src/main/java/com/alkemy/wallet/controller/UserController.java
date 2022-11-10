@@ -1,5 +1,6 @@
 package com.alkemy.wallet.controller;
 
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.service.IUserService;
@@ -17,7 +18,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserDetails(@RequestHeader("Authorization") String token, @PathVariable Long id) {
-        UserResponseDto response = service.getUserById(id, token);
+        UserResponseDto response = service.getUserDetails(id, token);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserResponseDto> updateById(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody UserRequestDto request) {
+        UserResponseDto response = service.update(id, token, request);
         return ResponseEntity.ok().body(response);
     }
 

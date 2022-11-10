@@ -41,6 +41,16 @@ public class UserMapper {
                 .build();
     }
 
+    public User refreshValues(UserRequestDto dto, User entity2Return) {
+        if (dto.getFirstName() != null && !dto.getFirstName().trim().isEmpty())
+            entity2Return.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null && !dto.getLastName().trim().isEmpty())
+            entity2Return.setLastName(dto.getLastName());
+        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty())
+            entity2Return.setPassword(dto.getPassword());
+        return entity2Return;
+    }
+
     public UserListResponseDto entityList2DtoList(List<User> entityList) {
         return UserListResponseDto.builder()
                 .users(entityList.stream().map(this::entity2Dto).collect(Collectors.toList()))

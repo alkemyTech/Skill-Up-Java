@@ -20,7 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -34,7 +34,7 @@ import java.util.Set;
 @Slf4j
 public class AuthServiceImpl implements IAuthService {
 
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final AuthenticationManager authenticationManager;
 
@@ -50,7 +50,7 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public UserResponseDto register(UserRequestDto request) {
-        if (repository.findByEmail(request.getEmail()).isPresent()) {
+        if (getByEmail(request.getEmail()) != null) {
             log.error("User with email {} not found in the database", request.getEmail());
             throw new EntityExistsException(String.format("The email %s already exist in the data base", request.getEmail()));
         }
@@ -62,7 +62,7 @@ public class AuthServiceImpl implements IAuthService {
         }
         roles.add(role);
         User entity = mapper.dto2Entity(request, roles);
-        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+        entity.setPassword(encode(entity.getPassword()));
         entity.setSoftDelete(false);
         return mapper.entity2Dto(repository.save(entity));
     }
@@ -80,9 +80,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public User getByEmail(String email) {
         Optional<User> response = repository.findByEmail(email);
-        if (response.isEmpty())
-            throw new UsernameNotFoundException(String.format("User with email %s not found in the data base", email));
-        return response.get();
+        return response.orElse(null);
     }
 
     @Override
@@ -111,6 +109,11 @@ public class AuthServiceImpl implements IAuthService {
     public Role getRoleByName(String name) {
         Optional<Role> response = roleRepository.findByName(name);
         return response.orElse(null);
+    }
+
+    @Override
+    public String encode(String toEncode) {
+        return bCryptPasswordEncoder.encode(toEncode);
     }
 
     private String generateToken(String userRequest) {

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,10 +46,14 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
         double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
         fixedTermDeposit.setInterests(interests);
-        //Falta obtener UserId del usuario autenticado
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity entity = bankDAO.findUserByEmail(authentication.getName());
+        Long id = entity.getUserId();
+
         AccountEntity account = bankDAO.getAccount(1L, fixedTermDeposit.getCurrency().toUpperCase());
         Optional<UserEntity> user = bankDAO.getUserById(1L);
-        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user.orElseThrow(() -> new BankException("User does not exist")));
+        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user.orElseThrow(() -> new BankException("User does not exist DAO2")));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

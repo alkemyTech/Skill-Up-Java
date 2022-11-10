@@ -1,6 +1,8 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.UserRequestDTO;
+import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
@@ -32,8 +35,13 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public ResponseEntity<Object> createAccount(AccountDTO account){
         account.setTransactionLimit(TRANSACTION_LIMIT.get(account.getCurrency()));
-        UserEntity userEntity = bankDAO.getUserByEmail("pbmarin2015@gmail.com");
+        UserEntity userEntity = bankDAO.findUserByEmail("pbmarin2015@gmail.com");
         AccountEntity accountEntity = bankDAO.createAccount(account, userEntity);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("successfully created",HttpStatus.CREATED);
+    }
+    @Override
+    public ResponseEntity<Object> updateAccountId(Long id, AccountDTO account) {
+             bankDAO.updateAccount(id, account);
+            return new ResponseEntity<>("updated account",HttpStatus.OK);
     }
 }

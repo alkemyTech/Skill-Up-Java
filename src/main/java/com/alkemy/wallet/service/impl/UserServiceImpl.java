@@ -6,6 +6,7 @@ import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
+import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.RoleEnum;
 import com.alkemy.wallet.model.TransactionLimitEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request) {
 
-        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.getUserByEmail(request.getEmail()));
+        Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findUserByEmail(request.getEmail()));
 
         if (userExists.isPresent()) {
             throw new BankException(MessageErrorEnum.USER_EXISTS.getMessage());
@@ -68,7 +69,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         UserResponseDTO response = UserResponseDTO.builder()
-                .user(userEntity.getEmail())
+                .user(userEntity.getUsername())
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -99,5 +100,14 @@ public class UserServiceImpl implements IUserService {
         }
 
         return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
+    }
+
+    @Override
+    public ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut) {
+           bankDAO.updateUser(id, userRequestDTO);
+        if(userRequestDTO.getPassword().isEmpty() || userRequestDTO.getFirstName().isEmpty() || userRequestDTO.getLastName().isEmpty()){
+            return new ResponseEntity<>("missing data",HttpStatus.FORBIDDEN);
+        }
+           return new ResponseEntity<>("updated User",HttpStatus.OK);
     }
 }

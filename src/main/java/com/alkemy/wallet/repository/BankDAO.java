@@ -1,10 +1,13 @@
 package com.alkemy.wallet.repository;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -88,6 +91,11 @@ public class BankDAO {
                 .build();
         return accountRepository.saveAndFlush(accountEntity);
     }
+    public AccountEntity updateAccount(Long id, AccountDTO account){
+      Optional<AccountEntity> accountEntity = getAccountById(id);
+        accountEntity.get().setTransactionLimit(account.getTransactionLimit());
+        return  accountRepository.saveAndFlush(accountEntity.get());
+    }
 
     public TransactionEntity createTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {
         TransactionEntity transactionEntity = TransactionEntity.builder()
@@ -120,5 +128,12 @@ public class BankDAO {
 
     public List<TransactionEntity> getAllTransactionByAccount(AccountEntity account) {
         return new ArrayList<>(account.getTransactions());
+    }
+    public UserEntity updateUser(Long id,UserRequestDTO user){
+        Optional<UserEntity> userUpdate = getUserById(id);
+                userUpdate.get().setFirstName(user.getFirstName());
+                userUpdate.get().setLastName(user.getLastName());
+                userUpdate.get().setPassword(user.getPassword());
+        return userRepository.saveAndFlush(userUpdate.get());
     }
 }

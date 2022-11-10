@@ -24,10 +24,8 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Integer> deleteUserById(@PathVariable Integer id){
-        if(userService.deleteUserById(id)){
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+       userService.deleteUserById(id);
+       return ResponseEntity.ok().build();
     }
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserDetail(@PathVariable Integer id){

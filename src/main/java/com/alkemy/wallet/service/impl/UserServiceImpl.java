@@ -59,4 +59,14 @@ public class UserServiceImpl implements IUserService {
         }
 
     }
+    //Todo: Implementar metodo save y findById
+    @Override
+    public User save(User accountUser) {
+        return null;
+    }
+
+    @Override
+    public Optional<User> findById(long id) {
+        return Optional.empty();
+    }
 }

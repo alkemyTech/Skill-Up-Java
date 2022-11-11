@@ -1,6 +1,10 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.dto.validator.IValidatorDeposit;
+import com.alkemy.wallet.dto.validator.IValidatorRole;
+import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
+import com.alkemy.wallet.dto.validator.IValidatorUser;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.AuthenticationRequest;
@@ -35,9 +39,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request) {
-
-        DTOValidator.validate(request, IDTOValidate.class);
-
+        DTOValidator.validate(request, IValidatorUser.class, IValidatorRole.class);
         Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findUserByEmail(request.getEmail()));
 
         if (userExists.isPresent()) {
@@ -93,16 +95,30 @@ public class UserServiceImpl implements IUserService {
         if(opUser.isEmpty()) {
             throw new BankException("The requested user ID does not exist");
         }
-
         return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
     }
 
     @Override
     public ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut) {
+           DTOValidator.validate(userRequestDTO, IValidatorUser.class);
            bankDAO.updateUser(id, userRequestDTO);
         if(userRequestDTO.getPassword().isEmpty() || userRequestDTO.getFirstName().isEmpty() || userRequestDTO.getLastName().isEmpty()){
             return new ResponseEntity<>("missing data",HttpStatus.FORBIDDEN);
         }
            return new ResponseEntity<>("updated User",HttpStatus.OK);
     }
+    @Override
+    public UserDetailDTO getUserDetail(Long id){
+        Optional<UserEntity> opUser = bankDAO.getUserById(id);
+        UserEntity user1 = bankDAO.findUserByEmail(opUser.get().getEmail());
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user ID does not exist");
+        }
+        UserDetailDTO userDetailDTO = new UserDetailDTO(user1);
+        return userDetailDTO ;
+    }
+
+
+
 }

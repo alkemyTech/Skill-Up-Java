@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.configuration.JwtUtil;
+import com.alkemy.wallet.dto.UserDetailDTO;
 import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.impl.MyUserDetailsService;
 import com.alkemy.wallet.dto.UserRequestDTO;
@@ -41,7 +42,10 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         return userService.deleteUser(id);
     }
-
+    @GetMapping("/users/{id}")
+    public UserDetailDTO getUserDetail(@PathVariable Long id) {
+        return userService.getUserDetail(id);
+    }
     @GetMapping("/users")
     public List<UserEntity> showAllUsers() {
         return userService.showAllUsers();

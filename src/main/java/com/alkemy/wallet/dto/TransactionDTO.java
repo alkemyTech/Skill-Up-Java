@@ -1,10 +1,11 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.TypeEnum;
+import com.alkemy.wallet.dto.validator.*;
 import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -16,19 +17,15 @@ public class TransactionDTO {
 
     private Long destinationAccountId;
 
-    @NotNull(message = "Transaction type")
-    @NotBlank(message = "Transaction type")
+
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String type;
-
-    @NotNull(message = "Transaction description")
-    @NotBlank(message = "Transaction description")
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String description;
-
     @Min(0)
-    @NotNull(message = "Transaction amount")
+    @NotNull(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private Double amount;
-
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String currency;
-
     private LocalDateTime transactionDate;
 }

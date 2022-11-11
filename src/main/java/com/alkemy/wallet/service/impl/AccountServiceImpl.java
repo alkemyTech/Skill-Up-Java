@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.Account;
@@ -9,6 +10,9 @@ import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -60,6 +64,14 @@ public class AccountServiceImpl implements IAccountService {
     public List<AccountDTO> getAccountsByUser(Integer id) {
         List<Account> result = accountRepository.findAccountsByUserID(id);
         return accountMapper.accountEntityList2DTOList(result);
+    }
+
+    @Override
+    public List<AccountDTO> getAccountsByPage(Integer page) {
+            Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
+            Page<Account> accounts =  accountRepository.findAll(pageWithTenElements);
+            List<Account> accountsList = accounts.getContent();
+            return accountMapper.accountEntityList2DTOList(accountsList);
     }
 
 }

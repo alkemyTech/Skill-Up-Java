@@ -30,4 +30,10 @@ public class AccountController {
         List<AccountDTO> accounts = accountService.getAccountsByUser(id);
         return ResponseEntity.ok().body(accounts);
     }
+    @GetMapping("/accounts")
+    public ResponseEntity<List<AccountDTO>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
+        List<AccountDTO> users;
+        users =  page !=null ? accountService.getUsersByPage(page) : accountService.getAllUsers();
+        return ResponseEntity.ok().body(users);
+    }
 }

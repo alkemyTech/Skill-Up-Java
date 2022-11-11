@@ -18,4 +18,5 @@ public class FixedTermDepositDTO {
     private Double interests;
     @NotBlank(groups = IValidatorFixedTermDep.class)
     private String currency;
+    private double totalAmount;
 }

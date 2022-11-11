@@ -35,7 +35,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     private static final int daysClosingDate = 30;
 
-    private static final double interestRate = 0.05;
+    private static final double interestRate = 0.005;
 
     @Autowired
     BankDAO bankDAO;
@@ -54,14 +54,17 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         }
         double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
         fixedTermDeposit.setInterests(interests);
+        double totalAmount = fixedTermDeposit.getAmount() + interests;
+        fixedTermDeposit.setTotalAmount(totalAmount);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Long id = user.getUserId();
 
         AccountEntity account = bankDAO.getAccount(id, fixedTermDeposit.getCurrency().toUpperCase());
+        account.setBalance(account.getBalance() - fixedTermDeposit.getAmount());
         bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>("total amount: $"+ totalAmount, HttpStatus.CREATED);
     }
     @Override
     public FixedTermDepositSimulateDTO simulateDeposit(FixedTermDepositDTO fixedTermDeposit){
@@ -78,12 +81,14 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
             throw new BankException("Fixed term deposit closing date must be greater than 30 days");
         }
         double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
+        double totalAmount = fixedTermDeposit.getAmount() + interests;
+
         fixedTermDepositSimulateDto.setAmount(fixedTermDeposit.getAmount());
         fixedTermDepositSimulateDto.setCurrency(fixedTermDeposit.getCurrency());
         fixedTermDepositSimulateDto.setClosingDate(fixedTermDeposit.getClosingDate());
         fixedTermDepositSimulateDto.setInterests(interests);
-
-
+        fixedTermDepositSimulateDto.setTotalAmount(totalAmount);
+        System.out.println("totalAmount = " + totalAmount);
         return fixedTermDepositSimulateDto;
         }
 }

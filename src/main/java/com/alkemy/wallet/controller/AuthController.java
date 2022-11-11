@@ -27,17 +27,18 @@ public class AuthController {
         return ResponseEntity.ok().body(userResponse);
     }
     
-	/*
-	 * @PostMapping("/login") 
-	 * public String login(@RequestParam String email, @RequestParam String password) { 
-	 * System.out.println(email);
-	 * System.out.println(password); 
-	 * return userService.login(email, password); }
-	 */
+	
+	  @PostMapping("/login") 
+	  public String login(@RequestParam String email, @RequestParam String password) { 
+	  System.out.println(email);
+	  System.out.println(password); 
+	  return userService.login(email, password); 
+	  }
+	 
     
     @PostMapping("/signup") //permite registrar usuario y que entregue un token de vuelta
  	@ResponseStatus(code = HttpStatus.CREATED)
- 	public String signup(@RequestBody User User) {
+ 	public User signup(@RequestBody User User) {
  		System.out.println(User.toString());
  		return userService.signUp(User);
  	}

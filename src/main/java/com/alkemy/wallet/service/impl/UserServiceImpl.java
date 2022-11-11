@@ -19,11 +19,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -32,7 +34,7 @@ import java.util.Optional;
 
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
@@ -103,14 +105,16 @@ public class UserServiceImpl implements IUserService {
     }
 
 	@Override
+	@Transactional(readOnly = true)
 	public String login(String email, String password) {
 		try {
 			// Validar datos de inicio de sesion
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+			
 			System.out.println(email);
 			System.out.println(password);
 			// Retorna token si los datos son correctos
-			return jwtTokenProvider.createToken(email, userRepository.findByEmail(email).getRole());
+			return jwtTokenProvider.createToken(userRepository.findByEmail(email).getEmail(), userRepository.findByEmail(email).getRole() );
 		} catch (AuthenticationException e) {
 			// Excepcion en caso de datos erroneos
 			throw new RestServiceException("username o password invalido", HttpStatus.UNPROCESSABLE_ENTITY);
@@ -118,7 +122,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public String signUp(User user) {
+	public User signUp(User user) {
 		// Valida si el nombre de usuario no exista
 				if (!userRepository.existsByEmail(user.getEmail())) {
 				// Se encripta contraseña
@@ -132,7 +136,8 @@ public class UserServiceImpl implements IUserService {
 		        user.setRole(userRole);
 				userRepository.save(user);
 							// Retrona token valido para este usuario
-				return jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+				jwtTokenProvider.createToken(user.getEmail(), user.getRole());
+				return user;
 							
 				} else {
 							// En caso de que nombre de usuario exista se retonra excepcion

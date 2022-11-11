@@ -26,10 +26,10 @@ public class WebSecurityConfig {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests()
-		.antMatchers("/**").permitAll()
+		.antMatchers("/users").permitAll()
 		.antMatchers("/auth/login").permitAll()
 		.antMatchers("/auth/signup").permitAll()
-		.antMatchers("/auth/**").permitAll()
+		//.antMatchers("/auth/**").permitAll()
 		.antMatchers("/auth/register").permitAll()
 		.anyRequest().authenticated();
 		

@@ -7,6 +7,7 @@ import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @ToString
 @AllArgsConstructor
@@ -16,6 +17,6 @@ import javax.validation.constraints.NotBlank;
 public class AccountDTO {
     @NotBlank(groups= {IValidatorAccount.class})
     private String currency;
-    @NotBlank(groups= {IValidatorAccount.class})
+    @NotNull(groups= {IValidatorAccount.class})
     private Double transactionLimit;
 }

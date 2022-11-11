@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class TransactionServiceImpl implements ITransactionService {
     private final BankDAO bankDAO;
 
     @Override
-    public ResponseEntity<Object> saveDeposit(TransactionDTO transaction) {
+    public ResponseEntity<Object> saveDeposit(@RequestBody TransactionDTO transaction) {
         DTOValidator.validate(transaction, IValidatorDeposit.class);
         isTransactionAllowed(transaction, DEPOSIT, "Incorrect operation, only can be a deposit");
 

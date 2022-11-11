@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class FixedTermDepositDTO {
+public class FixedTermDepositSimulateDTO {
     @NotNull(groups = IValidatorFixedTermDep.class)
     private Double amount;
     @NotNull(groups = IValidatorFixedTermDep.class)

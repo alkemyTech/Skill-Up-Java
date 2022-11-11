@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositDTO;
+import com.alkemy.wallet.dto.FixedTermDepositSimulateDTO;
 import com.alkemy.wallet.dto.validator.IValidatorFixedTermDep;
 import com.alkemy.wallet.dto.validator.IValidatorRole;
 import com.alkemy.wallet.dto.validator.IValidatorUser;
@@ -18,9 +19,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.spec.PSource;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
@@ -48,17 +52,39 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         if(days < daysClosingDate) {
             throw new BankException("Fixed term deposit closing date must be greater than 30 days");
         }
-
         double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
         fixedTermDeposit.setInterests(interests);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity entity = bankDAO.findUserByEmail(authentication.getName());
-        Long id = entity.getUserId();
+        UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
+        Long id = user.getUserId();
 
-        AccountEntity account = bankDAO.getAccount(1L, fixedTermDeposit.getCurrency().toUpperCase());
-        Optional<UserEntity> user = bankDAO.getUserById(1L);
-        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user.orElseThrow(() -> new BankException("User does not exist DAO2")));
+        AccountEntity account = bankDAO.getAccount(id, fixedTermDeposit.getCurrency().toUpperCase());
+        bankDAO.createFixedTermDeposit(fixedTermDeposit, account, user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    @Override
+    public FixedTermDepositSimulateDTO simulateDeposit(FixedTermDepositDTO fixedTermDeposit){
+        DTOValidator.validate(fixedTermDeposit, IValidatorFixedTermDep.class);
+        FixedTermDepositSimulateDTO fixedTermDepositSimulateDto= new FixedTermDepositSimulateDTO();
+
+        if(!fixedTermDeposit.getCurrency().equalsIgnoreCase(ARS.getCurrency()) && !fixedTermDeposit.getCurrency().equalsIgnoreCase(USD.getCurrency()) ) {
+            throw  new BankException("Currency not permitted");
+        }
+        LocalDate date = LocalDate.now();
+        long days = date.until(fixedTermDeposit.getClosingDate(), ChronoUnit.DAYS);
+
+        if(days < daysClosingDate) {
+            throw new BankException("Fixed term deposit closing date must be greater than 30 days");
+        }
+        double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
+        fixedTermDepositSimulateDto.setAmount(fixedTermDeposit.getAmount());
+        fixedTermDepositSimulateDto.setCurrency(fixedTermDeposit.getCurrency());
+        fixedTermDepositSimulateDto.setClosingDate(fixedTermDeposit.getClosingDate());
+        fixedTermDepositSimulateDto.setInterests(interests);
+
+
+        return fixedTermDepositSimulateDto;
+        }
 }
+

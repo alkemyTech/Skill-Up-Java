@@ -6,6 +6,7 @@ import com.alkemy.wallet.model.RoleEnum;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @ToString
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class RoleDTO {
     private Long id;
-    @NotBlank(groups = IValidatorRole.class)
+    @NotNull(groups = IValidatorRole.class)
     private RoleEnum name;
     @NotBlank(groups = IValidatorRole.class)
     private String description;

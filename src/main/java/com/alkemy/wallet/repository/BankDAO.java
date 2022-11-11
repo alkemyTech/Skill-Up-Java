@@ -1,14 +1,12 @@
 package com.alkemy.wallet.repository;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.model.TypeEnum;
-import com.alkemy.wallet.model.entity.*;
+import com.alkemy.wallet.model.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,50 +14,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Component
 public class BankDAO {
-
     private final UserRepository userRepository;
-
     private final AccountRepository accountRepository;
-
     private final RoleRepository roleRepository;
-
     private final TransactionRepository transactionRepository;
-
     private final FixedTermDepositRepository fixedTermDepositRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserEntity findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
-
     public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public Optional<TransactionEntity> getTransactionId(Long id){
-        return transactionRepository.findById(id);
-    }
-    public TransactionEntity updateTransaction(Long id, TransactionDTO transactionDTO){
-        Optional<TransactionEntity> transaction = getTransactionId(id);
-        transaction.get().setDescription(transactionDTO.getDescription());
-        return  transactionRepository.saveAndFlush(transaction.get());
-    }
-
-    public AccountEntity getAccount(Long userId, String currency) {
-        return accountRepository.getAccount(userId, currency);
-    }
-
-    public Optional<AccountEntity> getAccountById(Long accountId) {
-        return accountRepository.findById(accountId);
-    }
-
     public void deleteByUserId(Long userId) {
         userRepository.deleteById(userId);
-    }
-
-    public List<IBalance> getBalance() {
-        return transactionRepository.getBalance("1");
     }
 
     public RoleEntity getRole(RoleDTO role) {
@@ -88,6 +58,52 @@ public class BankDAO {
         return userRepository.saveAndFlush(userEntity);
     }
 
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public UserEntity updateUser(Long id,UserRequestDTO user){
+        Optional<UserEntity> userUpdate = getUserById(id);
+        userUpdate.get().setFirstName(user.getFirstName());
+        userUpdate.get().setLastName(user.getLastName());
+        userUpdate.get().setPassword(user.getPassword());
+        return userRepository.saveAndFlush(userUpdate.get());
+    }
+
+    public List<AccountEntity> getAllAccountByUser(UserEntity user) {
+        return new ArrayList<>(user.getAccount());
+    }
+
+    public Optional<TransactionEntity> getTransactionId(Long id){
+        return transactionRepository.findById(id);
+    }
+    public TransactionEntity updateTransaction(Long id, TransactionDTO transactionDTO){
+        Optional<TransactionEntity> transaction = getTransactionId(id);
+        transaction.get().setDescription(transactionDTO.getDescription());
+        return  transactionRepository.saveAndFlush(transaction.get());
+    }
+
+    public TransactionEntity createTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {
+        TransactionEntity transactionEntity = TransactionEntity.builder()
+                .type(type)
+                .amount(transaction.getAmount())
+                .description(transaction.getDescription())
+                .account(accountEntity)
+                .build();
+        return transactionRepository.saveAndFlush(transactionEntity);
+    }
+
+    public List<TransactionEntity> getAllTransactionByAccount(AccountEntity account) {
+        return new ArrayList<>(account.getTransactions());
+    }
+
+    public AccountEntity getAccount(Long userId, String currency) {
+        return accountRepository.getAccount(userId, currency);
+    }
+
+    public Optional<AccountEntity> getAccountById(Long accountId) {
+        return accountRepository.findById(accountId);
+    }
     public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity) {
         AccountEntity accountEntity = AccountEntity.builder()
                 .currency(accountDTO.getCurrency())
@@ -103,16 +119,6 @@ public class BankDAO {
         return  accountRepository.saveAndFlush(accountEntity.get());
     }
 
-    public TransactionEntity createTransaction(TransactionDTO transaction, TypeEnum type, AccountEntity accountEntity) {
-        TransactionEntity transactionEntity = TransactionEntity.builder()
-                .type(type)
-                .amount(transaction.getAmount())
-                .description(transaction.getDescription())
-                .account(accountEntity)
-                .build();
-        return transactionRepository.saveAndFlush(transactionEntity);
-    }
-
     public FixedTermDepositEntity createFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit, AccountEntity accountEntity, UserEntity userEntity) {
         FixedTermDepositEntity fixedTermDepositEntity = FixedTermDepositEntity.builder()
                 .amount(fixedTermDeposit.getAmount())
@@ -124,34 +130,8 @@ public class BankDAO {
         return fixedTermDepositRepository.saveAndFlush(fixedTermDepositEntity);
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public List<AccountEntity> getAllAccountByUser(UserEntity user) {
-        return new ArrayList<>(user.getAccount());
-    }
-
-    public List<TransactionEntity> getAllTransactionByAccount(AccountEntity account) {
-        return new ArrayList<>(account.getTransactions());
-    }
-    public UserEntity updateUser(Long id,UserRequestDTO user){
-        Optional<UserEntity> userUpdate = getUserById(id);
-                userUpdate.get().setFirstName(user.getFirstName());
-                userUpdate.get().setLastName(user.getLastName());
-                userUpdate.get().setPassword(user.getPassword());
-        return userRepository.saveAndFlush(userUpdate.get());
-    }
-
-    public Page<UserEntity> showUsersPage(PageRequest pageRequest) {
-        return userRepository.findAll(pageRequest);
-    }
-
-    public Page<AccountEntity> showAccountsPage(PageRequest pageRequest) {
-        return accountRepository.findAll(pageRequest);
-    }
-
-    public Page<TransactionEntity> showTransactionPage(PageRequest pageRequest) {
-        return transactionRepository.findAll(pageRequest);
+    public String returnUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }

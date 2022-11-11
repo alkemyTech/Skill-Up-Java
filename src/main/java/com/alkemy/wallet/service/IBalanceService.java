@@ -1,8 +1,9 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.BalanceResponseDTO;
-import org.springframework.http.ResponseEntity;
+import com.alkemy.wallet.dto.BalanceDTO;
+
+import java.util.List;
 
 public interface IBalanceService {
-    public ResponseEntity<BalanceResponseDTO> getBalance();
+    List<BalanceDTO> getBalance();
 }

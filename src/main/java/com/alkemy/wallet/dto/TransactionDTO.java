@@ -1,9 +1,14 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.TypeEnum;
-import lombok.*;
+import com.alkemy.wallet.dto.validator.IValidatorAccount;
+import com.alkemy.wallet.dto.validator.IValidatorDeposit;
+import com.alkemy.wallet.dto.validator.IValidatorPayment;
+import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -13,22 +18,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
-
     private Long destinationAccountId;
 
-    @NotNull(message = "Transaction type")
-    @NotBlank(message = "Transaction type")
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String type;
-
-    @NotNull(message = "Transaction description")
-    @NotBlank(message = "Transaction description")
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String description;
-
-    @Min(0)
-    @NotNull(message = "Transaction amount")
+    @NotNull(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private Double amount;
-
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private String currency;
-
     private LocalDateTime transactionDate;
 }

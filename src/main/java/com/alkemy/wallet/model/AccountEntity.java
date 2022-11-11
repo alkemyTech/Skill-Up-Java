@@ -1,11 +1,10 @@
-package com.alkemy.wallet.model.entity;
+package com.alkemy.wallet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.NumberFormat;
-
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;

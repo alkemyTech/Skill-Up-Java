@@ -57,10 +57,10 @@ public class AccountController {
       @ApiResponse(code = 200, message = "Successfully retrieved"),
       @ApiResponse(code = 404, message = "Not found - The user was not found")
   })
-  @GetMapping("/balance/{id}")
-  public ResponseEntity<List<AccountBasicDto>> getBalance(@Valid @PathVariable @ApiParam(name = "id", value = "User id", example = "1") Long id) {
+  @GetMapping("/balance")
+  public ResponseEntity<List<AccountBasicDto>> getBalance(){
 
-    List<AccountBasicDto> accounts = iuserService.getAccountsBalance(id);
+    List<AccountBasicDto> accounts = iuserService.getAccountsBalance();
     return ResponseEntity.ok(accounts);
   }
 

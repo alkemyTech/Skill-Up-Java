@@ -4,9 +4,12 @@ import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.BalanceResponseDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.model.AuthenticationRequest;
+import com.alkemy.wallet.model.entity.AccountEntity;
+import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +37,10 @@ public class AccountController {
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateAccount(@PathVariable Long id, @RequestBody AccountDTO account){
         return  accountService.updateAccountId(id, account);
+    }
+
+    @GetMapping("/accountspage/{pageNumber}")
+    public ResponseEntity<Page<AccountEntity>> showAccountsPage(@PathVariable int pageNumber){
+        return accountService.showAccountsPage(pageNumber);
     }
 }

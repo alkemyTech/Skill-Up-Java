@@ -2,12 +2,15 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
+import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IAccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,5 +46,17 @@ public class AccountServiceImpl implements IAccountService {
     public ResponseEntity<Object> updateAccountId(Long id, AccountDTO account) {
              bankDAO.updateAccount(id, account);
             return new ResponseEntity<>("updated account",HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Page<AccountEntity>> showAccountsPage(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+        Page<AccountEntity> pageAccounts = bankDAO.showAccountsPage(pageRequest);
+
+        if(pageAccounts.isEmpty()){
+            throw new BankException("LISTA VACIA");
+        }
+
+        return ResponseEntity.ok(pageAccounts);
     }
 }

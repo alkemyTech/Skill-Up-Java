@@ -25,4 +25,11 @@ public class AccountController {
     public ResponseEntity<List<AccountResponseDto>> getAccountUserById(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.getAccountUserById(userId), HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AccountResponseDto> updateAccount(@PathVariable("id") Long accountId,
+                                                            @RequestParam Double newTransactionLimit,
+                                                            @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(service.updateAccount(accountId,newTransactionLimit,token), HttpStatus.OK);
+    }
 }

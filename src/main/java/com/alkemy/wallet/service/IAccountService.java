@@ -23,4 +23,5 @@ public interface IAccountService {
 
     String sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token);
 
+    AccountResponseDto updateAccount(Long accountId, Double newTransactionLimit, String token);
 }

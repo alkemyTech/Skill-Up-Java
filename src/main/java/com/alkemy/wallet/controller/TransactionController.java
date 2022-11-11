@@ -1,13 +1,13 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.TransactionDTO;
-import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.service.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +49,12 @@ public class TransactionController {
         return transactionService.updateTransaction(id, description);
     }
 
-    @GetMapping("/page/{pageNumber}")
-    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(@PathVariable int pageNumber){
-        return transactionService.showTransactionPage(pageNumber);
+    @GetMapping("/transactionspage")
+    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int size, Model model){
+        PageRequest pageRequest = PageRequest.of(pageNumber, size);
+
+        transactionService.addNavigationAttributesToModel(pageNumber,model,pageRequest);
+
+        return transactionService.showTransactionPage(pageRequest);
     }
 }

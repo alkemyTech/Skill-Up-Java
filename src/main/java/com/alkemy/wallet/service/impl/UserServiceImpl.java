@@ -14,14 +14,16 @@ import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.RoleEnum.USER;
@@ -90,15 +92,31 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseEntity<Page<UserEntity>> showUsersPage(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+    public ResponseEntity<Page<UserEntity>> showUsersPage(PageRequest pageRequest) {
         Page<UserEntity> pageUsers = bankDAO.showUsersPage(pageRequest);
 
-        if(pageUsers.isEmpty()){
-            throw new BankException("LISTA VACIA");
+        if (pageUsers.isEmpty()){
+            throw new BankException("Missing page number");
         }
 
         return ResponseEntity.ok(pageUsers);
+    }
+
+    @Override
+    public void addNavigationAttributesToModel(int pageNumber, Model model, PageRequest pageRequest) {
+        Page<UserEntity> pageUsers = bankDAO.showUsersPage(pageRequest);
+
+        int totalPages = pageUsers.getTotalPages();
+        if(totalPages > 0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pages", pages);
+            model.addAttribute("current", pageNumber+1);
+            model.addAttribute("next", pageNumber+2);
+            model.addAttribute("prev", pageNumber);
+            model.addAttribute("last", totalPages);
+        }
+
+        model.addAttribute("List", pageUsers.getContent());
     }
 
     @Override

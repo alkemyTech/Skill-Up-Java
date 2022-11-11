@@ -1,9 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
-import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.exception.BankException;
-import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
@@ -14,10 +12,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
@@ -42,6 +43,7 @@ public class AccountServiceImpl implements IAccountService {
         AccountEntity accountEntity = bankDAO.createAccount(account, userEntity);
         return new ResponseEntity<>("successfully created",HttpStatus.CREATED);
     }
+
     @Override
     public ResponseEntity<Object> updateAccountId(Long id, AccountDTO account) {
              bankDAO.updateAccount(id, account);
@@ -49,14 +51,30 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<Page<AccountEntity>> showAccountsPage(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+    public ResponseEntity<Page<AccountEntity>> showAccountsPage(PageRequest pageRequest) {
         Page<AccountEntity> pageAccounts = bankDAO.showAccountsPage(pageRequest);
 
-        if(pageAccounts.isEmpty()){
-            throw new BankException("LISTA VACIA");
+        if (pageAccounts.isEmpty()){
+            throw new BankException("Missing page number");
         }
 
         return ResponseEntity.ok(pageAccounts);
+    }
+
+    @Override
+    public void addNavigationAttributesToModel(int pageNumber, Model model, PageRequest pageRequest) {
+        Page<AccountEntity> pageAccounts = bankDAO.showAccountsPage(pageRequest);
+
+        int totalPages = pageAccounts.getTotalPages();
+        if(totalPages > 0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pages", pages);
+            model.addAttribute("current", pageNumber+1);
+            model.addAttribute("next", pageNumber+2);
+            model.addAttribute("prev", pageNumber);
+            model.addAttribute("last", totalPages);
+        }
+
+        model.addAttribute("List", pageAccounts.getContent());
     }
 }

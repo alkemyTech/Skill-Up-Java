@@ -1,9 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.dto.IBalance;
 import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.exception.BankException;
-import com.alkemy.wallet.model.TransactionLimitEnum;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.TransactionEntity;
@@ -18,10 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
@@ -122,15 +123,31 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(int pageNumber) {
-        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(PageRequest pageRequest) {
         Page<TransactionEntity> pageTransactions = bankDAO.showTransactionPage(pageRequest);
 
-        if(pageTransactions.isEmpty()){
-            throw new BankException("LISTA VACIA");
+        if (pageTransactions.isEmpty()){
+            throw new BankException("Missing page number");
         }
 
         return ResponseEntity.ok(pageTransactions);
+    }
+
+    @Override
+    public void addNavigationAttributesToModel(int pageNumber, Model model, PageRequest pageRequest) {
+        Page<TransactionEntity> pageTransactions = bankDAO.showTransactionPage(pageRequest);
+
+        int totalPages = pageTransactions.getTotalPages();
+        if(totalPages > 0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pages", pages);
+            model.addAttribute("current", pageNumber+1);
+            model.addAttribute("next", pageNumber+2);
+            model.addAttribute("prev", pageNumber);
+            model.addAttribute("last", totalPages);
+        }
+
+        model.addAttribute("List", pageTransactions.getContent());
     }
 
     @Override

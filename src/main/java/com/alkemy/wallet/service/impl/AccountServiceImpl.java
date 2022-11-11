@@ -1,10 +1,13 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.validator.IValidatorAccount;
+import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IAccountService;
+import com.alkemy.wallet.utils.DTOValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public ResponseEntity<Object> createAccount(AccountDTO account) {
+        DTOValidator.validate(account, IValidatorAccount.class);
         account.setTransactionLimit(TRANSACTION_LIMIT.get(account.getCurrency()));
         UserEntity userEntity = bankDAO.findUserByEmail("pbmarin2015@gmail.com");
         AccountEntity accountEntity = bankDAO.createAccount(account, userEntity);
@@ -39,6 +43,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public ResponseEntity<Object> updateAccountId(Long id, AccountDTO account) {
+        DTOValidator.validate(account, IValidatorAccount.class);
         bankDAO.updateAccount(id, account);
         return new ResponseEntity<>("updated account", HttpStatus.OK);
     }

@@ -1,11 +1,15 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.FixedTermDepositDTO;
+import com.alkemy.wallet.dto.validator.IValidatorFixedTermDep;
+import com.alkemy.wallet.dto.validator.IValidatorRole;
+import com.alkemy.wallet.dto.validator.IValidatorUser;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IFixedTermDepositService;
+import com.alkemy.wallet.utils.DTOValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     @Override
     public ResponseEntity<Object> saveFixedTermDeposit(FixedTermDepositDTO fixedTermDeposit){
+        DTOValidator.validate(fixedTermDeposit, IValidatorFixedTermDep.class);
         if(!fixedTermDeposit.getCurrency().equalsIgnoreCase(ARS.getCurrency()) && !fixedTermDeposit.getCurrency().equalsIgnoreCase(USD.getCurrency()) ) {
             throw  new BankException("Currency not permitted");
         }

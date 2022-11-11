@@ -1,6 +1,9 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.validator.IValidatorDeposit;
+import com.alkemy.wallet.dto.validator.IValidatorPayment;
+import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
@@ -8,6 +11,7 @@ import com.alkemy.wallet.model.entity.TransactionEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
+import com.alkemy.wallet.utils.DTOValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +33,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> saveDeposit(TransactionDTO transaction) {
-
+        DTOValidator.validate(transaction, IValidatorDeposit.class);
         isTransactionAllowed(transaction, DEPOSIT, "Incorrect operation, only can be a deposit");
 
         if (!transaction.getCurrency().equalsIgnoreCase(ARS.getCurrency()) && !transaction.getCurrency().equalsIgnoreCase(USD.getCurrency())) {
@@ -47,6 +51,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> savePayment(TransactionDTO transaction) {
+        DTOValidator.validate(transaction, IValidatorPayment.class);
         isTransactionAllowed(transaction, PAYMENT, "Incorrect operation, only can be a payment");
         UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         AccountEntity account = bankDAO.getAccount(user.getUserId(), transaction.getCurrency().toUpperCase());
@@ -65,6 +70,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> sendArs(TransactionDTO transaction) {
+        DTOValidator.validate(transaction, IValidatorSendArsUsd.class);
         if (transaction.getAmount() <= 0) {
             throw new BankException("Invalid amount");
         }
@@ -97,6 +103,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> sendUsd(TransactionDTO transaction) {
+        DTOValidator.validate(transaction, IValidatorSendArsUsd.class);
         if (transaction.getAmount() <= 0) {
             throw new BankException("Invalid amount");
         }

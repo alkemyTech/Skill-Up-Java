@@ -20,7 +20,7 @@ public interface IUserService {
   //Declaracion de metodos para la seguridad
     public String login(String email, String password);
     
-	public String signUp(User User);
+	public User signUp(User User);
 
     public UserDetails loadUserByUsername(String email);
 

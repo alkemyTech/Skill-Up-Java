@@ -20,5 +20,5 @@ public interface IUserService {
     public List<UserEntity> showAllUsers();
     public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId);
 
-   // UserDetailDTO getUserDetail(Long id);
+   UserDetailDTO getUserDetail(Long id);
 }

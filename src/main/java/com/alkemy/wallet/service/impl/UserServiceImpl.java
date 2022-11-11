@@ -107,11 +107,18 @@ public class UserServiceImpl implements IUserService {
         }
            return new ResponseEntity<>("updated User",HttpStatus.OK);
     }
-/*    @Override
-    public List<UserDetailDTO> getUserDetail(Long id){
-        Optional<UserEntity> user = bankDAO.getUserById(id);
-        return user ;
-    }*/
+    @Override
+    public UserDetailDTO getUserDetail(Long id){
+        Optional<UserEntity> opUser = bankDAO.getUserById(id);
+        UserEntity user1 = bankDAO.findUserByEmail(opUser.get().getEmail());
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user ID does not exist");
+        }
+        UserDetailDTO userDetailDTO = new UserDetailDTO(user1);
+        return userDetailDTO ;
+    }
+
 
 
 }

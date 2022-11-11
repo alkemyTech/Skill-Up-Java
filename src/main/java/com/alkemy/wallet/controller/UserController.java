@@ -42,10 +42,10 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         return userService.deleteUser(id);
     }
-    /*@GetMapping("/users/{id}")
+    @GetMapping("/users/{id}")
     public UserDetailDTO getUserDetail(@PathVariable Long id) {
         return userService.getUserDetail(id);
-    }*/
+    }
     @GetMapping("/users")
     public List<UserEntity> showAllUsers() {
         return userService.showAllUsers();

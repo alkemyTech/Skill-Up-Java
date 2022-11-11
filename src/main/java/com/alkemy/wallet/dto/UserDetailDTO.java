@@ -1,5 +1,6 @@
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.RoleEnum;
 import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.FixedTermDepositEntity;
 import com.alkemy.wallet.model.entity.RoleEntity;
@@ -20,7 +21,7 @@ public class UserDetailDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private RoleEntity role;
+    private RoleEnum role;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
     private Set<AccountEntity> account;
@@ -30,7 +31,7 @@ public class UserDetailDTO {
         this.firstName = userEntity.getFirstName();
         this.lastName = userEntity.getLastName();
         this.email = userEntity.getEmail();
-        this.role = userEntity.getRole();
+        this.role = userEntity.getRole().getName();
         this.creationDate = userEntity.getCreationDate();
         this.updateDate = userEntity.getUpdateDate();
         this.account = userEntity.getAccount();

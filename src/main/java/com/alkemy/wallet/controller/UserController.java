@@ -1,9 +1,13 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.dto.request.UserRequestDto;
-import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
+import com.alkemy.wallet.model.request.UserRequestDto;
+import com.alkemy.wallet.model.response.UserResponseDto;
 import com.alkemy.wallet.service.IUserService;
+
+import com.alkemy.wallet.model.response.AccountResponseDto;
+import com.alkemy.wallet.model.response.list.UserListResponseDto;
+import com.alkemy.wallet.service.impl.UserServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

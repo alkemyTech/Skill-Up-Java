@@ -1,8 +1,8 @@
 package com.alkemy.wallet.model.mapper;
 
-import com.alkemy.wallet.model.dto.request.FixedTermDepositRequestDto;
-import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
-import com.alkemy.wallet.model.dto.response.list.FixedTermDepositListResponseDto;
+import com.alkemy.wallet.model.request.FixedTermDepositRequestDto;
+import com.alkemy.wallet.model.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.response.list.FixedTermDepositListResponseDto;
 import com.alkemy.wallet.model.entity.FixedTermDeposit;
 import org.springframework.stereotype.Component;
 

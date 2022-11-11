@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @Table(name = "transactions")
 @Builder
@@ -40,4 +39,8 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    public Transaction() {
+        this.transactionDate = LocalDateTime.now();
+    }
 }

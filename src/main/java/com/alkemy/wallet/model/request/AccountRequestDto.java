@@ -1,8 +1,6 @@
-package com.alkemy.wallet.model.dto.response;
+package com.alkemy.wallet.model.request;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -10,12 +8,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccountResponseDto {
-    private Long id;
+public class AccountRequestDto {
     private String currency;
     private Double transactionLimit;
     private Double balance;
     private Long userId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

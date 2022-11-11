@@ -1,11 +1,11 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.dto.request.FixedTermDepositRequestDto;
-import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.FixedTermDeposit;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.FixedTermDepositMapper;
+import com.alkemy.wallet.model.request.FixedTermDepositRequestDto;
+import com.alkemy.wallet.model.response.FixedTermDepositResponseDto;
 import com.alkemy.wallet.repository.IFixedTermDepositRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;

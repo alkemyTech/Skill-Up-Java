@@ -1,11 +1,10 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.dto.request.UserRequestDto;
-import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.model.entity.User;
-
 import java.util.Optional;
+import com.alkemy.wallet.model.request.UserRequestDto;
+import com.alkemy.wallet.model.response.UserResponseDto;
+import com.alkemy.wallet.model.response.list.UserListResponseDto;
 
 public interface IUserService {
 

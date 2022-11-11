@@ -16,7 +16,12 @@ import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -219,4 +224,36 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResourceNotFoundException("Transaction does not exist");
         }
         }
+
+    @Override
+    public TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId) {
+
+        Pageable pageable = PageRequest.of(page,10);
+
+        Page <Transaction> pagination = transactionRepository.findByAccount_User_UserId(userId,pageable);
+        List<TransactionDetailDto> finalList = new ArrayList<>();
+
+        for(Transaction transaction: pagination)
+        {
+            finalList.add(transactionMapper.convertToTransactionDetailDto(transaction));
+        }
+
+
+        TransactionPaginatedDto transactionPaginatedDto = new TransactionPaginatedDto();
+        transactionPaginatedDto.setTransactionDetailDtoList(finalList);
+
+        String url = "http://localhost:8080/transactions/all/"+userId+"?page=";
+
+        if(pagination.hasNext())
+            transactionPaginatedDto.setUrlNext(url+(page+1));
+        else
+            transactionPaginatedDto.setUrlNext("");
+
+        if(pagination.hasPrevious())
+            transactionPaginatedDto.setUrlPrevious(url+(page-1));
+        else
+            transactionPaginatedDto.setUrlPrevious("");
+
+        return transactionPaginatedDto;
+    }
 }

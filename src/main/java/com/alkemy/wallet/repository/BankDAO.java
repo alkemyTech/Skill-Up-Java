@@ -63,10 +63,6 @@ public class BankDAO {
         userRepository.deleteById(userId);
     }
 
-    public List<IBalance> getBalance() {
-        return transactionRepository.getBalance("1");
-    }
-
     public RoleEntity getRole(RoleDTO role) {
         Optional<RoleEntity> roleEntity = roleRepository.findById(role.getId());
         if (!roleEntity.isPresent()) {

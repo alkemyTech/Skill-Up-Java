@@ -27,7 +27,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private JwtUtil jwtTokenUtil;
 
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
-            String username = authenticationRequest.getEmail();
+            String username = authenticationRequest.getUserName();
             String password = authenticationRequest.getPassword();
 
         if(username==null || password==null) {
@@ -35,7 +35,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
         authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(username, password) );
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUserName());
         if(userDetails==null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 

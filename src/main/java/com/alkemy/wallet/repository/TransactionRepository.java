@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-    @Query(value = "SELECT A.CURRENCY, SUM(T.AMOUNT) AS AMOUNT, T.TYPE FROM ACCOUNTS A JOIN TRANSACTIONS T ON A.ACCOUNT_ID = T.ACCOUNT_ID WHERE A.ACCOUNT_ID = 1 GROUP BY T.type, A.CURRENCY", nativeQuery=true)
-    List<IBalance> getBalance(@Param("userId") Long userId);
 }

@@ -3,6 +3,8 @@ package com.alkemy.wallet.repository;
 import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,7 @@ public class BankDAO {
     public UserEntity findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
+
     public Optional<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -77,6 +80,7 @@ public class BankDAO {
     public Optional<TransactionEntity> getTransactionId(Long id){
         return transactionRepository.findById(id);
     }
+
     public TransactionEntity updateTransaction(Long id, TransactionDTO transactionDTO){
         Optional<TransactionEntity> transaction = getTransactionId(id);
         transaction.get().setDescription(transactionDTO.getDescription());
@@ -104,6 +108,7 @@ public class BankDAO {
     public Optional<AccountEntity> getAccountById(Long accountId) {
         return accountRepository.findById(accountId);
     }
+
     public AccountEntity createAccount(AccountDTO accountDTO, UserEntity userEntity) {
         AccountEntity accountEntity = AccountEntity.builder()
                 .currency(accountDTO.getCurrency())
@@ -113,6 +118,7 @@ public class BankDAO {
                 .build();
         return accountRepository.saveAndFlush(accountEntity);
     }
+
     public AccountEntity updateAccount(Long id, AccountDTO account){
       Optional<AccountEntity> accountEntity = getAccountById(id);
         accountEntity.get().setTransactionLimit(account.getTransactionLimit());
@@ -133,5 +139,17 @@ public class BankDAO {
     public String returnUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    public Page<UserEntity> showUsersPage(PageRequest pageRequest) {
+        return userRepository.findAll(pageRequest);
+    }
+
+    public Page<AccountEntity> showAccountsPage(PageRequest pageRequest) {
+        return accountRepository.findAll(pageRequest);
+    }
+
+    public Page<TransactionEntity> showTransactionPage(PageRequest pageRequest) {
+        return transactionRepository.findAll(pageRequest);
     }
 }

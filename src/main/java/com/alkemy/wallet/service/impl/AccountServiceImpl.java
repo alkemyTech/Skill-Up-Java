@@ -213,4 +213,20 @@ public class AccountServiceImpl implements IAccountService {
         else
             throw new Mistake("El tipo ingresado es incorrecto");
     }
+    @Override
+    public AccountResponseDto updateAccount(Long accountId, Double newTransactionLimit, String token) {
+        User user = authService.getUserFromToken(token);
+        Account accountToUpdate = null;
+        for (Account account : user.getAccounts()) {
+            if (account.getId() == accountId) {
+                accountToUpdate = account;
+            }
+        }
+        if (accountToUpdate == null) {
+            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
+        }
+        accountToUpdate.setTransactionLimit(newTransactionLimit);
+
+        return accountMapper.entity2Dto(accountRepository.save(accountToUpdate));
+    }
 }

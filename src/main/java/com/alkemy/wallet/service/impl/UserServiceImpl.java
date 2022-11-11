@@ -110,39 +110,12 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 		try {
 			// Validar datos de inicio de sesion
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-			
-			System.out.println(email);
-			System.out.println(password);
 			// Retorna token si los datos son correctos
 			return jwtTokenProvider.createToken(userRepository.findByEmail(email).getEmail(), userRepository.findByEmail(email).getRole() );
 		} catch (AuthenticationException e) {
 			// Excepcion en caso de datos erroneos
 			throw new RestServiceException("username o password invalido", HttpStatus.UNPROCESSABLE_ENTITY);
 		}
-	}
-
-	@Override
-	public User signUp(User user) {
-		// Valida si el nombre de usuario no exista
-				if (!userRepository.existsByEmail(user.getEmail())) {
-				// Se encripta contraseña
-					user.setPassword(passwordEncoder.encode(user.getPassword()));
-				// Se almacena el usuario
-				// Adding role
-		        Role userRole = new Role();
-		        userRole.setName(RoleList.USER);
-		        userRole.setDescription("Created user with role USER");
-		        roleRepository.save(userRole);
-		        user.setRole(userRole);
-				userRepository.save(user);
-							// Retrona token valido para este usuario
-				jwtTokenProvider.createToken(user.getEmail(), user.getRole());
-				return user;
-							
-				} else {
-							// En caso de que nombre de usuario exista se retonra excepcion
-					throw new RestServiceException("Username ya esta en uso", HttpStatus.UNPROCESSABLE_ENTITY);
-					}
 	}
 
 	@Override

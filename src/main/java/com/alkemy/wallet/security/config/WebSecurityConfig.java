@@ -1,5 +1,8 @@
 package com.alkemy.wallet.security.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +29,9 @@ public class WebSecurityConfig {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests()
-		.antMatchers("/users").permitAll()
-		.antMatchers("/auth/login").permitAll()
-		.antMatchers("/auth/signup").permitAll()
-		//.antMatchers("/auth/**").permitAll()
-		.antMatchers("/auth/register").permitAll()
+		.antMatchers("/swagger-ui/**").permitAll()
+		.antMatchers("/docs/**").permitAll()
+		.antMatchers("/auth/**").permitAll()
 		.anyRequest().authenticated();
 		
 		http.exceptionHandling().accessDeniedPage("/login");
@@ -48,5 +49,12 @@ public class WebSecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(12);
 	}
-	
+
+	@Bean
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI()
+				.components(new Components()
+				.addSecuritySchemes("Bearer",
+				new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("Bearer").bearerFormat("JWT")));
+	}
 }

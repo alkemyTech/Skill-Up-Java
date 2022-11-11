@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,8 @@ public class UserController {
     private IUserService userService;
 
     //Documentation--------------------------------
-    @Operation(summary = "User list", description = "<h3>Endpoint that lists the users that are registered in the database.</h3>" +
+    @Operation(security = {@SecurityRequirement(name = "Bearer")},
+            summary = "User list", description = "<h3>Endpoint that lists the users that are registered in the database.</h3>" +
             "<p>You can use the pagination that lists maximum 10 users for page." +
             "</br><b>Note: </b>if You don't pass it the pagination parameter, it will list all the existing users in the database.</p>")
     @Parameters(value = { @Parameter(name = "page", description = "Number of page", example = "1", in = ParameterIn.QUERY)})

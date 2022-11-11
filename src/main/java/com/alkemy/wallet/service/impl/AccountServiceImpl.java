@@ -41,50 +41,38 @@ public class AccountServiceImpl implements IAccountService {
        return accountRepository.findById(idAccount).get();
     }
 
-    //ToDo: Guardar una cuenta nueva
+    //Se debe hacer el PR de esta funcionalidad
     @Override
-    public AccountResponseDto save(Account entity) {
+    public AccountResponseDto createAccount(AccountResponseDto dto){
         return null;
     }
-
-    //ToDo: Implementar patron de creacion
     @Override
-    public List<AccountResponseDto> createUserAccounts(Long userId) {
-        User accountUser = userService.findById((userId)).get();
-        if (accountUser == null) {
-            throw new EntityNotFoundException(String.format("The user with userid: %s does not exist", userId));
-        } else {
-            //creating accounts
-            AccountCurrencyEnum currencyUSD = USD;
-            AccountCurrencyEnum currencyARS = ARS;
+    public List<Account> createUserAccounts() {
+        AccountCurrencyEnum currencyUSD = USD;
+        AccountCurrencyEnum currencyARS = ARS;
 
-            Account USDAccount = new Account();
-            USDAccount.setUser(accountUser);
-            USDAccount.setCreationDate(LocalDateTime.now());
-            USDAccount.setBalance(0.0);
-            USDAccount.setCurrency(currencyUSD);
-            USDAccount.setSoftDelete(false);
-            USDAccount.setTransactionLimit(1000.0);
+        Account USDAccount = new Account();
+        USDAccount.setCreationDate(LocalDateTime.now());
+        USDAccount.setBalance(0.0);
+        USDAccount.setCurrency(currencyUSD);
+        USDAccount.setSoftDelete(false);
+        USDAccount.setTransactionLimit(1000.0);
 
-            Account ARSAccount = new Account();
-            ARSAccount.setUser(accountUser);
-            ARSAccount.setCreationDate(LocalDateTime.now());
-            ARSAccount.setBalance(0.0);
-            ARSAccount.setCurrency(currencyARS);
-            ARSAccount.setSoftDelete(false);
-            ARSAccount.setTransactionLimit(300000.0);
+        Account ARSAccount = new Account();
+        ARSAccount.setCreationDate(LocalDateTime.now());
+        ARSAccount.setBalance(0.0);
+        ARSAccount.setCurrency(currencyARS);
+        ARSAccount.setSoftDelete(false);
+        ARSAccount.setTransactionLimit(300000.0);
 
-            accountRepository.save(USDAccount);
-            accountRepository.save(ARSAccount);
+        accountRepository.save(USDAccount);
+        accountRepository.save(ARSAccount);
 
-            userService.save(accountUser);
+        List<Account> accountList= new ArrayList<Account>();
+        accountList.add(USDAccount);
+        accountList.add(ARSAccount);
 
-            List<Account> accountList= new ArrayList<Account>();
-            accountList.add(USDAccount);
-            accountList.add(ARSAccount);
-
-            return accountMapper.entityList2DtoList(accountList);
-        }
+        return accountList;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.dto.AccountDTO;
-import com.alkemy.wallet.dto.RoleDTO;
-import com.alkemy.wallet.dto.UserRequestDTO;
-import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.AuthenticationRequest;
@@ -17,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.RoleEnum.USER;
@@ -105,4 +104,11 @@ public class UserServiceImpl implements IUserService {
         }
            return new ResponseEntity<>("updated User",HttpStatus.OK);
     }
+/*    @Override
+    public List<UserDetailDTO> getUserDetail(Long id){
+        Optional<UserEntity> user = bankDAO.getUserById(id);
+        return user ;
+    }*/
+
+
 }

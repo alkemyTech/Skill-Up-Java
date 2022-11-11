@@ -13,8 +13,9 @@ import com.alkemy.wallet.model.response.AccountResponseDto;
 public interface IAccountService {
 
     Account getAccountById(long IdAccount);
-    AccountResponseDto save(Account entity);
-    List<AccountResponseDto> createUserAccounts(Long userId);
+    AccountResponseDto createAccount(AccountResponseDto dto);
+
+    List<Account> createUserAccounts();
 
     AccountResponseDto editAccountBalance(long idAccount, Double newBalance);
 

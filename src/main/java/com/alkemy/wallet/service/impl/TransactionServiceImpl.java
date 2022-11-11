@@ -6,9 +6,9 @@ import com.alkemy.wallet.dto.validator.IValidatorPayment;
 import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
-import com.alkemy.wallet.model.entity.AccountEntity;
-import com.alkemy.wallet.model.entity.TransactionEntity;
-import com.alkemy.wallet.model.entity.UserEntity;
+import com.alkemy.wallet.model.AccountEntity;
+import com.alkemy.wallet.model.TransactionEntity;
+import com.alkemy.wallet.model.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.utils.DTOValidator;
@@ -17,11 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
 import static com.alkemy.wallet.model.TypeEnum.*;
@@ -29,18 +27,14 @@ import static com.alkemy.wallet.model.TypeEnum.*;
 @RequiredArgsConstructor
 @Service
 public class TransactionServiceImpl implements ITransactionService {
-
     private final BankDAO bankDAO;
-
     @Override
     public ResponseEntity<Object> saveDeposit(@RequestBody TransactionDTO transaction) {
         DTOValidator.validate(transaction, IValidatorDeposit.class);
         isTransactionAllowed(transaction, DEPOSIT, "Incorrect operation, only can be a deposit");
-
         if (!transaction.getCurrency().equalsIgnoreCase(ARS.getCurrency()) && !transaction.getCurrency().equalsIgnoreCase(USD.getCurrency())) {
             throw new BankException("Currency not permitted");
         }
-
         if (transaction.getAmount() <= 0) {
             throw new BankException("Invalid amount");
         }
@@ -77,7 +71,6 @@ public class TransactionServiceImpl implements ITransactionService {
         }
         UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Optional<AccountEntity> destinationAccount = bankDAO.getAccountById(transaction.getDestinationAccountId());
-
         if (destinationAccount.isPresent()) {
             if (destinationAccount.get().getCurrency().equals(ARS.getCurrency())) {
                 AccountEntity originAccount = bankDAO.getAccount(user.getUserId(), ARS.getCurrency());
@@ -110,7 +103,6 @@ public class TransactionServiceImpl implements ITransactionService {
         }
         UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Optional<AccountEntity> destinationAccount = bankDAO.getAccountById(transaction.getDestinationAccountId());
-
         if (destinationAccount.isPresent()) {
             if (destinationAccount.get().getCurrency().equals(USD.getCurrency())) {
                 AccountEntity originAccount = bankDAO.getAccount(user.getUserId(), USD.getCurrency());
@@ -146,7 +138,6 @@ public class TransactionServiceImpl implements ITransactionService {
         if (opUser.isEmpty()) {
             throw new BankException("The requested user Id does not exist");
         }
-
         List<AccountEntity> accounts = bankDAO.getAllAccountByUser(opUser.get());
         List<TransactionEntity> transactions = new ArrayList<>();
         for (AccountEntity account : accounts) {

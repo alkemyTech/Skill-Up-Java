@@ -1,10 +1,9 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.RoleEnum;
-import com.alkemy.wallet.model.entity.AccountEntity;
-import com.alkemy.wallet.model.entity.FixedTermDepositEntity;
-import com.alkemy.wallet.model.entity.RoleEntity;
-import com.alkemy.wallet.model.entity.UserEntity;
+import com.alkemy.wallet.model.AccountEntity;
+import com.alkemy.wallet.model.FixedTermDepositEntity;
+import com.alkemy.wallet.model.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

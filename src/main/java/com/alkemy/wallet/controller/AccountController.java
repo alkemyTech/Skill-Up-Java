@@ -13,29 +13,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//@Secured({"ROLE_ADMIN","ROLE_USER"})
-@PreAuthorize("hasRole('ROLE_USER') OR hasRole('ROLE_ADMIN')")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/account")
 public class AccountController {
-
     @Autowired
     IBalanceService balanceService;
     @Autowired
     IAccountService accountService;
 
-
     @PostMapping
     public ResponseEntity<Object> createAccount(@RequestBody AccountDTO account) {
         return accountService.createAccount(account);
     }
-
     @GetMapping("/balance")
     public List<BalanceDTO> getBalance() {
         return balanceService.getBalance();
     }
-
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateAccount(@PathVariable Long id, @RequestBody AccountDTO account) {
         return accountService.updateAccountId(id, account);

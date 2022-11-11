@@ -1,6 +1,5 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.dto.validator.IValidatorDeposit;
 import com.alkemy.wallet.dto.validator.IValidatorUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

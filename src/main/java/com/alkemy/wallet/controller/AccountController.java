@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,5 +65,10 @@ public class AccountController {
     @PatchMapping(value="/{id}")
     ResponseEntity<AccountDetailDto> updateAccount(@RequestBody AccountPatchDto accountPatchDto, @Parameter(description = "id account to be updated") @PathVariable Integer id, @Parameter(description = "authentication token") @RequestHeader("Authorization") String userToken) throws Exception {
         return ResponseEntity.ok(accountService.updateAccount(accountPatchDto, id, userToken));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<PaginatedAccountsDto> paginateAccounts(@Param("page") Integer page) {
+        return ResponseEntity.ok(accountService.getAccounts(page));
     }
 }

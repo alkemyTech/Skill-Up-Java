@@ -13,6 +13,6 @@ public class TransactionDto {
   private Double amount;
   private TypeTransaction type;
   private String description;
-  private AccountDto accountDto;
+  private Long accountId;
   private Date transactionDate;
 }

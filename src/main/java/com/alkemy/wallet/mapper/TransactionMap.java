@@ -2,6 +2,7 @@ package com.alkemy.wallet.mapper;
 
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.entity.TransactionEntity;
+import com.alkemy.wallet.repository.IAccountRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Component;
 public class TransactionMap {
   @Autowired
   private AccountMap accountMap;
+
+  @Autowired
+  IAccountRepository accountRepository;
 
   public TransactionDto transactionEntity2Dto(TransactionEntity entity) {
     TransactionDto transactionDto = new TransactionDto();
@@ -47,7 +51,7 @@ public class TransactionMap {
     entity.setAmount(dto.getAmount());
     entity.setDescription(dto.getDescription());
     entity.setTransactionDate(dto.getTransactionDate());
-    entity.setAccountId(accountMap.accountDto2Entity(dto.getAccountDto()));
+    entity.setAccountId(accountRepository.findByAccountId(dto.getAccountId()));
 
     return entity;
   }

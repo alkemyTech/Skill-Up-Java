@@ -4,7 +4,9 @@ package com.alkemy.wallet.service.impl;
 import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.UserEntity;
+import com.alkemy.wallet.mapper.AccountMap;
 import com.alkemy.wallet.mapper.UserMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IUserRepository;
@@ -27,6 +29,9 @@ public class UserServiceImpl implements IUserService {
   @Autowired
   private UserMap userMap;
 
+  @Autowired
+  private AccountMap accountMap;
+
 
   @Override
   public UserDto findById(Long id) {
@@ -42,17 +47,18 @@ public class UserServiceImpl implements IUserService {
   @Override
   public List<AccountBasicDto> getAccountsBalance(Long id) {
 
-    UserDto user = findById(id);
-    List<AccountBasicDto> accounts = user.getAccounts();
+    UserEntity user = IUserRepository.findByUserId(id);
+    List<AccountEntity> accounts = user.getAccounts();
 
     for (int i = 0; i < accounts.size(); i++) {
 
-      AccountBasicDto account;
+      AccountEntity account;
       account = accounts.get(i);
       account.setBalance(accountService.calculateBalance(account.getAccountId()));
 
     }
-    return accounts;
+    List<AccountBasicDto> accountsDto = accountMap.accountEntityList2BasicDto(accounts);
+    return accountsDto;
   }
   @Override
   public List<UserDto> listAllUsers() {

@@ -36,7 +36,7 @@ public class AccountMap {
 
     account.setAccountId(entity.getAccountId());
     account.setCurrency(entity.getCurrency());
-    account.setBalance(0);
+    account.setBalance(entity.getBalance());
     account.setFixedTermDeposits(
         fixedTermDepositMap.entityList2BasicDtoList(entity.getFixedTermDeposits()));
 

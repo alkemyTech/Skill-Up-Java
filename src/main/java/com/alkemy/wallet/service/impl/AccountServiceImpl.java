@@ -1,26 +1,35 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.dto.AccountBasicDto;
+import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.CurrencyDto;
+import com.alkemy.wallet.dto.FixedTermDepositBasicDto;
+import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.entity.AccountEntity;
+import com.alkemy.wallet.entity.FixedTermDepositEntity;
+import com.alkemy.wallet.entity.TransactionEntity;
 import com.alkemy.wallet.entity.UserEntity;
+import com.alkemy.wallet.enumeration.Currency;
+import com.alkemy.wallet.enumeration.TypeTransaction;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.mapper.AccountMap;
 import com.alkemy.wallet.repository.IAccountRepository;
+import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
-
-
+import com.sun.jdi.Value;
 import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.aspectj.weaver.ast.Instanceof;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
 
 @Service
@@ -36,7 +45,8 @@ public class AccountServiceImpl implements IAccountService {
   private IUserRepository IUserRepository;
   @Autowired
   private IAccountService accountService;
-
+  @Autowired
+  private ITransactionRepository transactionRepository;
 
 
   @Override
@@ -56,13 +66,14 @@ public class AccountServiceImpl implements IAccountService {
     double fixedTermDeposits = 0;
 
 
-    AccountBasicDto account = accountService.findById(accountId);
-    List<TransactionDto> payments = transactionService.getByAccountAndType(accountId, "PAYMENT");
-    List<TransactionDto> incomes = transactionService.getByAccountAndType(accountId, "INCOME");
+    AccountEntity account = IAccountRepository.findByAccountId(accountId);
+    List<TransactionEntity> payments = transactionRepository.findAllByAccountIdAndType(account,
+        TypeTransaction.PAYMENT);
+    List<TransactionEntity> incomes = transactionRepository.findAllByAccountIdAndType(account, TypeTransaction.INCOME);
 
     for (int i = 0; i < payments.size(); i++) {
 
-      TransactionDto payment;
+      TransactionEntity payment;
       payment = payments.get(i);
 
       totalPayment = totalPayment + payment.getAmount();
@@ -71,7 +82,7 @@ public class AccountServiceImpl implements IAccountService {
 
     for (int i = 0; i < incomes.size(); i++) {
 
-      TransactionDto income;
+      TransactionEntity income;
       income = incomes.get(i);
 
       totalIncome = totalIncome + income.getAmount();
@@ -80,11 +91,11 @@ public class AccountServiceImpl implements IAccountService {
 
     if (account.getFixedTermDeposits() != null) {
 
-      List<FixedTermDepositBasicDto> deposits = account.getFixedTermDeposits();
+      List<FixedTermDepositEntity> deposits = account.getFixedTermDeposits();
 
       for (int i = 0; i < deposits.size(); i++) {
 
-        FixedTermDepositBasicDto fixedTermDeposit;
+        FixedTermDepositEntity fixedTermDeposit;
         fixedTermDeposit = deposits.get(i);
 
         fixedTermDeposits += fixedTermDeposit.getAmount();
@@ -94,6 +105,8 @@ public class AccountServiceImpl implements IAccountService {
 
     double balance = totalIncome - totalPayment - fixedTermDeposits;
 
+    account.setBalance(balance);
+    IAccountRepository.save(account);
     return balance;
   }
 
@@ -177,6 +190,7 @@ public class AccountServiceImpl implements IAccountService {
 
   }
 
+
   @Override
   public PageDto<AccountDto> findAllAccounts(Pageable page, HttpServletRequest request) {
     PageDto<AccountDto> pageDto = new PageDto<>();
@@ -196,5 +210,4 @@ public class AccountServiceImpl implements IAccountService {
   private String makePaginationLink(HttpServletRequest request, int page) {
     return String.format("%s?page=%d", request.getRequestURI(), page);
   }
-  }
-
+}

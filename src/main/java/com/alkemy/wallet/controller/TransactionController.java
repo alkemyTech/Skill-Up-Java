@@ -1,10 +1,12 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.TransactionDto;
+import com.alkemy.wallet.model.entity.Transaction;
 import com.alkemy.wallet.model.response.AccountBalanceDto;
 import com.alkemy.wallet.model.response.TransactionResponseDto;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.impl.AccountServiceImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class TransactionController {
     @Autowired
     ITransactionService transactionService;
+
+    @Autowired
+    ModelMapper mapper;
 
     //TODO use the interface, not the implementation
     private final AccountServiceImpl accountBalanceService;
@@ -31,6 +36,8 @@ public class TransactionController {
 
     @PostMapping("/transactions/payment")
     public ResponseEntity<TransactionDto> saveTransaction(@RequestBody TransactionDto transactionDto) {
-        return ResponseEntity.ok().body(transactionService.saveTransaction(transactionDto));
+        Transaction transaction = mapper.map(transactionDto, Transaction.class);
+
+        return ResponseEntity.ok().body(mapper.map(transactionService.saveTransaction(transaction), TransactionDto.class));
     }
 }

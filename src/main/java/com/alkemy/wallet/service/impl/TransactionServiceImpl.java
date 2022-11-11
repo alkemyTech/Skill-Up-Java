@@ -8,16 +8,25 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class TransactionServiceImpl implements ITransactionService {
     @Autowired
     ITransactionRepository repository;
 
     @Override
-    public TransactionDto saveTransaction(TransactionDto transactionDto) {
-        ModelMapper mapper = new ModelMapper();
-        Transaction transaction = repository.save(mapper.map(transactionDto, Transaction.class));
+    public Transaction saveTransaction(Transaction transaction) {
+        return repository.save(transaction);
+    }
 
-        return mapper.map(transaction, TransactionDto.class);
+    @Override
+    public Optional<Transaction> getTransactionById(Long id) {
+        return repository.findById(id);
+    }
+
+    @Override
+    public void deleteTransaction(Long id) {
+        repository.deleteById(id);
     }
 }

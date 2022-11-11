@@ -46,7 +46,7 @@ public class Account {
     @Column(name = "deleted")
     private Boolean softDelete = Boolean.FALSE;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
 

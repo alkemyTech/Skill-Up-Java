@@ -11,6 +11,8 @@ import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -117,6 +119,18 @@ public class TransactionServiceImpl implements ITransactionService {
     public ResponseEntity<Object> updateTransaction(Long id, TransactionDTO transactionDTO) {
         bankDAO.updateTransaction(id, transactionDTO);
         return new ResponseEntity<>("Update transaction",HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+        Page<TransactionEntity> pageTransactions = bankDAO.showTransactionPage(pageRequest);
+
+        if(pageTransactions.isEmpty()){
+            throw new BankException("LISTA VACIA");
+        }
+
+        return ResponseEntity.ok(pageTransactions);
     }
 
     @Override

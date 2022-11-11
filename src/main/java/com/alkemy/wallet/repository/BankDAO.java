@@ -150,4 +150,8 @@ public class BankDAO {
     public Page<AccountEntity> showAccountsPage(PageRequest pageRequest) {
         return accountRepository.findAll(pageRequest);
     }
+
+    public Page<TransactionEntity> showTransactionPage(PageRequest pageRequest) {
+        return transactionRepository.findAll(pageRequest);
+    }
 }

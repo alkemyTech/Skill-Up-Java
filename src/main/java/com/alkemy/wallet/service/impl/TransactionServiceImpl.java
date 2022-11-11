@@ -13,6 +13,7 @@ import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.impl.transaction.util.ITransactionStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -84,9 +85,22 @@ public class TransactionServiceImpl implements ITransactionService {
 
         strategy.make(transDTO.getAmount(), accountRepository.findById(1).get());//accDestiny
         Transaction newTrans = transactionMapper.transCreateDTO2Entity(transDTO);
-        newTrans.setAccount_id(1);
+        newTrans.setAccount_id(1);//AccDestiny
         newTrans.setType(strategy.type());
         transactionRepository.save(newTrans);
+    }
+
+    @Override
+    public void makeTransaction(ITransactionStrategy strategy, Account account, Double amount) {
+        TransactionCreateDTO transDTO = new TransactionCreateDTO();
+        transDTO.setAmount(amount);
+        transDTO.setDescription("New FixedTermDeposit");
+        transDTO.setAccount_id(account.getId());
+        Transaction newTrans = transactionMapper.transCreateDTO2Entity(transDTO);
+        newTrans.setType(strategy.type());
+        strategy.make(amount, account);
+        transactionRepository.save(newTrans);
+
     }
 
     @Override

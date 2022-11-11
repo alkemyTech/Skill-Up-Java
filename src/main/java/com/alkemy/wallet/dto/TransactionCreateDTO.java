@@ -33,4 +33,7 @@ public class TransactionCreateDTO {
         this.transactionDate = transactionDate;
         this.account_id = account_id;
     }
+
+    public TransactionCreateDTO() {
+    }
 }

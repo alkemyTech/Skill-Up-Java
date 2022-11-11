@@ -11,10 +11,12 @@ import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.RoleName;
 import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.repository.RoleRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     private final JWTUtil jwtUtil;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public List<UserDto> getAllUsers() {
         var users = userRepository.findAll();
@@ -47,9 +52,10 @@ public class UserServiceImpl implements UserService {
 
         //SET ROLE TO USER
         //THIS ROLE CREATION MUST BE DELETED IN THE FUTURE
-        RoleName roleName = RoleName.USER;
-        Role role = new Role( roleName, "Rol de usuarios", new Timestamp( System.currentTimeMillis() ), null );
-        user.setRole( role );
+        Role role;
+        role=roleRepository.findById(1).orElse(new Role(1,RoleName.USER, "Rol de usuarios", new Timestamp( System.currentTimeMillis() ), null ));
+
+        user.setRole(role);
 
         user.setCreationDate( new Timestamp( System.currentTimeMillis() ) );
         user.setSoftDelete( false );

@@ -1,20 +1,17 @@
 package com.alkemy.wallet.repository;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.model.TypeEnum;
 import com.alkemy.wallet.model.entity.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Component
@@ -144,5 +141,9 @@ public class BankDAO {
                 userUpdate.get().setLastName(user.getLastName());
                 userUpdate.get().setPassword(user.getPassword());
         return userRepository.saveAndFlush(userUpdate.get());
+    }
+
+    public Page<UserEntity> showUsersPage(PageRequest pageRequest) {
+        return userRepository.findAll(pageRequest);
     }
 }

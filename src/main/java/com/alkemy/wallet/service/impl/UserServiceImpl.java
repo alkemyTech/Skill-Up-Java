@@ -14,6 +14,9 @@ import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.converters.models.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -84,6 +87,18 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<UserEntity> showAllUsers() {
         return bankDAO.getAllUsers();
+    }
+
+    @Override
+    public ResponseEntity<Page<UserEntity>> showUsersPage(int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber,10);
+        Page<UserEntity> pageUsers = bankDAO.showUsersPage(pageRequest);
+
+        if(pageUsers.isEmpty()){
+            throw new BankException("LISTA VACIA");
+        }
+
+        return ResponseEntity.ok(pageUsers);
     }
 
     @Override

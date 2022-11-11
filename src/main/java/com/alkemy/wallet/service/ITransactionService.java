@@ -1,7 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.TransactionDTO;
-import com.alkemy.wallet.model.entity.TransactionEntity;
+import com.alkemy.wallet.model.TransactionEntity;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

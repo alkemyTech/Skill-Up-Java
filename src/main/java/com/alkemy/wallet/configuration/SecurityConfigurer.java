@@ -10,12 +10,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static com.alkemy.wallet.model.RoleEnum.ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -56,16 +53,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
                 http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-        //cambios
-       /* http.cors();
-        http.csrf().disable();
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                .antMatchers("/transactions/").hasRole(ADMIN.getName())
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

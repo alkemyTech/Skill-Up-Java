@@ -1,7 +1,7 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.entity.AccountEntity;
-import com.alkemy.wallet.model.entity.FixedTermDepositEntity;
+import com.alkemy.wallet.model.AccountEntity;
+import com.alkemy.wallet.model.FixedTermDepositEntity;
 import lombok.*;
 
 import java.util.Set;

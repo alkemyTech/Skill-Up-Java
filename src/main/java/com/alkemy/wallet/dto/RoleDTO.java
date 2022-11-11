@@ -1,7 +1,6 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.dto.validator.IValidatorRole;
-import com.alkemy.wallet.dto.validator.IValidatorUser;
 import com.alkemy.wallet.model.RoleEnum;
 import lombok.*;
 

@@ -2,9 +2,8 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
 import com.alkemy.wallet.dto.validator.IValidatorAccount;
-import com.alkemy.wallet.dto.validator.IValidatorSendArsUsd;
-import com.alkemy.wallet.model.entity.AccountEntity;
-import com.alkemy.wallet.model.entity.UserEntity;
+import com.alkemy.wallet.model.AccountEntity;
+import com.alkemy.wallet.model.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.utils.DTOValidator;
@@ -12,19 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
 
 @RequiredArgsConstructor
 @Service
 public class AccountServiceImpl implements IAccountService {
-
     private final BankDAO bankDAO;
-
     private static final Map<String, Double> TRANSACTION_LIMIT = new HashMap<>();
 
     static {

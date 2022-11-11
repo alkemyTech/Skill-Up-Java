@@ -1,9 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.dto.AccountDTO;
-import com.alkemy.wallet.dto.RoleDTO;
-import com.alkemy.wallet.dto.UserRequestDTO;
-import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.BankException;
 import com.alkemy.wallet.exception.MessageErrorEnum;
 import com.alkemy.wallet.model.AuthenticationRequest;
@@ -13,6 +10,7 @@ import com.alkemy.wallet.model.entity.AccountEntity;
 import com.alkemy.wallet.model.entity.UserEntity;
 import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.DTOValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +35,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request) {
+
+        DTOValidator.validate(request, IDTOValidate.class);
 
         Optional<UserEntity> userExists = Optional.ofNullable(bankDAO.findUserByEmail(request.getEmail()));
 

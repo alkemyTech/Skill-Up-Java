@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -41,6 +42,7 @@ public class TransactionController {
   @ApiOperation(value = "make a payment", notes = "Makes a payment and return the transaction")
   @ApiResponse(code = 200, message = "Successfully retrieved")
   @PostMapping("/payment")
+  @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<TransactionDto> makeAPayment(@RequestBody TransactionDto dto) {
 
       dto.setType(TypeTransaction.PAYMENT);

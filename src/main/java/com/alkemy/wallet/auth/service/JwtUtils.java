@@ -1,7 +1,7 @@
 package com.alkemy.wallet.auth.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class JwtUtils {
@@ -53,6 +54,4 @@ public class JwtUtils {
     final String email = extractUsername(token);
     return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
-
-
 }

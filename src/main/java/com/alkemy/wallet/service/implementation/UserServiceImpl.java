@@ -17,10 +17,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -91,9 +94,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser( Integer id ) throws ResourceNotFoundException {
+    public void deleteUser( Integer id , String token) throws ResourceNotFoundException {
         try {
-            userRepository.deleteById( id );
+            User user = loadUserByUsername(jwtUtil.extractUserName(token.substring(7)));
+
+            if(user.getRole().getName().name()=="ADMIN")
+                userRepository.deleteById(id);
+            else{
+                if(user.getUserId()==id)
+                    userRepository.deleteById(id);
+            }
+
         } catch ( EmptyResultDataAccessException exception ) {
             throw new ResourceNotFoundException( exception.getMessage() );
         }
@@ -121,6 +132,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer id) {
         Optional<User> optionalUser = userRepository.findById(id);
+
+        optionalUser.get().getRole().getName().name();
 
         if(optionalUser.isEmpty()){
             throw new ResourceNotFoundException("The user with id: " + id + " was not found");

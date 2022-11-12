@@ -37,12 +37,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
                 //PERMISOS
                 //SITIOS A LOS QUE CUALQUIERA PUEDE INGRESAR
                 .authorizeRequests()
-                .antMatchers("/auth/**", "/accounts/**" )
+                .antMatchers("/auth/**")
                 .permitAll()
                 .and()
                 //SITIOS A LOS QUE CUALQUIER USUARIO AUTORIZADO PUEDE INGRESAR
                 .authorizeRequests()
-                .antMatchers("/transactions/**","/api/fixedDeposit/**","/users/**")
+                .antMatchers("/transactions/**","/api/fixedDeposit/**","/users/**", "/accounts/**")
                 .authenticated()
                 .and()
 

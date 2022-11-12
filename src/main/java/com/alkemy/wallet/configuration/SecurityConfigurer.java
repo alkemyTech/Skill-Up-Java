@@ -38,7 +38,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/transactions/**","/api/fixedDeposit/**")
+                .antMatchers("/transactions/**","/fixedDeposit/**")
                 .hasAnyRole("ADMIN", "USER")
                 .and()
                 .authorizeRequests()

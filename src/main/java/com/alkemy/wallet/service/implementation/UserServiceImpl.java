@@ -17,7 +17,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,34 +39,42 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
 
     @Override
-    public UserPaginatedDto getAllUsers(Integer page) {
+    public UserPaginatedDto getAllUsers(Integer page, String token) {
+        String jwt;
+        jwt = token.substring(7);
+        String email = jwtUtil.extractUserName(jwt);
+        User user = loadUserByUsername(email);
+        if (user.getRole().getName().name().equals("USER")) {
+            throw new ForbiddenAccessException("Can only access if you are an Admin");
+        }else {
 
-        Pageable pageable = PageRequest.of(page,10);
-        Page <User> userPage = userRepository.findAll(pageable);
+            Pageable pageable = PageRequest.of(page, 10);
+            Page<User> userPage = userRepository.findAll(pageable);
 
-        UserPaginatedDto userPaginatedDto = new UserPaginatedDto();
+            UserPaginatedDto userPaginatedDto = new UserPaginatedDto();
 
-        List<UserDto> userDtoList = new ArrayList<UserDto>();
+            List<UserDto> userDtoList = new ArrayList<UserDto>();
 
-        for(User u : userPage){
-            userDtoList.add(userMapper.convertToDto(u));
+            for (User u : userPage) {
+                userDtoList.add(userMapper.convertToDto(u));
+            }
+
+            userPaginatedDto.setUserList(userDtoList);
+
+            String url = "http://localhost:8080/users?page=";
+
+            if (userPage.hasPrevious())
+                userPaginatedDto.setPreviousUrl(url + (page - 1));
+            else
+                userPaginatedDto.setPreviousUrl("");
+
+            if (userPage.hasNext())
+                userPaginatedDto.setNextUrl(url + (page + 1));
+            else
+                userPaginatedDto.setNextUrl("");
+
+            return userPaginatedDto;
         }
-
-        userPaginatedDto.setUserList(userDtoList);
-
-        String url = "http://localhost:8080/users?page=";
-
-        if(userPage.hasPrevious())
-            userPaginatedDto.setPreviousUrl(url+(page-1));
-        else
-            userPaginatedDto.setPreviousUrl("");
-
-        if(userPage.hasNext())
-            userPaginatedDto.setNextUrl(url+(page+1));
-        else
-            userPaginatedDto.setNextUrl("");
-
-        return userPaginatedDto;
     }
 
     @Override
@@ -114,6 +121,7 @@ public class UserServiceImpl implements UserService {
         try {
             return userRepository.findByEmail( email );
         } catch ( UsernameNotFoundException exception ) {
+            System.out.println("hola");
             throw exception;
         }
     }

@@ -29,7 +29,13 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Creation successful",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserRegisteredDto.class)) })
+                            schema = @Schema(implementation = UserRegisteredDto.class)),}),
+            @ApiResponse(responseCode = "409", description = "Conflict",
+                    content = { @Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "A Conflict has occurred")),}),
+            @ApiResponse(responseCode = "400", description = "The request was not valid",
+                    content = { @Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "One of the fields is missing")),}),
     })
     //End Swagger notation
 
@@ -43,7 +49,13 @@ public class AuthenticationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AuthenticationResponse.class)) })
+                            schema = @Schema(implementation = AuthenticationResponse.class)),}),
+            @ApiResponse(responseCode = "401", description = "User Unauthorized",
+                    content = { @Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "Authorization information is missing or invalid")),}),
+            @ApiResponse(responseCode = "400", description = "The request was not valid",
+                    content = { @Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "One of the fields is missing")),}),
     })
     //End Swagger notation
 

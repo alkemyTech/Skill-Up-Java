@@ -15,8 +15,13 @@ import com.alkemy.wallet.service.FixedTermDepositService;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,8 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
     private final UserService userService;
     private final FixedTermDepositService fixedTermDepositService;
+    @Autowired
+    private HttpServletRequest request;
 
     @Override
     public AccountDto createAccountByUserId(int userId, Currency currency) {
@@ -166,6 +173,20 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.convertToDto(optionalAccountDto.get());
     }
 
+    @Override
+    public PaginatedAccountsDto getAccounts(int page) {
+        Pageable pageable = PageRequest.of(page,10);
+        Page<Account> accounts = accountRepository.findAll(pageable);
+        List<AccountDto> accountDtoList = accounts.stream().map(accountMapper::convertToDto).collect(Collectors.toList());
+        final String GET_ACCOUNTS_URL = request.getRequestURL().toString() + "?page=";
+        final String previousPageURL = GET_ACCOUNTS_URL + accounts.previousOrFirstPageable().getPageNumber();
+        final String nextPageURL = GET_ACCOUNTS_URL + accounts.nextOrLastPageable().getPageNumber();
+        PaginatedAccountsDto paginatedAccountsDto = new PaginatedAccountsDto(
+                accountDtoList,
+                previousPageURL,
+                nextPageURL);
+        return paginatedAccountsDto;
+    }
 
     private double getTransactionLimitForCurrency(Currency currency){
         return switch (currency) {

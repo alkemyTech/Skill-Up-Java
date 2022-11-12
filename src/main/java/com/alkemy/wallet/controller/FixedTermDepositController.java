@@ -32,7 +32,17 @@ public class FixedTermDepositController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "FixedTermDeposit created",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = FixedTermDepositDto.class)) })
+                            schema = @Schema(implementation = FixedTermDepositDto.class))
+                    }),
+            @ApiResponse(responseCode = "400", description = "The data entered does not correspond or data is missing",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedTermDepositDto.class))
+                    }),
+            @ApiResponse(responseCode = "500", description = "you are not logged in or there was a server error",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedTermDepositDto.class))
+                    })
+
     })
     //End Swagger notation
     @PostMapping("/create")
@@ -48,9 +58,13 @@ public class FixedTermDepositController {
     //Swagger Notation simulateFixedTermDeposit
     @Operation(summary = "Simulate FixedTermDeposit")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "FixedTermDeposit simulated",
+            @ApiResponse(responseCode = "200", description = "FixedTermDeposit simulated",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = FixedTermDepositSimulateDto.class)) })
+                            schema = @Schema(implementation = FixedTermDepositSimulateDto.class))}),
+            @ApiResponse(responseCode = "400", description = "The data entered does not correspond or data is missing",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FixedTermDepositDto.class))
+                    }),
     })
     //End Swagger notation
 

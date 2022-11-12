@@ -28,7 +28,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
+import java.text.DecimalFormat;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
@@ -95,4 +99,26 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         );
         return responseDTO;
     }
+
+    public Map<String, Object> simulate(FixedTermDepositRequestDTO requestDTO) {
+        // Validate minimum days
+        if(requestDTO.getDays() < 30) {
+            throw new FixedTermException(ErrorList.MINIMUN_DAYS_FXD.getMessage());
+        }
+        Map<String, Object> response = new LinkedHashMap<>();
+        DecimalFormat df = new DecimalFormat("#.00");
+        Double interestTotal = calculateInterest.getInterestPlusAmount(requestDTO.getAmount(), requestDTO.getDays());
+        Double interestWin = calculateInterest.getInterest(requestDTO.getAmount(), requestDTO.getDays());
+        // Open Date and Closing Date
+        Instant dateFXD = Instant.now();
+        Instant closingDateFXD = dateFXD.plusSeconds(86400L * requestDTO.getDays());
+        response.put("amount", requestDTO.getAmount());
+        response.put("totalInterest", Double.parseDouble(df.format(interestTotal).replaceAll(",",".")));
+        response.put("interestGained", Double.parseDouble(df.format(interestWin).replaceAll(",",".")));
+        response.put("currency", requestDTO.getCurrency());
+        response.put("creationDate", dateFXD);
+        response.put("closingDate", closingDateFXD);
+        return response;
+    }
+
 }

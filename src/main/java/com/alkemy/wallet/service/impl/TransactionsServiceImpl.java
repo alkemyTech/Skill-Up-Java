@@ -17,9 +17,11 @@ import com.alkemy.wallet.mapper.exception.ParamNotFound;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,6 +46,9 @@ public class TransactionsServiceImpl implements ITransactionService {
 
   @Autowired
   private IUserRepository userRepository;
+
+  @Autowired
+  private IAccountService accountService;
 
   @Override
   public List<TransactionDto> getByAccountAndType(Long accountId, TypeTransaction type) {
@@ -72,6 +77,10 @@ public class TransactionsServiceImpl implements ITransactionService {
       transactionEntity.setAccountId(accountEntity);
       transactionEntity.setUserEntity(accountEntity.getUser());
       transactionEntity.setDescription(dto.getDescription());
+      transactionEntity.setTransactionDate(new Date());
+      this.accountService.updateBalance(dto.getAccountId(),dto.getAmount());
+
+
 
       ITransactionRepository.save(transactionEntity);
 
@@ -158,19 +167,26 @@ public class TransactionsServiceImpl implements ITransactionService {
     if (receive.getCurrency() != currency){
       throw new ParamNotFound("the destination account has a different currency");
     }
+    if (account.getBalance() < sendTransferDto.getAmount()){
+      throw new ParamNotFound("insufficient funds");
+
+    }
     TransactionDto send = new TransactionDto();
     send.setAmount(sendTransferDto.getAmount());
     send.setDescription(sendTransferDto.getDescription());
     send.setAccountId(account.getAccountId());
     send.setType(TypeTransaction.PAYMENT);
+    send.setTransactionDate(new Date());
     TransactionDto transactionDto = createTransaction(send);
 
     TransactionDto reciver = new TransactionDto();
     reciver.setAmount(sendTransferDto.getAmount());
     reciver.setDescription(sendTransferDto.getDescription());
-    reciver.setAccountId(account.getAccountId());
+    reciver.setAccountId(receive.getAccountId());
     reciver.setType(TypeTransaction.INCOME);
+    reciver.setTransactionDate(new Date());
     createTransaction(reciver);
+
     return transactionDto;
   }
 

@@ -3,9 +3,10 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.dto.UserDetailDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.UsersDTO;
+import com.alkemy.wallet.model.AccountEntity;
 import com.alkemy.wallet.model.AuthenticationRequest;
 import com.alkemy.wallet.model.AuthenticationResponse;
-import com.alkemy.wallet.model.AccountEntity;
 import com.alkemy.wallet.model.UserEntity;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.service.impl.AuthenticationServiceImpl;
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<UserEntity> showAllUsers() {
+    public List<UsersDTO> showAllUsers() {
         return userService.showAllUsers();
     }
 

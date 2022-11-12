@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -61,8 +62,12 @@ public class BankDAO {
         return userRepository.saveAndFlush(userEntity);
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<UsersDTO> getAllUsers() {
+        List<String> users = userRepository.findAllUsers();
+
+        return users.stream()
+                .map(UsersDTO::new)
+                .collect(Collectors.toList());
     }
 
     public UserEntity updateUser(Long id,UserRequestDTO user){

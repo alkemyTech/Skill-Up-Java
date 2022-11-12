@@ -3,6 +3,7 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.UserDetailDTO;
 import com.alkemy.wallet.dto.UserRequestDTO;
 import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.UsersDTO;
 import com.alkemy.wallet.model.AccountEntity;
 import com.alkemy.wallet.model.UserEntity;
 import com.alkemy.wallet.model.AuthenticationRequest;
@@ -17,7 +18,7 @@ public interface IUserService {
     ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut);
     ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request);
     ResponseEntity<Object> deleteUser(Long userId);
-    List<UserEntity> showAllUsers();
+    List<UsersDTO> showAllUsers();
     ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId);
     UserDetailDTO getUserDetail(Long id);
     ResponseEntity<Page<UserEntity>> showUsersPage(PageRequest pageRequest);

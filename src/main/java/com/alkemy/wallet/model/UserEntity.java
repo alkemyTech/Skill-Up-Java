@@ -4,6 +4,7 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.model.AccountEntity;
 import com.alkemy.wallet.model.FixedTermDepositEntity;
 import com.alkemy.wallet.model.RoleEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.*;
@@ -55,6 +56,7 @@ public class UserEntity implements UserDetails {
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name="role_id")
     private RoleEntity role;
 
@@ -69,9 +71,11 @@ public class UserEntity implements UserDetails {
     private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<AccountEntity> account;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<FixedTermDepositEntity> fixedTermDeposit;
 
     @Override

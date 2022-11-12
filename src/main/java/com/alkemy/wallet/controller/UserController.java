@@ -151,9 +151,7 @@ class UserController {
     @PreAuthorize("hasRole('ADMIN_ROLE')")
     @DeleteMapping( "/{id}" )
     //TODO: A este metodo lo puede acceser Usuarios autenticados tambien, agregarle algo para negar eso y que sea solo para admin
-    void deleteById( @Parameter(description = "id user to be deleted") @PathVariable Integer id, @Parameter(description = "authentication token") @RequestParam( "Authorization" ) String token ) throws ResourceNotFoundException {
-        log.info( "User id: {}", id );
-        log.info( "Token: {}", token );
-        userservice.deleteUser( id );
+    void deleteById( @Parameter(description = "id user to be deleted") @PathVariable Integer id, @Parameter(description = "authentication token") @RequestHeader( "Authorization" ) String token ) throws ResourceNotFoundException {
+        userservice.deleteUser( id ,token);
     }
 }

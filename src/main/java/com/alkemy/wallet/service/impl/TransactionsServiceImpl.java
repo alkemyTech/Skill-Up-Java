@@ -21,6 +21,7 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -76,7 +77,9 @@ public class TransactionsServiceImpl implements ITransactionService {
       transactionEntity.setAccountId(accountEntity);
       transactionEntity.setUserEntity(accountEntity.getUser());
       transactionEntity.setDescription(dto.getDescription());
+      transactionEntity.setTransactionDate(new Date());
       this.accountService.updateBalance(dto.getAccountId(),dto.getAmount());
+
 
 
       ITransactionRepository.save(transactionEntity);
@@ -173,6 +176,7 @@ public class TransactionsServiceImpl implements ITransactionService {
     send.setDescription(sendTransferDto.getDescription());
     send.setAccountId(account.getAccountId());
     send.setType(TypeTransaction.PAYMENT);
+    send.setTransactionDate(new Date());
     TransactionDto transactionDto = createTransaction(send);
 
     TransactionDto reciver = new TransactionDto();
@@ -180,6 +184,7 @@ public class TransactionsServiceImpl implements ITransactionService {
     reciver.setDescription(sendTransferDto.getDescription());
     reciver.setAccountId(receive.getAccountId());
     reciver.setType(TypeTransaction.INCOME);
+    reciver.setTransactionDate(new Date());
     createTransaction(reciver);
 
     return transactionDto;

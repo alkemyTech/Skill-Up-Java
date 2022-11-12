@@ -6,6 +6,7 @@ import com.alkemy.wallet.entity.AccountEntity;
 import com.alkemy.wallet.entity.FixedTermDepositEntity;
 import com.alkemy.wallet.entity.UserEntity;
 import com.alkemy.wallet.enumeration.Currency;
+import com.alkemy.wallet.enumeration.TypeTransaction;
 import com.alkemy.wallet.mapper.exception.MinDaysException;
 import com.alkemy.wallet.mapper.FixedTermDepositMap;
 import com.alkemy.wallet.mapper.exception.ParamNotFound;
@@ -65,7 +66,7 @@ public class FixedTermServiceImpl implements IFixedTermDepositService {
 
     Long id = 20L;
 
-    accountService.updateBalance(entity.getAccountId(), entity.getAmount());
+    accountService.updateBalance(entity.getAccountId(), entity.getAmount(), TypeTransaction.PAYMENT );
     FixedTermDepositEntity CreatedFixedDeposit = fixedTermDepositRepository.save(entity);
     return fixedTermDepositMap.fixedTermDepositEntity2Dto(CreatedFixedDeposit);
   }

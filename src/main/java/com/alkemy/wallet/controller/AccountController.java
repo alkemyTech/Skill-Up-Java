@@ -20,55 +20,65 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping( "/accounts" )
 public class AccountController {
     private final AccountService accountService;
 
     //Swagger Notation createAccount
-    @Operation(summary = "Create Account of a User")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Account created",
-            content = { @Content(mediaType = "application/json",
-            schema = @Schema(implementation = AccountDto.class)) })
-    })
+    @Operation( summary = "Create Account of a User" )
+    @ApiResponses( value = {
+            @ApiResponse( responseCode = "201", description = "Account created",
+                          content = { @Content( mediaType = "application/json",
+                                                schema = @Schema( implementation = AccountDto.class ) ) } )
+    } )
     //End Swagger notation
 
     @PostMapping
-    public ResponseEntity<AccountDto> createAccount(@Parameter(description = "Currency that the Account has: USD or ARS ")@RequestBody CurrencyRequestDto currency, @Parameter(description = "authentication token") @RequestHeader("Authorization") String token) {
-        AccountDto account = accountService.createAccount(token, currency);
-        return ResponseEntity.status(HttpStatus.CREATED).body(account);
+    public ResponseEntity<AccountDto> createAccount(
+            @Parameter( description = "Currency that the Account has: USD or ARS " ) @RequestBody CurrencyRequestDto currency,
+            @Parameter( description = "authentication token" ) @RequestHeader( "Authorization" ) String token ) {
+        AccountDto account = accountService.createAccount( token, currency );
+        return ResponseEntity.status( HttpStatus.CREATED ).body( account );
     }
 
     //Swagger Notation getBalance
-    @Operation(summary = "Get balance of a Account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Found Balances of Accounts",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AccountBalanceDto.class)) })
-    })
+    @Operation( summary = "Get balance of a Account" )
+    @ApiResponses( value = {
+            @ApiResponse( responseCode = "200", description = "Found Balances of Accounts",
+                          content = { @Content( mediaType = "application/json",
+                                                schema = @Schema( implementation = AccountBalanceDto.class ) ) } )
+    } )
     //End Swagger notation
 
-    @GetMapping("/balance")
-    public ResponseEntity<List<AccountBalanceDto>> getBalance(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(accountService.getUserBalance(token));
+    @GetMapping( "/balance" )
+    public ResponseEntity<List<AccountBalanceDto>> getBalance( @RequestHeader( "Authorization" ) String token ) {
+        return ResponseEntity.ok( accountService.getUserBalance( token ) );
     }
 
     //Swagger Notation updateAccount
-    @Operation(summary = "Updates TransactionLimit of a Account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Update successful",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AccountDetailDto.class)) })
-    })
+    @Operation( summary = "Updates TransactionLimit of a Account" )
+    @ApiResponses( value = {
+            @ApiResponse( responseCode = "200", description = "Update successful",
+                          content = { @Content( mediaType = "application/json",
+                                                schema = @Schema( implementation = AccountDetailDto.class ) ) } )
+    } )
     //End Swagger notation
 
-    @PatchMapping(value="/{id}")
-    ResponseEntity<AccountDetailDto> updateAccount(@RequestBody AccountPatchDto accountPatchDto, @Parameter(description = "id account to be updated") @PathVariable Integer id, @Parameter(description = "authentication token") @RequestHeader("Authorization") String userToken) throws Exception {
-        return ResponseEntity.ok(accountService.updateAccount(accountPatchDto, id, userToken));
+    @PatchMapping( value = "/{id}" )
+    ResponseEntity<AccountDetailDto> updateAccount( @RequestBody AccountPatchDto accountPatchDto,
+                                                    @Parameter( description = "id account to be updated" ) @PathVariable Integer id,
+                                                    @Parameter( description = "authentication token" ) @RequestHeader(
+                                                            "Authorization" ) String userToken ) throws Exception {
+        return ResponseEntity.ok( accountService.updateAccount( accountPatchDto, id, userToken ) );
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<PaginatedAccountsDto> paginateAccounts(@Param("page") Integer page) {
-        return ResponseEntity.ok(accountService.getAccounts(page));
+    @GetMapping( "/all" )
+    public ResponseEntity<PaginatedAccountsDto> paginateAccounts( @Param( "page" ) Integer page ) {
+        return ResponseEntity.ok( accountService.getAccounts( page ) );
+    }
+
+    @GetMapping( "/{userId}" )
+    public ResponseEntity<List<AccountDto>> getAccountsByUserId( @PathVariable Integer userId ) {
+        return ResponseEntity.ok( accountService.getAccountsByUserId( userId ) );
     }
 }

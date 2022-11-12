@@ -3,7 +3,6 @@ package com.alkemy.wallet.service.implementation;
 import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.RoleName;
@@ -147,12 +146,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token) {
+    public UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token) throws ForbiddenAccessException {
         User user=this.getUserById(id);
         User userToken=loadUserByUsername(jwtUtil.extractClaimUsername(token.substring(7)));
         if(user.getUserId()!=userToken.getUserId()){
 
-            throw new ResourceNotFoundException("you are trying to modify a user that is not you");
+            throw new ForbiddenAccessException("You are trying to modify a user that is not you");
         }
         user.setFirstName(userUpdateDto.getFirstName());
         user.setLastName(userUpdateDto.getLastName());

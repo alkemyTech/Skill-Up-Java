@@ -5,10 +5,14 @@ import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.model.Account;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IAccountService {
     public AccountDTO createAccount(int userId, String currency);
 
     List<AccountDTO> getAccountsByUser(Integer id);
-    List<AccountDTO> getAccountsByPage(Integer page);
+
+    Map<String, Object> getAccounts();
+
+    Map<String, Object> getAccountsByPage(Integer page);
 }

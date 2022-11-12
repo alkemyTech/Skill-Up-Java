@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -30,10 +31,10 @@ public class AccountController {
         List<AccountDTO> accounts = accountService.getAccountsByUser(id);
         return ResponseEntity.ok().body(accounts);
     }
-    @GetMapping("/accounts")
-    public ResponseEntity<List<AccountDTO>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
-        List<AccountDTO> users;
-        users =  page !=null ? accountService.getUsersByPage(page) : accountService.getAllUsers();
-        return ResponseEntity.ok().body(users);
+    @GetMapping("/pages")
+    public ResponseEntity<Map<String, Object>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
+        Map<String, Object> accounts;
+        accounts =  page !=null ? accountService.getAccountsByPage(page) : accountService.getAccounts();
+        return ResponseEntity.ok().body(accounts);
     }
 }

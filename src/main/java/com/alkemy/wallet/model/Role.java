@@ -1,9 +1,11 @@
 package com.alkemy.wallet.model;
 
+import lombok.Setter;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 // TODO: Check db table name
+@Setter
 @Entity
 @Table(name = "ROLES")
 public class Role {

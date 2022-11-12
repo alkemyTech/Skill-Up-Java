@@ -12,6 +12,7 @@ import com.alkemy.wallet.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -154,8 +155,7 @@ public class AccountServiceImpl implements IAccountService {
             }
         }
         if (accountToUpdate == null) {
-            //throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
-            throw new ExceptionCustom(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
+            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
         }
         accountToUpdate.setTransactionLimit(newTransactionLimit);
 

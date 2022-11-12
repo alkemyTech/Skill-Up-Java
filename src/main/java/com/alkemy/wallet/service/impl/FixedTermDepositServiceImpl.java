@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.controller.exception.ExceptionCustom;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.FixedTermDeposit;
 import com.alkemy.wallet.model.entity.User;
@@ -24,10 +23,8 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     private final IAccountService accountService;
     private final IAuthService authService;
 
-    public FixedTermDepositServiceImpl(FixedTermDepositMapper mapper,
-                                       IFixedTermDepositRepository fixedTermDepositRepository,
-                                       IAccountService accountService,
-                                       IAuthService authService) {
+    public FixedTermDepositServiceImpl(FixedTermDepositMapper mapper, IFixedTermDepositRepository fixedTermDepositRepository,
+                                       IAccountService accountService, IAuthService authService) {
         this.mapper = mapper;
         this.fixedTermDepositRepository = fixedTermDepositRepository;
         this.accountService = accountService;
@@ -68,9 +65,8 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
             FixedTermDeposit fixedTermToSave = fixedTermDepositRepository.save(fixedTermDeposit);
             return mapper.entity2Dto(fixedTermToSave);
         } else {
-            //throw new IllegalArgumentException(
-            //      String.format("Closing Date is less than 30 days: %s  or account has not enough money: %s",closingDateDays,fixedDepositAmount));
-            throw new ExceptionCustom(String.format("Closing Date is less than 30 days: %s  or account has not enough money: %s",closingDateDays,fixedDepositAmount));
+            throw new IllegalArgumentException(
+                  String.format("Closing Date is less than 30 days: %s  or account has not enough money: %s",closingDateDays,fixedDepositAmount));
         }
 
     }

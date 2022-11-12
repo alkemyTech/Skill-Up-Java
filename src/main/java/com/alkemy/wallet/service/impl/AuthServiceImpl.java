@@ -2,7 +2,6 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
 import com.alkemy.wallet.auth.utility.JwtUtils;
-import com.alkemy.wallet.controller.exception.ExceptionCustom;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.RoleEnum;
 import com.alkemy.wallet.model.entity.User;
@@ -17,11 +16,13 @@ import com.alkemy.wallet.service.IAuthService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
@@ -50,8 +51,7 @@ public class AuthServiceImpl implements IAuthService {
     public UserResponseDto register(UserRequestDto request) {
         if (getByEmail(request.getEmail()) != null) {
             log.error("User with email {} not found in the database", request.getEmail());
-            //throw new EntityExistsException(String.format("The email %s already exist in the data base", request.getEmail()));
-            throw new ExceptionCustom(String.format("The email %s already exist in the data base", request.getEmail()));
+            throw new EntityExistsException(String.format("The email %s already exist in the data base", request.getEmail()));
         }
         log.info("User {} found in the database", request.getEmail());
         Set<Role> roles = new HashSet<>();
@@ -89,8 +89,7 @@ public class AuthServiceImpl implements IAuthService {
         String cleanToken = token.substring(7);
         String email = jwtUtils.extractUsername(cleanToken);
         if (!jwtUtils.validateToken(cleanToken, userDetailsCustomService.loadUserByUsername(email))) {
-            //throw new AccessDeniedException("Invalid token, not from logged user. JWT validity cannot be asserted and should not be trusted");
-            throw new ExceptionCustom("Invalid token, not from logged user. JWT validity cannot be asserted and should not be trusted");
+            throw new AccessDeniedException("Invalid token, not from logged user. JWT validity cannot be asserted and should not be trusted");
         }
         return getByEmail(email);
     }
@@ -100,8 +99,7 @@ public class AuthServiceImpl implements IAuthService {
         Optional<Role> response =  roleRepository.findById(roleId);
         if (response.isEmpty()) {
             log.error("Role with id {} not found in the database", roleId);
-            //throw new NullPointerException(String.format("Invalid role id: %s. Try USER(1) or ADMIN(2)", roleId));
-            throw new ExceptionCustom(String.format("Invalid role id: %s. Try USER(1) or ADMIN(2)", roleId));
+            throw new NullPointerException(String.format("Invalid role id: %s. Try USER(1) or ADMIN(2)", roleId));
         }
         log.info("{} with id {} found in the database", response.get().getName(), response.get().getId());
         return response.get();

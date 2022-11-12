@@ -14,7 +14,7 @@ public class InvestStrategy implements ITransactionStrategy{
 
     @Override
     public void make(double amount, Account accOrigin) {
-        this.modifyAccountTransactionLimit(amount, accOrigin);
+        this.checkAccountTransactionLimit(amount, accOrigin);
         if(accOrigin.getBalance() < amount){
             throw new TransactionException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }else{

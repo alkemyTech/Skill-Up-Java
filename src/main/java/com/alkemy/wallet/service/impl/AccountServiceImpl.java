@@ -29,7 +29,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public AccountDTO createAccount(int userId, String currency) {
         // Encuentro la lista de cuentas con el UserId pasado por parametro
-        List<Account> accountsByUserId = this.accountRepository.findByUser(userRepository.findById(userId).get());
+        List<Account> accountsByUserId = this.accountRepository.findAccountsByUserID(userId);
         //List<Account> accountsByUserId = this.accountRepository.findByUserID(userId); TODO:Probar metodo para remplazar el de arriba
         // Busco si alguna de las cuentas pertenecientes al UserId ya tiene la currency igual a la pasada por parametro
         boolean repeatedAccount = accountsByUserId.stream()

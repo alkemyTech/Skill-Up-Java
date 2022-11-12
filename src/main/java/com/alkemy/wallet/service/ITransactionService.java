@@ -11,10 +11,10 @@ import java.util.List;
 public interface ITransactionService {
 
     //Get One.
-    TransactionDTO getTransactionById(Integer id);
+    TransactionDTO getTransactionById(Integer id, Integer user_id);
 
     //Get All by User in a List.
-    List<TransactionDTO> getAllByUserId(Integer id);
+    List<TransactionDTO> findAllByUserId(Integer id, Integer page);
 
     //Create
     void makeTransaction(TransactionCreateDTO transDTO, ITransactionStrategy strategy);
@@ -22,5 +22,5 @@ public interface ITransactionService {
     void makeTransaction(ITransactionStrategy strategy, Account account, Double amount);
 
     //Update
-    void updateTransaction(TransactionUpdateDTO transDTO, Integer id);
+    void updateTransaction(TransactionUpdateDTO transDTO, Integer id , Integer user_id);
 }

@@ -3,15 +3,39 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
+import com.alkemy.wallet.model.Transaction;
+import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.IncomeStrategy;
 import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
+
+import com.alkemy.wallet.util.GetTokenData;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -26,25 +50,30 @@ public class TransactionController {
 
 
 
+
+
     @GetMapping("/{transactionId}/")
-    ResponseEntity<TransactionDTO> transactionDetails(@PathVariable Integer transactionId){
+    ResponseEntity<TransactionDTO> transactionDetails(@PathVariable Integer transactionId , @RequestHeader("Authorization") String bearerToken) throws ParseException {
 
-        return ResponseEntity.ok(transactionService.getTransactionById(transactionId));
+
+        // extraigo el token del Bearer
+        String token = bearerToken.substring("Bearer ".length());
+        // llamo método estático
+        Integer user_id = GetTokenData.getUserIdFromToken(token);
+        return ResponseEntity.ok(transactionService.getTransactionById(transactionId , user_id ));
 
     }
-/*
 
- // need a method from transactionService that returns a Page<Transaction> collection
     @GetMapping("/{userId}")
-    ResponseEntity<Page<Transaction>> transactionsListByUserId(@PathVariable Integer userId , Pageable pageable){
-       return ResponseEntity.ok( transactionService.findByUserId(pageable) );
+    ResponseEntity<List<TransactionDTO>> transactionsListByUserId(@PathVariable Integer userId , @RequestParam Integer page){
+        /*UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        System.out.println(userDetails.getUsername());*/
+       return ResponseEntity.ok( transactionService.findAllByUserId(userId, page) );
     }
 
 
-    // probably we need to put the validation dependency in pom.xml --> "javax.validation.Valid";
-     need a method "makePayment" from TransactionService wich modifies the currency of the proper Account and saves a
-     new Transaction object into the DataBase.
-*/
+
     @PostMapping("/deposit")
     ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO ){
 
@@ -52,6 +81,7 @@ public class TransactionController {
      return new ResponseEntity<>( HttpStatus.CREATED);
 
     }
+
 
    // same as above
     @PostMapping("/payment")
@@ -63,12 +93,26 @@ public class TransactionController {
     }
 
     @PatchMapping("/{transactionId}")
-    ResponseEntity<?> transactionModification(@PathVariable Integer transactionId , @RequestBody TransactionUpdateDTO transactionUpdateDTO){
+    ResponseEntity<?> transactionModification(@PathVariable Integer transactionId , @RequestBody TransactionUpdateDTO transactionUpdateDTO , @RequestHeader("Authorization") String bearerToken) throws ParseException {
 
-        transactionService.updateTransaction(transactionUpdateDTO,transactionId);
+        // extraigo el token del Bearer
+        String token = bearerToken.substring("Bearer ".length());
+
+        // llamo método estático
+        Integer user_id = GetTokenData.getUserIdFromToken(token);
+
+
+        transactionService.updateTransaction(transactionUpdateDTO,transactionId , user_id);
         return ResponseEntity.ok().build();
 
     }
+    @PostMapping("/sendArs")
+    ResponseEntity<?> transferMoney(@RequestBody @Valid TransactionCreateDTO transaction,
+                                    @RequestHeader(value = "Authorization") String token){
 
+        transactionService.makeTransaction(transaction, new PaymentStrategy(),token);
+        transactionService.makeTransaction(transaction, new IncomeStrategy());
+        return new ResponseEntity<>( HttpStatus.CREATED);
 
+    }
 }

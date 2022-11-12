@@ -32,6 +32,7 @@ public class WebSecurityConfig {
 		.antMatchers("/swagger-ui/**").permitAll()
 		.antMatchers("/docs/**").permitAll()
 		.antMatchers("/auth/**").permitAll()
+				.antMatchers("/fixed-deposit/simulate").permitAll()
 		.anyRequest().authenticated();
 		
 		http.exceptionHandling().accessDeniedPage("/login");

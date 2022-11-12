@@ -78,22 +78,6 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public Map<String, Object> getAccountsByPage(Integer page) {
-/*        String host = "";
-        Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties");
-        if (inputStream!=null) {
-            try {
-                properties.load(inputStream);
-                host = properties.getProperty("server.port");
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        *//*UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .scheme("http").host("www.localhost:" + host + "/accounts/pages")
-                .path("/").query("q={keyword}").buildAndExpand("baeldung");*/
-
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
         pageWithTenElements.next();
         Page<Account> accounts =  accountRepository.findAll(pageWithTenElements);
@@ -102,7 +86,7 @@ public class AccountServiceImpl implements IAccountService {
         Map<String, Object> response = new HashMap<>();
         if (accounts.hasNext() || accounts.hasPrevious()) {
             ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
-            builder.scheme("https");
+            builder.scheme("http");
             if (accounts.hasNext()) {
                 builder.replaceQueryParam("page", accounts.getPageable().getPageNumber() + 1);
                 response.put("Next page url", builder.build().toUri());
@@ -113,12 +97,6 @@ public class AccountServiceImpl implements IAccountService {
             }
         }
         response.put("Accounts", accountDTOList);
-/*        response.put("currentPage", accounts.getNumber());
-        response.put("totalItems", accounts.getTotalElements());
-        response.put("totalPages", accounts.getTotalPages());
-        response.put("Next page", accounts.hasNext());
-        response.put("Has previous page", accounts.hasPrevious());
-        response.put("Has previous page", accounts.getPageable().getPageNumber());*/
         return response;
     }
 

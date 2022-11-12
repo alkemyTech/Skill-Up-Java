@@ -1,10 +1,12 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.UserDTO;
+import com.alkemy.wallet.dto.UserDetailsDTO;
 import com.alkemy.wallet.dto.UserRegisterDTO;
+import com.alkemy.wallet.dto.UserUpdateDTO;
 import com.alkemy.wallet.enumeration.RoleList;
-import com.alkemy.wallet.exception.RestServiceException;
 import com.alkemy.wallet.exception.NotFoundException;
+import com.alkemy.wallet.exception.RestServiceException;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
@@ -18,17 +20,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,17 +70,41 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
         Page<User> users =  userRepository.findAll(pageWithTenElements);
         List<User> userList = users.getContent();
+        System.out.println("Total pages: "+ users.getTotalPages());
+        System.out.println("Total elemttos: "+users.getTotalElements());
         return userMapper.userEntityList2DTOList(userList);
     }
 
     @Override
-    public UserDTO getUserDatail(Integer id) {
+    public UserDetailsDTO getUserDatail(Integer id) {
         Optional<User> entity =userRepository.findById(id);
         if(entity.isEmpty()){
             throw new NotFoundException("Invalid ID");
         }
-        return userMapper.userEntity2DTO(entity.get());
-        //TODO: modify dto to return
+        return userMapper.userEntity2DTODetails(entity.get());
+    }
+
+    @Override
+    public UserDTO updateUser(UserUpdateDTO userUpdateDTO, Integer id) {
+        Optional<User> result = userRepository.findById(id);
+        if(result.isEmpty()) {
+            throw new NotFoundException("Invalid ID");
+        }
+        User res = result.get();
+        userUpdateDTO.setId(id);
+        User user = userMapper.userUpdateDTO2Entity(userUpdateDTO);
+
+        String encodedPassword = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        user.setEmail(res.getEmail());
+        user.setRole(res.getRole());
+        user.setCreationDate(res.getCreationDate());
+
+        user.setUpdateDate(new Date());
+
+        User response = userRepository.save(user);
+        return userMapper.userEntity2DTO(response);
     }
 
     @Override

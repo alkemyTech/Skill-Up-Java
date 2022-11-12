@@ -44,6 +44,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         fixedTermDeposit.setInterests(interests);
         double totalAmount = fixedTermDeposit.getAmount() + interests;
         fixedTermDeposit.setTotalAmount(totalAmount);
+        fixedTermDeposit.setCreateDate(date);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = bankDAO.findUserByEmail(bankDAO.returnUserName());
         Long id = user.getUserId();
@@ -66,6 +67,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         }
         double interests = (fixedTermDeposit.getAmount() * interestRate) * days;
         double totalAmount = fixedTermDeposit.getAmount() + interests;
+        fixedTermDepositSimulateDto.setCreateDate(date);
         fixedTermDepositSimulateDto.setAmount(fixedTermDeposit.getAmount());
         fixedTermDepositSimulateDto.setCurrency(fixedTermDeposit.getCurrency());
         fixedTermDepositSimulateDto.setClosingDate(fixedTermDeposit.getClosingDate());

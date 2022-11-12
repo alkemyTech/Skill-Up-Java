@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class FixedTermDepositSimulateDTO {
     @NotNull(groups = IValidatorFixedTermDep.class)
     private Double amount;
+    private LocalDate createDate;
     @NotNull(groups = IValidatorFixedTermDep.class)
     private LocalDate closingDate;
     private Double interests;

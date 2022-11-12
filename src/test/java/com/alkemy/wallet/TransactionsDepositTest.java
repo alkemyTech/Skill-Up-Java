@@ -47,8 +47,6 @@ public class TransactionsDepositTest {
         UserDetails dummy = new User("foo@foo.com", "foo", new ArrayList<>());
         Mockito.when(jwtUtil.generateToken(dummy)).thenReturn("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmb29AZm9vLmNvbSIsImV4cCI6MTY2Nzk2NjQ0MSwiaWF0IjoxNjY3OTMwNDQxfQ.hJ78zEJZ6a1t0E59CotdI1lPMobP7353mppZk4sskxM");
     }
-
-
     @Test
     public void transactionsDepositReturns201HttpCreated() throws Exception {
         UserDetails dummy = new User("foo@foo.com", "foo", new ArrayList<>());
@@ -62,4 +60,5 @@ public class TransactionsDepositTest {
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
+
 }

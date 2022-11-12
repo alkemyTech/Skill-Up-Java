@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Column( nullable = false, name = "PASSWORD" )
     private String password;
 
-    @OneToOne( fetch = FetchType.EAGER, cascade = CascadeType.PERSIST )
+    @OneToOne( fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn( name = "ROLE_ID", referencedColumnName = "ROLE_ID", nullable = false )
     private Role role;
 

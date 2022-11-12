@@ -50,10 +50,8 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.convertRequestDtoToEntity(userRequestDto);
 
-        //SET ROLE TO USER
-        //THIS ROLE CREATION MUST BE DELETED IN THE FUTURE
         Role role;
-        role=roleRepository.findById(1).orElse(new Role(1,RoleName.USER, "Rol de usuarios", new Timestamp( System.currentTimeMillis() ), null ));
+        role=roleRepository.findById(1).orElse(new Role(1,RoleName.USER, "Users rol", new Timestamp( System.currentTimeMillis() ), null ));
 
         user.setRole(role);
 

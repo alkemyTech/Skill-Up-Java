@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -17,6 +18,7 @@ import static java.lang.Boolean.FALSE;
 @Table( name = "USERS" )
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @SQLDelete( sql = "UPDATE users SET soft_delete = true WHERE USER_ID=?" )
 @Where( clause = "soft_delete=false" )
 public class User implements UserDetails {
@@ -38,7 +40,7 @@ public class User implements UserDetails {
     @Column( nullable = false, name = "PASSWORD" )
     private String password;
 
-    @OneToOne( fetch = FetchType.EAGER, cascade = CascadeType.PERSIST )
+    @OneToOne( fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn( name = "ROLE_ID", referencedColumnName = "ROLE_ID", nullable = false )
     private Role role;
 

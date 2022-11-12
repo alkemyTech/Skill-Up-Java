@@ -1,10 +1,14 @@
 package com.alkemy.wallet.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 // TODO: Check db table name
 @Entity
+@Getter
 @Table(name = "ROLES")
 public class Role {
 
@@ -26,6 +30,14 @@ public class Role {
     private Timestamp updateDate;
 
     public Role(RoleName name, String description, Timestamp creationDate, Timestamp updateDate) {
+        this.name = name;
+        this.description = description;
+        this.creationDate = creationDate;
+        this.updateDate = updateDate;
+    }
+
+    public Role(Integer id,RoleName name, String description, Timestamp creationDate, Timestamp updateDate) {
+        this.roleId = id;
         this.name = name;
         this.description = description;
         this.creationDate = creationDate;

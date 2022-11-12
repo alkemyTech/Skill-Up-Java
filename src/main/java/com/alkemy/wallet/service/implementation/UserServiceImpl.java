@@ -1,27 +1,32 @@
 package com.alkemy.wallet.service.implementation;
 
-import com.alkemy.wallet.dto.UserDetailDto;
-import com.alkemy.wallet.dto.UserDto;
-import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
-import com.alkemy.wallet.dto.UserUpdateDto;
 import com.alkemy.wallet.exception.ForbiddenAccessException;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.RoleName;
 import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.repository.RoleRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,10 +39,38 @@ public class UserServiceImpl implements UserService {
 
     private final JWTUtil jwtUtil;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
-    public List<UserDto> getAllUsers() {
-        var users = userRepository.findAll();
-        return users.stream().map(userMapper::convertToDto).toList();
+    public UserPaginatedDto getAllUsers(Integer page) {
+
+        Pageable pageable = PageRequest.of(page,10);
+        Page <User> userPage = userRepository.findAll(pageable);
+
+        UserPaginatedDto userPaginatedDto = new UserPaginatedDto();
+
+        List<UserDto> userDtoList = new ArrayList<UserDto>();
+
+        for(User u : userPage){
+            userDtoList.add(userMapper.convertToDto(u));
+        }
+
+        userPaginatedDto.setUserList(userDtoList);
+
+        String url = "http://localhost:8080/users?page=";
+
+        if(userPage.hasPrevious())
+            userPaginatedDto.setPreviousUrl(url+(page-1));
+        else
+            userPaginatedDto.setPreviousUrl("");
+
+        if(userPage.hasNext())
+            userPaginatedDto.setNextUrl(url+(page+1));
+        else
+            userPaginatedDto.setNextUrl("");
+
+        return userPaginatedDto;
     }
 
     @Override
@@ -45,11 +78,10 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.convertRequestDtoToEntity(userRequestDto);
 
-        //SET ROLE TO USER
-        //THIS ROLE CREATION MUST BE DELETED IN THE FUTURE
-        RoleName roleName = RoleName.USER;
-        Role role = new Role( roleName, "Rol de usuarios", new Timestamp( System.currentTimeMillis() ), null );
-        user.setRole( role );
+        Role role;
+        role=roleRepository.findById(1).orElse(new Role(1,RoleName.USER, "Users rol", new Timestamp( System.currentTimeMillis() ), null ));
+
+        user.setRole(role);
 
         user.setCreationDate( new Timestamp( System.currentTimeMillis() ) );
         user.setSoftDelete( false );
@@ -62,9 +94,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser( Integer id ) throws ResourceNotFoundException {
+    public void deleteUser( Integer id , String token) throws ResourceNotFoundException {
         try {
-            userRepository.deleteById( id );
+            User user = loadUserByUsername(jwtUtil.extractUserName(token.substring(7)));
+
+            if(user.getRole().getName().name()=="ADMIN")
+                userRepository.deleteById(id);
+            else{
+                if(user.getUserId()==id)
+                    userRepository.deleteById(id);
+            }
+
         } catch ( EmptyResultDataAccessException exception ) {
             throw new ResourceNotFoundException( exception.getMessage() );
         }
@@ -93,6 +133,8 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Integer id) {
         Optional<User> optionalUser = userRepository.findById(id);
 
+        optionalUser.get().getRole().getName().name();
+
         if(optionalUser.isEmpty()){
             throw new ResourceNotFoundException("The user with id: " + id + " was not found");
         }
@@ -115,12 +157,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token) {
+    public UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token) throws ForbiddenAccessException {
         User user=this.getUserById(id);
         User userToken=loadUserByUsername(jwtUtil.extractClaimUsername(token.substring(7)));
         if(user.getUserId()!=userToken.getUserId()){
 
-            throw new ResourceNotFoundException("you are trying to modify a user that is not you");
+            throw new ForbiddenAccessException("You are trying to modify a user that is not you");
         }
         user.setFirstName(userUpdateDto.getFirstName());
         user.setLastName(userUpdateDto.getLastName());

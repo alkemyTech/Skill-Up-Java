@@ -15,8 +15,7 @@ public class PaymentStrategy implements ITransactionStrategy{
 
     @Override
     public void make(double amount, Account accOrigin) {
-        this.modifyAccountTransactionLimit(amount, accOrigin);
-        //TODO:  checkear trans limit
+        this.checkAccountTransactionLimit(amount, accOrigin);
         if(accOrigin.getBalance() < amount){
             throw new TransactionException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }else{

@@ -12,7 +12,7 @@ public class DepositStrategy implements ITransactionStrategy{
 
     @Override
     public void make(double amount, Account account) {
-        this.modifyAccountTransactionLimit(amount, account);
+        this.checkAccountTransactionLimit(amount, account);
         account.setBalance(account.getBalance()+amount);
 
     }

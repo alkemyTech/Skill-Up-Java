@@ -34,6 +34,7 @@ public class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
+
     @Column(name = "creation_date")
     @CreationTimestamp
     private Date creationDate;

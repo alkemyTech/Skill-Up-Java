@@ -40,6 +40,11 @@ public class AccountController {
         return accountService.updateAccountId(id, account);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {
+        return accountService.showAllAccountsByUserId(userId);
+    }
+
     @GetMapping("/accountspage")
     public ResponseEntity<Page<AccountEntity>> showAccountsPage(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int size, Model model){
         PageRequest pageRequest = PageRequest.of(pageNumber, size);

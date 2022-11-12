@@ -82,16 +82,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId) {
-        Optional<UserEntity> opUser = bankDAO.getUserById(userId);
-
-        if(opUser.isEmpty()) {
-            throw new BankException("The requested user ID does not exist");
-        }
-        return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
-    }
-
-    @Override
     public ResponseEntity<Object> updateUserId(Long id, UserRequestDTO userRequestDTO, AuthenticationRequest aut) {
            DTOValidator.validate(userRequestDTO, IValidatorUser.class);
            bankDAO.updateUser(id, userRequestDTO);

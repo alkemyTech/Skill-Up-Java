@@ -57,11 +57,6 @@ public class UserController {
         return  userService.updateUserId(id, user, aut);
     }
 
-    @GetMapping("/accounts/{userId}")
-    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(@PathVariable Long userId) {
-        return userService.showAllAccountsByUserId(userId);
-    }
-
     @GetMapping("/userspage")
     public ResponseEntity<Page<UserEntity>> showUsersPage(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int size, Model model){
         PageRequest pageRequest = PageRequest.of(pageNumber, size);

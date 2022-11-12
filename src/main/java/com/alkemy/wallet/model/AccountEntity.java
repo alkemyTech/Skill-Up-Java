@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.NumberFormat;
 import javax.persistence.*;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -61,6 +62,6 @@ public class AccountEntity {
     @OneToMany(mappedBy="account")
     private Set<TransactionEntity> transactions;
 
-    @OneToMany(mappedBy="account")
+    @OneToMany(mappedBy="account", cascade = CascadeType.ALL)
     private Set<FixedTermDepositEntity> fixedTermsDeposit;
 }

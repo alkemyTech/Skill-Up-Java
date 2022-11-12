@@ -19,7 +19,6 @@ public interface IUserService {
     ResponseEntity<UserResponseDTO> createUser(UserRequestDTO request);
     ResponseEntity<Object> deleteUser(Long userId);
     List<UsersDTO> showAllUsers();
-    ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId);
     UserDetailDTO getUserDetail(Long id);
     ResponseEntity<Page<UserEntity>> showUsersPage(PageRequest pageRequest);
     void addNavigationAttributesToModel(int pageNumber, Model model, PageRequest pageRequest);

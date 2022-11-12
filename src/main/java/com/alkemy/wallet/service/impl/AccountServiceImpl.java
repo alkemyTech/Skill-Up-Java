@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,6 +51,16 @@ public class AccountServiceImpl implements IAccountService {
         DTOValidator.validate(account, IValidatorAccount.class);
         bankDAO.updateAccount(id, account);
         return new ResponseEntity<>("updated account", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<AccountEntity>> showAllAccountsByUserId(Long userId) {
+        Optional<UserEntity> opUser = bankDAO.getUserById(userId);
+
+        if(opUser.isEmpty()) {
+            throw new BankException("The requested user Id does not exist");
+        }
+        return ResponseEntity.ok(bankDAO.getAllAccountByUser(opUser.get()));
     }
 
     @Override

@@ -1,23 +1,18 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.controller.exception.Mistake;
+import com.alkemy.wallet.controller.exception.ExceptionCustom;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
-import com.alkemy.wallet.model.entity.*;
-import com.alkemy.wallet.model.mapper.AccountMapper;
-import com.alkemy.wallet.model.request.AccountRequestDto;
-import com.alkemy.wallet.model.response.AccountResponseDto;
-import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
-import com.alkemy.wallet.model.response.AccountBalanceDto;
 import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.User;
+import com.alkemy.wallet.model.mapper.AccountMapper;
+import com.alkemy.wallet.model.response.AccountResponseDto;
 import com.alkemy.wallet.repository.IAccountRepository;
-import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
-import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -34,102 +29,113 @@ import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
 public class AccountServiceImpl implements IAccountService {
 
     private final IAccountRepository accountRepository;
-    private final ITransactionRepository transactionRepository;
-    private final IUserService userService;
     private final AccountMapper accountMapper;
     private final IAuthService authService;
 
+    private static final String EL_USUARIO_CON_ID = "El usuario con id ";
+
     @Override
     public Account getAccountById(long idAccount) {
-       return accountRepository.findById(idAccount).get();
+        Optional<Account> account = accountRepository.findById(idAccount);
+        if (account.isEmpty())
+            throw new ExceptionCustom(EL_USUARIO_CON_ID + idAccount + " no esta disponible");
+        return account.get();
     }
 
     //Se debe hacer el PR de esta funcionalidad
     @Override
-    public AccountResponseDto createAccount(AccountResponseDto dto){
+    public AccountResponseDto createAccount(AccountResponseDto dto) {
         return null;
     }
+
     @Override
     public List<Account> createUserAccounts() {
-        AccountCurrencyEnum currencyUSD = USD;
-        AccountCurrencyEnum currencyARS = ARS;
 
-        Account USDAccount = new Account();
-        USDAccount.setCreationDate(LocalDateTime.now());
-        USDAccount.setBalance(0.0);
-        USDAccount.setCurrency(currencyUSD);
-        USDAccount.setSoftDelete(false);
-        USDAccount.setTransactionLimit(1000.0);
+        Account usdAccount = new Account();
+        usdAccount.setCreationDate(LocalDateTime.now());
+        usdAccount.setBalance(0.0);
+        usdAccount.setCurrency(USD);
+        usdAccount.setSoftDelete(false);
+        usdAccount.setTransactionLimit(1000.0);
 
-        Account ARSAccount = new Account();
-        ARSAccount.setCreationDate(LocalDateTime.now());
-        ARSAccount.setBalance(0.0);
-        ARSAccount.setCurrency(currencyARS);
-        ARSAccount.setSoftDelete(false);
-        ARSAccount.setTransactionLimit(300000.0);
+        Account arsAccount = new Account();
+        arsAccount.setCreationDate(LocalDateTime.now());
+        arsAccount.setBalance(0.0);
+        arsAccount.setCurrency(ARS);
+        arsAccount.setSoftDelete(false);
+        arsAccount.setTransactionLimit(300000.0);
 
-        accountRepository.save(USDAccount);
-        accountRepository.save(ARSAccount);
+        accountRepository.save(usdAccount);
+        accountRepository.save(arsAccount);
 
-        List<Account> accountList= new ArrayList<Account>();
-        accountList.add(USDAccount);
-        accountList.add(ARSAccount);
+        List<Account> accountList = new ArrayList<>();
+        accountList.add(usdAccount);
+        accountList.add(arsAccount);
 
         return accountList;
     }
 
     @Override
-    public  AccountResponseDto editAccountBalance(long idAccount, Double newBalance){
-        Account account = accountRepository.findById(idAccount).get();
-        if(account !=null) {
-            if (account.getBalance() >= newBalance) {
-                account.setBalance(newBalance);
-                return accountMapper.entity2Dto(accountRepository.save(account));
-            }
-        }else{
-            throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
-            }
-        return null;
+    public AccountResponseDto editAccountBalance(long idAccount, Double newBalance) {
+        Optional<Account> account = accountRepository.findById(idAccount);
+        if (account.isEmpty()) {
+            //throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
+            throw new ExceptionCustom(String.format("Account with id: %s was not found", idAccount));
+        }
+
+        //TODO cambiar mensaje
+        if (account.get().getBalance() <= newBalance) {
+            //throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
+            throw new ExceptionCustom(String.format("Account with id: %s was not found", idAccount));
+        }
+
+        account.get().setBalance(newBalance);
+        return accountMapper.entity2Dto(accountRepository.save(account.get()));
     }
 
     @Override
     public List<AccountBalanceResponseDto> getAccountBalance(String token) {
+        double valorPesoArs = 160.41;
+        double valorPesoUsd = 0.0062;
+        double porcentaje = 10;
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+
         long idUser = authService.getUserFromToken(token).getId();
-        List<Account> account = accountRepository.findAccountByUserId(idUser);
-        if (account.isEmpty())
-            throw new Mistake("Usuario no disponible");
+        List<Account> accounts = accountRepository.findAccountByUserId(idUser);
+        if (accounts.isEmpty())
+            throw new ExceptionCustom("Usuario no disponible");
 
         List<AccountBalanceResponseDto> accountBalanceList = new ArrayList<>();
 
-        for (Account value : account) {
+        for (Account account : accounts) {
             AccountBalanceResponseDto accountBalanceResponseDTO;
 
             LocalDate dateDB = LocalDate.of
-                    (value.getCreationDate().getYear(),
-                            value.getCreationDate().getMonth(),
-                            value.getCreationDate().getDayOfWeek().getValue());
+                    (account.getCreationDate().getYear(),
+                            account.getCreationDate().getMonth(),
+                            account.getCreationDate().getDayOfWeek().getValue());
 
             Period duration = Period.between(dateDB, LocalDate.now());
             accountBalanceResponseDTO = new AccountBalanceResponseDto();
             if (duration.getMonths() > 0) {
-                accountBalanceResponseDTO.setFixedTermDeposit(value.getBalance() * (282 * duration.getMonths()));
+                double aumento = (account.getBalance() * porcentaje) / 100;
+                accountBalanceResponseDTO.setFixedTermDeposit(account.getBalance() + (aumento * duration.getMonths()));
             }
-            if (value.getCurrency().equals(ARS)) {
-                accountBalanceResponseDTO.setBalanceUsd(value.getBalance() / 282);
-                accountBalanceResponseDTO.setBalanceArs(value.getBalance());
+            if (account.getCurrency().equals(ARS)) {
+                double arsToUsd = Double.parseDouble(decimalFormat.format((account.getBalance() * valorPesoArs)));
+                accountBalanceResponseDTO.setBalanceUsd(arsToUsd);
+                accountBalanceResponseDTO.setBalanceArs(account.getBalance());
                 accountBalanceList.add(accountBalanceResponseDTO);
-            }
-
-            if (value.getCurrency().equals(USD)) {
-                accountBalanceResponseDTO.setBalanceUsd(value.getBalance() * 282);
-                accountBalanceResponseDTO.setBalanceArs(value.getBalance());
+            } else if (account.getCurrency().equals(USD)) {
+                double usdToArs = Double.parseDouble(decimalFormat.format((account.getBalance() * valorPesoUsd)));
+                accountBalanceResponseDTO.setBalanceUsd(account.getBalance());
+                accountBalanceResponseDTO.setBalanceArs(usdToArs);
                 accountBalanceList.add(accountBalanceResponseDTO);
             }
         }
         return accountBalanceList;
     }
 
-    //ToDo Solo administrador
     @Override
     public List<AccountResponseDto> getAccountUserById(long idUser) {
         List<Account> account = accountRepository.findAccountByUserId(idUser);
@@ -139,94 +145,33 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public String sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token) {
-        String noDisponible = " no esta disponible";
-        long idUser = authService.getUserFromToken(token).getId();
-        if (idTargetUser == idUser)
-            throw new Mistake("Error no se puede enviar dinero al mismo usuario");
-
-        Optional<User> user = userService.findById(idUser);
-        if (user.isEmpty())
-            throw new Mistake("El usuario con id " + idUser + noDisponible);
-
-        Optional<User> targetUser = userService.findById(idTargetUser);
-        if (targetUser.isEmpty())
-            throw new Mistake("El usuario con id " + idTargetUser + noDisponible);
-
-        Optional<Account> accountUser = accountRepository.findTopByUserId(idUser);
-        if (accountUser.isEmpty())
-            throw new Mistake("La account con id " + idUser + noDisponible);
-
-        Optional<Account> accountTargetUser = accountRepository.findTopByUserId(idTargetUser);
-        if (accountTargetUser.isEmpty())
-            throw new Mistake("La account con id " + idTargetUser + noDisponible);
-
-        specificTypeOfTransaction(type);
-        specificTypeOfMoney(typeMoney, money, accountUser.get(), accountTargetUser.get());
-
-        if (accountUser.get().getBalance() < amount)
-            throw new Mistake("Error valor disponible superado");
-
-        if (amount > accountUser.get().getTransactionLimit())
-            throw new Mistake("Error supera el limite de transacciones");
-
-        double balanceUser = accountUser.get().getBalance() - amount;
-        double targetUserBalance = accountTargetUser.get().getBalance() + amount;
-
-        accountUser.get().setBalance((balanceUser));
-        accountTargetUser.get().setBalance(targetUserBalance);
-
-        Transaction transaction = new Transaction();
-        transaction.setTransactionDate(LocalDateTime.now());
-        transaction.setAmount(amount);
-        transaction.setDescription("Transacción exitosa");
-        transaction.setType(specificTypeOfTransaction(type));
-        transaction.setUser(targetUser.get());
-        transaction.setAccount(accountUser.get());
-
-        accountRepository.save(accountTargetUser.get());
-        accountRepository.save(accountUser.get());
-        //ToDo: Cambiar repository por transactionService
-        transactionRepository.save(transaction);
-
-        return "Operación realizada exitosamente";
-    }
-
-
-    public void specificTypeOfMoney(int typeMoney, String money, Account accountUser, Account accountTargetUser) {
-        String error = "Error solo puede enviar dinero en ";
-        if (typeMoney == 1 && (!accountUser.getCurrency().equals(ARS) || !accountTargetUser.getCurrency().equals(ARS)))
-            throw new Mistake(error + money);
-        else {
-            if (typeMoney == 2 && (!accountUser.getCurrency().equals(USD) || !accountTargetUser.getCurrency().equals(USD)))
-                throw new Mistake(error + money);
-        }
-    }
-
-    public TransactionTypeEnum specificTypeOfTransaction(String type) {
-        if (TransactionTypeEnum.PAYMENT.name().equalsIgnoreCase(type))
-            return TransactionTypeEnum.PAYMENT;
-        else if (TransactionTypeEnum.INCOME.name().equalsIgnoreCase(type))
-            return TransactionTypeEnum.INCOME;
-        else if (TransactionTypeEnum.DEPOSIT.name().equalsIgnoreCase(type))
-            return TransactionTypeEnum.DEPOSIT;
-        else
-            throw new Mistake("El tipo ingresado es incorrecto");
-    }
-    @Override
-    public AccountResponseDto updateAccount(Long accountId, Double newTransactionLimit, String token) {
+    public AccountResponseDto updateAccount(long accountId, double newTransactionLimit, String token) {
         User user = authService.getUserFromToken(token);
         Account accountToUpdate = null;
         for (Account account : user.getAccounts()) {
-            if (account.getId() == accountId) {
+            if (account.getId().equals(accountId)) {
                 accountToUpdate = account;
             }
         }
         if (accountToUpdate == null) {
-            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
+            //throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
+            throw new ExceptionCustom(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
         }
         accountToUpdate.setTransactionLimit(newTransactionLimit);
 
         return accountMapper.entity2Dto(accountRepository.save(accountToUpdate));
+    }
+
+    @Override
+    public Optional<Account> findTopByUserId(Long userId) {
+        Optional<Account> account = accountRepository.findTopByUserId(userId);
+        if (account.isEmpty())
+            throw new ExceptionCustom("La cuenta con el id " + userId + " no esta disponible");
+        return account;
+    }
+
+    @Override
+    public void save(Account account) {
+        accountRepository.save(account);
     }
 }

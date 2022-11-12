@@ -27,6 +27,8 @@ public class UserMapper {
     }
 
     public UserResponseDto entity2Dto(User entity) {
+        if (entity == null)
+            return null;
         return UserResponseDto.builder()
                 .id(entity.getId())
                 .firstName(entity.getFirstName())

@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class Mistake extends RuntimeException{
+public class ExceptionCustom extends RuntimeException{
     private final String message;
 }

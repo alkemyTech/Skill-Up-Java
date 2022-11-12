@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 public class TransactionDtoTest {
     private ModelMapper mapper;
     private Transaction transaction;
-    private TransactionDto dto;
     private User user;
     private Account account;
 
@@ -43,7 +42,7 @@ public class TransactionDtoTest {
         transaction.setUser(user);
         transaction.setAccount(account);
 
-        dto = mapper.map(transaction, TransactionDto.class);
+        TransactionDto dto = mapper.map(transaction, TransactionDto.class);
 
         assertEquals(transaction.getId(), dto.getId());
         assertEquals(transaction.getAmount(), dto.getAmount());

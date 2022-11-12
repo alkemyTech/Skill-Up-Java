@@ -17,5 +17,5 @@ public interface IUserService {
     UserListResponseDto getUsers();
     UserResponseDto deleteUserById(Long id);
     User save(User accountUser);
-    Optional<User> findById(long id);
+    Optional<User> findById(Long id);
 }

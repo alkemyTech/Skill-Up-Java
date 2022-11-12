@@ -2,17 +2,14 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
-import com.alkemy.wallet.model.entity.User;
+import com.alkemy.wallet.model.response.AccountResponseDto;
 
 import java.util.List;
 import java.util.Optional;
-import com.alkemy.wallet.model.request.AccountRequestDto;
-import com.alkemy.wallet.model.response.AccountBalanceDto;
-import com.alkemy.wallet.model.response.AccountResponseDto;
 
 public interface IAccountService {
 
-    Account getAccountById(long IdAccount);
+    Account getAccountById(long idAccount);
     AccountResponseDto createAccount(AccountResponseDto dto);
 
     List<Account> createUserAccounts();
@@ -23,7 +20,8 @@ public interface IAccountService {
 
     List<AccountResponseDto> getAccountUserById(long idUser);
 
-    String sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token);
+    AccountResponseDto updateAccount(long accountId, double newTransactionLimit, String token);
 
-    AccountResponseDto updateAccount(Long accountId, Double newTransactionLimit, String token);
+    Optional<Account> findTopByUserId(Long userId);
+    void save(Account account);
 }

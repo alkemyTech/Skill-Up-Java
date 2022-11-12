@@ -35,9 +35,9 @@ public class TransactionServiceTest {
 
     @Before
     public void setUp() {
-        Optional<User> optionalUser =userRepository.findByEmail("juanjo@gmail.com");
+        Optional<User> optionalUser = userRepository.findByEmail("juanjo@gmail.com");
 
-        if(!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             User user = new User();
             user.setFirstName("Juan");
             user.setLastName("Perez");
@@ -45,7 +45,7 @@ public class TransactionServiceTest {
             user.setPassword("123456");
             user.setCreationDate(LocalDateTime.now());
 
-            optionalUser.of(userRepository.save(user));
+            optionalUser = Optional.of(userRepository.save(user));
         }
 
         Account account = new Account();

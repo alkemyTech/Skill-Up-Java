@@ -58,10 +58,10 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
-    @ExceptionHandler(Mistake.class)
-    protected ResponseEntity<Map<String, String>> badRequest(Mistake mistake){
+    @ExceptionHandler(ExceptionCustom.class)
+    protected ResponseEntity<Map<String, String>> badRequest(ExceptionCustom exceptionCustom){
         Map<String, String> messages=new HashMap<>();
-        messages.put("message", mistake.getMessage());
+        messages.put("message", exceptionCustom.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
         return new ResponseEntity<>(messages, BAD_REQUEST);

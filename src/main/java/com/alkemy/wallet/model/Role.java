@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Setter
 @Getter
 @Entity
+@Getter
 @Table(name = "ROLES")
 public class Role {
 

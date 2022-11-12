@@ -13,13 +13,19 @@ import com.alkemy.wallet.repository.BankDAO;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.utils.DTOValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static com.alkemy.wallet.model.TransactionLimitEnum.ARS;
 import static com.alkemy.wallet.model.TransactionLimitEnum.USD;
 import static com.alkemy.wallet.model.TypeEnum.*;
@@ -159,5 +165,33 @@ public class TransactionServiceImpl implements ITransactionService {
         if (!transaction.getType().equalsIgnoreCase(deposit.getType())) {
             throw new BankException(message);
         }
+    }
+
+    @Override
+    public ResponseEntity<Page<TransactionEntity>> showTransactionPage(PageRequest pageRequest) {
+        Page<TransactionEntity> pageTransactions = bankDAO.showTransactionPage(pageRequest);
+
+        if (pageTransactions.isEmpty()){
+            throw new BankException("Missing page number");
+        }
+
+        return ResponseEntity.ok(pageTransactions);
+    }
+
+    @Override
+    public void addNavigationAttributesToModel(int pageNumber, Model model, PageRequest pageRequest) {
+        Page<TransactionEntity> pageTransactions = bankDAO.showTransactionPage(pageRequest);
+
+        int totalPages = pageTransactions.getTotalPages();
+        if(totalPages > 0){
+            List<Integer> pages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
+            model.addAttribute("pages", pages);
+            model.addAttribute("current", pageNumber+1);
+            model.addAttribute("next", pageNumber+2);
+            model.addAttribute("prev", pageNumber);
+            model.addAttribute("last", totalPages);
+        }
+
+        model.addAttribute("List", pageTransactions.getContent());
     }
 }

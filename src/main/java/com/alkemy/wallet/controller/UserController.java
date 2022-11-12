@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -52,8 +53,9 @@ class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     //TODO: A este metodo lo puede acceser Usuarios autenticados tambien, agregarle algo para negar eso y que sea solo para admin
-    List<UserDto> getAll() {
-        return userservice.getAllUsers();
+    UserPaginatedDto getAll(@Param("page") Integer page) {
+        return userservice.getAllUsers(page);
+
     }
 
     //Swagger Notation getUserDetailById

@@ -31,11 +31,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping( "/accounts" )
 public class AccountController {
     private final AccountService accountService;
 
     //Swagger Notation createAccount
+
     @Operation(summary = "Create Account of a User")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Account created",
@@ -48,6 +49,7 @@ public class AccountController {
                     content = {@Content(mediaType = "text/plain",
                             schema = @Schema(defaultValue = "User already has an account for that currency or server couldn't complete the action")),})
     })
+
     //End Swagger notation
 
     @SecurityRequirement(name = "Bearer Authentication")
@@ -104,10 +106,16 @@ public class AccountController {
     @PatchMapping(value = "/{id}")
     ResponseEntity<AccountDetailDto> updateAccount(@RequestBody AccountPatchDto accountPatchDto, @Parameter(description = "id account to be updated") @PathVariable Integer id, @RequestHeader("Authorization") String userToken) throws Exception {
         return ResponseEntity.ok(accountService.updateAccount(accountPatchDto, id, userToken));
+
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<PaginatedAccountsDto> paginateAccounts(@Param("page") Integer page) {
-        return ResponseEntity.ok(accountService.getAccounts(page));
+    @GetMapping( "/all" )
+    public ResponseEntity<PaginatedAccountsDto> paginateAccounts( @Param( "page" ) Integer page ) {
+        return ResponseEntity.ok( accountService.getAccounts( page ) );
+    }
+
+    @GetMapping( "/{userId}" )
+    public ResponseEntity<List<AccountDto>> getAccountsByUserId( @PathVariable Integer userId ) {
+        return ResponseEntity.ok( accountService.getAccountsByUserId( userId ) );
     }
 }

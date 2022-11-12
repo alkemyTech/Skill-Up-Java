@@ -6,8 +6,10 @@ import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
 import com.alkemy.wallet.dto.CurrencyRequestDto;
 import com.alkemy.wallet.mapper.AccountMapper;
+import com.alkemy.wallet.mapper.FixedTermDepositMapper;
 import com.alkemy.wallet.model.*;
 import com.alkemy.wallet.repository.AccountRepository;
+import com.alkemy.wallet.repository.FixedTermDepositRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
 import com.alkemy.wallet.service.FixedTermDepositService;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +37,9 @@ public class AccountServiceImpl implements AccountService {
     private final JWTUtil jwtUtil;
     private final AccountMapper accountMapper;
     private final UserService userService;
-    private final FixedTermDepositService fixedTermDepositService;
+    private final FixedTermDepositRepository fixedTermDepositRepository;
+
+    private final FixedTermDepositMapper fixedTermDepositMapper;
     @Autowired
     private HttpServletRequest request;
 
@@ -135,8 +140,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private AccountBalanceDto getAccountBalance(AccountDto account) {
+
         AccountBalanceDto accountBalance = accountMapper.convertAccountDtoToAccountBalanceDto(account);
-        accountBalance.setFixedTermDeposits(fixedTermDepositService.getAccountFixedTermDeposits(account.id()));
+        List<FixedTermDeposit> f = fixedTermDepositRepository.findByAccount_AccountId(account.id());
+        List<FixedTermDepositDto> fDto=new ArrayList<>();
+        for(FixedTermDeposit a:f){
+            fDto.add(fixedTermDepositMapper.convertToDto(a));
+        }
+        accountBalance.setFixedTermDeposits(fDto);
         return accountBalance;
     }
 

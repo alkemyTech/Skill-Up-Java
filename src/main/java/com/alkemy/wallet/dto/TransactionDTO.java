@@ -20,13 +20,13 @@ import java.time.LocalDateTime;
 public class TransactionDTO {
     private Long destinationAccountId;
 
-    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class})
     private String type;
-    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class})
     private String description;
     @NotNull(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
     private Double amount;
-    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class,IValidatorSendArsUsd.class})
+    @NotBlank(groups= {IValidatorDeposit.class, IValidatorPayment.class, IValidatorAccount.class})
     private String currency;
     private LocalDateTime transactionDate;
 }

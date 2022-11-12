@@ -145,8 +145,6 @@ class SendMoneyEndpointTest {
         }
 
 
-        //TODO: error when send money to other account currency type
-
         @Test
         void sendArs_exception_between_different_currencyAccounts() throws Exception {
             TransactionTransferRequestDto transactionTransferRequestDto = new TransactionTransferRequestDto(5000d, "this is a ARS transfer", 4);
@@ -161,7 +159,6 @@ class SendMoneyEndpointTest {
             ;
         }
 
-        //TODO: error when send money to an account that doesnt exist
 
         @Test
         void sendArs_to_an_account_that_dont_exist() throws Exception {
@@ -179,24 +176,6 @@ class SendMoneyEndpointTest {
             ;
         }
 
-    /*//TODO: error when send money from an account that doesnt exist
-
-    @Test
-    void sendArs_with_an_invalid_token() throws Exception {
-        TransactionTransferRequestDto transactionTransferRequestDto = new TransactionTransferRequestDto(5000d, "this is a ARS transfer", 3);
-
-        mockMvc.perform(post("/transactions/sendArs")
-                        .header("Authorization", "Bearer " + notRegisteredTokenUser)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(transactionTransferRequestDto)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
-                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "The account with id: " + transactionTransferRequestDto.getAccountId() + " was not found"))
-        ;
-    }*/
-
-        //TODO: error when send more money than the transaction limit
 
         @Test
         void sendArs_more_than_transactionLimit() throws Exception {
@@ -214,7 +193,6 @@ class SendMoneyEndpointTest {
             ;
         }
 
-        //TODO: error when doesnt have the amount on the account to send money
 
         @Test
         void sendArs_without_founds() throws Exception {
@@ -257,8 +235,6 @@ class SendMoneyEndpointTest {
         }
 
 
-        //TODO: error when send money to other account currency type
-
         @Test
         void sendUsd_exception_between_different_currencyAccounts() throws Exception {
             TransactionTransferRequestDto transactionTransferRequestDto = new TransactionTransferRequestDto(1500d, "this is a USD transfer", 3);
@@ -273,7 +249,6 @@ class SendMoneyEndpointTest {
             ;
         }
 
-        //TODO: error when send money to an account that doesnt exist
 
         @Test
         void sendUsd_to_an_account_that_dont_exist() throws Exception {
@@ -292,8 +267,6 @@ class SendMoneyEndpointTest {
         }
 
 
-        //TODO: error when send more money than the transaction limit
-
         @Test
         void sendUsd_more_than_transactionLimit() throws Exception {
             TransactionTransferRequestDto transactionTransferRequestDto = new TransactionTransferRequestDto(3000d, "this is a USD transfer", 4);
@@ -309,8 +282,6 @@ class SendMoneyEndpointTest {
                                     + " exceeded the transaction limit of " + acc2.getTransactionLimit()))
             ;
         }
-
-        //TODO: error when doesnt have the amount on the account to send money
 
         @Test
         void sendUsd_without_founds() throws Exception {

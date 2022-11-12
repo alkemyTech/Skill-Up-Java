@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/fixed-deposit")
 public class FixedTermDepositController {
@@ -24,6 +26,11 @@ public class FixedTermDepositController {
     @PostMapping
     public ResponseEntity<FixedTermDepositResponseDTO> createFXD(@RequestHeader(value = "Authorization") String token, @RequestBody FixedTermDepositRequestDTO requestDTO) {
         return new ResponseEntity<>(fixedTermDepositService.createFXD(token, requestDTO), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/simulate")
+    public ResponseEntity<Map<String, Object>> simulate(@RequestBody FixedTermDepositRequestDTO requestDTO) {
+        return new ResponseEntity<>(fixedTermDepositService.simulate(requestDTO), HttpStatus.OK);
     }
 
 }

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,8 +38,8 @@ class UserController {
     //end Swagger notation
 
     @GetMapping
-    List<UserDto> getAll() {
-        return userservice.getAllUsers();
+    UserPaginatedDto getAll(@Param("page") Integer page) {
+        return userservice.getAllUsers(page);
     }
 
     //Swagger Notation getUserDetailById

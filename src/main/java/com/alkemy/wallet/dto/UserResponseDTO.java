@@ -5,7 +5,7 @@ import com.alkemy.wallet.model.Role;
 import lombok.Data;
 
 @Data
-public class UserRegisterDTO {
+public class UserResponseDTO {
 
     Integer id;
     String firstName;
@@ -14,3 +14,4 @@ public class UserRegisterDTO {
     Role role;
 
 }
+

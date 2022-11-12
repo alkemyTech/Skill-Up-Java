@@ -1,8 +1,9 @@
 package com.alkemy.wallet.service;
 
 
+import com.alkemy.wallet.dto.UserCreateDTO;
 import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserRegisterDTO;
+import com.alkemy.wallet.dto.UserResponseDTO;
 import com.alkemy.wallet.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface IUserService {
     public List<UserDTO> getAllUsers();
 
-    public UserRegisterDTO createUser(UserDTO userDTO);
+    public UserResponseDTO createUser(UserCreateDTO userDTO);
 
     void deleteUserById(Integer id);
     

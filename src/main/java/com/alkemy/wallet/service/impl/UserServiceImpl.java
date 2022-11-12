@@ -1,7 +1,8 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.dto.UserCreateDTO;
 import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserRegisterDTO;
+import com.alkemy.wallet.dto.UserResponseDTO;
 import com.alkemy.wallet.enumeration.RoleList;
 import com.alkemy.wallet.exception.RestServiceException;
 import com.alkemy.wallet.exception.NotFoundException;
@@ -13,6 +14,8 @@ import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.util.EmailValidator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -81,17 +84,26 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
-    public UserRegisterDTO createUser(UserDTO userDTO) {
-        String encodedPassword = this.passwordEncoder.encode(userDTO.getPassword());
-        userDTO.setPassword(encodedPassword);
-        Role userRole = roleRepository.findByName(RoleList.USER);
-        userDTO.setRole(userRole);
-        User user = userMapper.userDTO2Entity(userDTO);
-        userRepository.save(user);        
-        UserRegisterDTO userResponse = userMapper.createUserEntity2DTOResponse(user);
-        accountService.createAccount(userResponse.getId(), "ARS");
-        accountService.createAccount(userResponse.getId(), "USD");
-        return userResponse;
+    public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
+		
+		if (EmailValidator.emailRegexMatches(userCreateDTO.getEmail())) {
+			try {
+				EmailValidator.emailRegexMatches(userCreateDTO.getEmail());
+				String encodedPassword = this.passwordEncoder.encode(userCreateDTO.getPassword());
+				userCreateDTO.setPassword(encodedPassword);
+				Role userRole = roleRepository.findByName(RoleList.USER);
+				User user = userMapper.userCreateDTO2Entity(userCreateDTO, userRole);
+				userRepository.save(user);        
+				UserResponseDTO userResponseDTO = userMapper.userEntity2DTOResponse(user);
+				accountService.createAccount(userResponseDTO.getId(), "ARS");
+				accountService.createAccount(userResponseDTO.getId(), "USD");
+				return userResponseDTO;
+			} catch (Exception e) {
+				throw new RestServiceException("user creation failed", HttpStatus.BAD_REQUEST);
+			}
+		} else {
+			throw new RestServiceException("must be a valid email", HttpStatus.UNPROCESSABLE_ENTITY);
+		}
     }
 
     @Override

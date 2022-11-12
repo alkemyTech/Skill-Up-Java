@@ -19,5 +19,5 @@ public interface AccountService {
     List<AccountBalanceDto> getUserBalance(String username);
     AccountDetailDto updateAccount(AccountPatchDto account, Integer Id, String userToken) throws Exception;
     boolean hasUserAccountById(Integer userId, Integer accountId);
-    PaginatedAccountsDto getAccounts(int page, String userToken);
+    PaginatedAccountsDto getPaginatedAccountsByUserId(int userId, int page, String userToken);
 }

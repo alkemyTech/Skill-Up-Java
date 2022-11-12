@@ -184,13 +184,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public PaginatedAccountsDto getAccounts(int page, String userToken) {
+    public PaginatedAccountsDto getPaginatedAccountsByUserId(int userId, int page, String userToken) {
         User user = userService.loadUserByUsername(jwtUtil.extractClaimUsername(userToken.substring(7)));
         if (user.getRole().getName().name().equals("USER")) {
             throw new ForbiddenAccessException("Can only access if you are an Admin");
         } else {
             Pageable pageable = PageRequest.of(page, 10);
-            Page<Account> accounts = accountRepository.findAll(pageable);
+            User user1 = new User(userId);
+            Page<Account> accounts = accountRepository.findAccountsByUserId(user1, pageable);
             List<AccountDto> accountDtoList = accounts.stream().map(accountMapper::convertToDto).collect(Collectors.toList());
             final String GET_ACCOUNTS_URL = request.getRequestURL().toString() + "?page=";
             final String previousPageURL = GET_ACCOUNTS_URL + accounts.previousOrFirstPageable().getPageNumber();

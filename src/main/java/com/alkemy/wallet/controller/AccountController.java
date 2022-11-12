@@ -110,8 +110,7 @@ public class AccountController {
 
     }
 
-
-    //Swagger Notation updateAccount
+    //Swagger Notation Paginated Accounts by User
     @Operation(summary = "Paginates accounts of Users")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Request successful",
@@ -125,7 +124,7 @@ public class AccountController {
                             schema = @Schema(defaultValue = "Cannot paginate users´s accounts")),}),
             @ApiResponse(responseCode = "404", description = "The requested resource wasn't found or It doesn't exist",
                     content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "Cannot paginate accounts because the page number doesn't exist")),}),
+                            schema = @Schema(defaultValue = "Cannot paginate accounts because the page number or the user doesn't exist")),}),
             @ApiResponse(responseCode = "500", description = "The server encountered an unexpected condition",
                     content = {@Content(mediaType = "text/plain",
                             schema = @Schema(defaultValue = "Server couldn't paginate accounts")),})
@@ -134,36 +133,9 @@ public class AccountController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping( "/all" )
-    public ResponseEntity<PaginatedAccountsDto> paginateAccounts( @Param( "page" ) Integer page, @RequestHeader("Authorization") String userToken ) {
-        return ResponseEntity.ok( accountService.getAccounts( page,userToken ) );
-    }
-
-    //Swagger Notation updateAccount
-    @Operation(summary = "Get Users´s Accounts by using id of a User ")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Request successful",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AccountDto.class))}),
-            @ApiResponse(responseCode = "400", description = "The request was not valid",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "There is missing data to enter or a data was entered incorrectly")),}),
-            @ApiResponse(responseCode = "403", description = "User not authorized to perform the operation",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "Cannot get others Users´s Accounts")),}),
-            @ApiResponse(responseCode = "404", description = "The requested resource wasn't found or It doesn't exist",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "Cannot get accounts because id doesn't exist")),}),
-            @ApiResponse(responseCode = "500", description = "The server encountered an unexpected condition",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "Server couldn't get Accounts")),})
-    })
-    //End Swagger notation
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping( "/{userId}" )
-    public ResponseEntity<List<AccountDto>> getAccountsByUserId( @PathVariable Integer userId, @RequestHeader("Authorization") String userToken ) {
-        return ResponseEntity.ok( accountService.getAccountsByUserId( userId, userToken ));
+    public ResponseEntity<PaginatedAccountsDto> getPaginateAccountsByUserId( @PathVariable Integer userId, @Param( "page" ) Integer page, @RequestHeader("Authorization") String userToken ) {
+        return ResponseEntity.ok( accountService.getPaginatedAccountsByUserId( userId, page, userToken ) );
     }
+
 }

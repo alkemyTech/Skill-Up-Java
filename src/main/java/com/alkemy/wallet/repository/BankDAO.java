@@ -79,7 +79,7 @@ public class BankDAO {
     }
 
     public List<AccountEntity> getAllAccountByUser(UserEntity user) {
-        return new ArrayList<>(user.getAccount());
+        return accountRepository.findAll();
     }
 
     public Optional<TransactionEntity> getTransactionId(Long id){

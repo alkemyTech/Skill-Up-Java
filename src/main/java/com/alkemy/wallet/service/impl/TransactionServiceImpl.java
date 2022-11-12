@@ -134,8 +134,6 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public ResponseEntity<Object> updateTransaction(Long id, TransactionDTO transactionDTO) {
-        Optional<AccountEntity> accountEntity = bankDAO.getAccountById(id);
-        accountEntity.orElseThrow(() -> new BankException("Account not found"));
         bankDAO.updateTransaction(id, transactionDTO);
         return new ResponseEntity<>("Update transaction", HttpStatus.NO_CONTENT);
     }

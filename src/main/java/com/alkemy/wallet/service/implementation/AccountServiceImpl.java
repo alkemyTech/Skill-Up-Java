@@ -5,6 +5,7 @@ import com.alkemy.wallet.exception.InvalidAmountException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.TransactionLimitExceededException;
 import com.alkemy.wallet.dto.CurrencyRequestDto;
+import com.alkemy.wallet.exception.UserAlreadyHasAccountException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.*;
 import com.alkemy.wallet.repository.AccountRepository;
@@ -49,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
         User user = userService.loadUserByUsername(username);
         Currency currency = currencyDto.currencyRequestToEnum();
         if (accountRepository.findAccountByUserIdAndCurrency(user, currency).isPresent()) {
-            throw new RuntimeException("User already has an account for that currency.");
+            throw new UserAlreadyHasAccountException("User already has an account for that currency");
         }
         double balance = 0;
         double transactionLimit = getTransactionLimitForCurrency(currency);

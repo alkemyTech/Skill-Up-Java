@@ -13,7 +13,6 @@ import java.util.List;
 public interface FixedTermDepositRepository extends JpaRepository<FixedTermDeposit, Integer> {
     @Query("SELECT f FROM FixedTermDeposit f WHERE f.account = ?1")
     List<FixedTermDeposit> findallByAccount(Account account);
-    List<FixedTermDeposit> findByAccount_CurrencyAndAccount_User_UserId(Currency currency, Integer userId);
     List<FixedTermDeposit> findByAccount_AccountId(Integer accountId);
 
 }

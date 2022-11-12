@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.impl.AccountServiceImpl;
@@ -32,9 +33,8 @@ public class AccountController {
         return ResponseEntity.ok().body(accounts);
     }
     @GetMapping("/pages")
-    public ResponseEntity<Map<String, Object>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
-        Map<String, Object> accounts;
-        accounts =  page !=null ? accountService.getAccountsByPage(page) : accountService.getAccounts();
+    public ResponseEntity<AccountPageDTO> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
+        AccountPageDTO accounts =  accountService.getAccountsByPage(page);
         return ResponseEntity.ok().body(accounts);
     }
 }

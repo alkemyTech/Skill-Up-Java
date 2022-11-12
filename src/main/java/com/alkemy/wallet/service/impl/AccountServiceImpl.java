@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.Account;
@@ -77,27 +78,29 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public Map<String, Object> getAccountsByPage(Integer page) {
+    public AccountPageDTO getAccountsByPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
-        pageWithTenElements.next();
         Page<Account> accounts =  accountRepository.findAll(pageWithTenElements);
         List<Account> accountsList = accounts.getContent();
-        List<AccountDTO> accountDTOList = accountMapper.accountEntityList2DTOList(accountsList);
-        Map<String, Object> response = new HashMap<>();
-        if (accounts.hasNext() || accounts.hasPrevious()) {
-            ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
-            builder.scheme("http");
-            if (accounts.hasNext()) {
-                builder.replaceQueryParam("page", accounts.getPageable().getPageNumber() + 1);
-                response.put("Next page url", builder.build().toUri());
-            }
-            if (accounts.hasPrevious()){
-                builder.replaceQueryParam("page", accounts.getPageable().getPageNumber());
-                response.put("Prevoius page url", builder.build().toUri());
-            }
-        }
-        response.put("Accounts", accountDTOList);
-        return response;
+
+        AccountPageDTO accountPageDTO = new AccountPageDTO();
+        accountPageDTO.setTotalPages(accounts.getTotalPages());
+
+        ServletUriComponentsBuilder nextPageBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        nextPageBuilder.scheme("http");
+        nextPageBuilder.replaceQueryParam("page", page + 1);
+
+        ServletUriComponentsBuilder previousPageBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        previousPageBuilder.scheme("http");
+        previousPageBuilder.replaceQueryParam("page", page - 1);
+
+        accountPageDTO.setNextPage(accounts.getTotalPages() == page  ? null : nextPageBuilder.build().toUriString());
+        accountPageDTO.setPreviusPage(page == 1  ?  null : previousPageBuilder.build().toUriString());
+
+
+        accountPageDTO.setUserDTOList(accountMapper.accountEntityList2DTOList(accountsList));
+
+        return accountPageDTO;
     }
 
 }

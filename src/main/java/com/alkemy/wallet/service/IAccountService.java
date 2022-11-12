@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.model.Account;
 
@@ -14,5 +15,5 @@ public interface IAccountService {
 
     Map<String, Object> getAccounts();
 
-    Map<String, Object> getAccountsByPage(Integer page);
+    AccountPageDTO getAccountsByPage(Integer page);
 }

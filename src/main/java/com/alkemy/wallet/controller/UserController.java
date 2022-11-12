@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.dto.UserDetailsDTO;
+import com.alkemy.wallet.dto.UserPageDTO;
 import com.alkemy.wallet.dto.UserUpdateDTO;
 import com.alkemy.wallet.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,9 +37,14 @@ public class UserController {
             @ApiResponse(responseCode="401", description = "Unauthorizated")})
     //Mapping---------------------------------------
     @GetMapping()
-    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
-        List<UserDTO>users =  page !=null ? userService.getUsersByPage(page) : userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> getUsers(){
+        List<UserDTO>users = userService.getAllUsers();
         return ResponseEntity.ok().body(users);
+    }
+    @GetMapping(path = "/pages")
+    public ResponseEntity<UserPageDTO> getUsersByPage(@RequestParam(value = "page" ) Integer page){
+        UserPageDTO userPageDTO =  userService.getUsersByPage(page);
+        return ResponseEntity.ok().body(userPageDTO);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Integer> deleteUserById(@PathVariable Integer id){

@@ -1,10 +1,7 @@
 package com.alkemy.wallet.service;
 
 
-import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserDetailsDTO;
-import com.alkemy.wallet.dto.UserRegisterDTO;
-import com.alkemy.wallet.dto.UserUpdateDTO;
+import com.alkemy.wallet.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -21,7 +18,7 @@ public interface IUserService {
 
     UserDetails loadUserByUsername(String email);
 
-    List<UserDTO> getUsersByPage(Integer page);
+    UserPageDTO getUsersByPage(Integer page);
 
     UserDetailsDTO getUserDatail(Integer id);
 

@@ -1,9 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserDetailsDTO;
-import com.alkemy.wallet.dto.UserRegisterDTO;
-import com.alkemy.wallet.dto.UserUpdateDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.enumeration.RoleList;
 import com.alkemy.wallet.exception.NotFoundException;
 import com.alkemy.wallet.exception.RestServiceException;
@@ -66,13 +63,21 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
-    public List<UserDTO> getUsersByPage(Integer page) {
+    public UserPageDTO getUsersByPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
-        Page<User> users =  userRepository.findAll(pageWithTenElements);
-        List<User> userList = users.getContent();
-        System.out.println("Total pages: "+ users.getTotalPages());
-        System.out.println("Total elemttos: "+users.getTotalElements());
-        return userMapper.userEntityList2DTOList(userList);
+        Page<User> usersPage =  userRepository.findAll(pageWithTenElements);
+        List<User> userList = usersPage.getContent();
+
+        UserPageDTO userPageDTO = new UserPageDTO();
+        int totalPages = usersPage.getTotalPages();
+        userPageDTO.setTotalPages(totalPages);
+
+        StringBuilder url = new StringBuilder("http://localhost:9090/users/pages?page=");
+        userPageDTO.setNextPage(totalPages == page  ? null : url + String.valueOf(page +1));
+        userPageDTO.setPreviusPage(page == 1  ? null : url+ String.valueOf(page - 1));
+
+        userPageDTO.setUserDTOList(userMapper.userEntityList2DTOList(userList));
+        return userPageDTO;
     }
 
     @Override

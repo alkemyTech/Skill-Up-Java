@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 // TODO: Check db table name
 @Setter
-@Getter
 @Entity
 @Getter
 @Table(name = "ROLES")

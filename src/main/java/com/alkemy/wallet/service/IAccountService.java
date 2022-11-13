@@ -6,6 +6,7 @@ import com.alkemy.wallet.dto.AccountBasicDto;
 import com.alkemy.wallet.dto.CurrencyDto;
 import com.alkemy.wallet.dto.PageDto;
 import com.alkemy.wallet.entity.AccountEntity;
+import com.alkemy.wallet.enumeration.TypeTransaction;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ public interface IAccountService {
 
   List<AccountDto> findAllByUser(Long userId);
 
-  void updateBalance(Long accountId, Double amount);
+  void updateBalance(Long accountId, Double amount, TypeTransaction type);
 
   //AccountEntity findEntityById (Long accountId);
 

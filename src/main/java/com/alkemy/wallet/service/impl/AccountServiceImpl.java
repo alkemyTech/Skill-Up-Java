@@ -123,12 +123,21 @@ public class AccountServiceImpl implements IAccountService {
 
 
   @Override
-  public void updateBalance(Long accountId, Double amount) {
+  public void updateBalance(Long accountId, Double amount, TypeTransaction type) {
     Optional<AccountEntity> accountEntity= IAccountRepository.findById(accountId);
     if (!accountEntity.isPresent()){
       throw new ParamNotFound("No id macth");
     }
-    accountEntity.get().setBalance(accountEntity.get().getBalance()-amount);
+    if ( type == TypeTransaction.PAYMENT){
+      accountEntity.get().setBalance(accountEntity.get().getBalance()-amount);
+    }
+    if (type == TypeTransaction.DEPOSIT){
+      accountEntity.get().setBalance(accountEntity.get().getBalance()+amount);
+    }
+    if (type == TypeTransaction.INCOME){
+      accountEntity.get().setBalance(accountEntity.get().getBalance()+amount);
+    }
+
     IAccountRepository.save(accountEntity.get());
   }
 
@@ -213,3 +222,12 @@ public class AccountServiceImpl implements IAccountService {
     return String.format("%s?page=%d", request.getRequestURI(), page);
   }
 }
+  /*@Override
+  public void updateBalance(Long accountId, Double amount, TypeTransaction type) {
+    Optional<AccountEntity> accountEntity= IAccountRepository.findById(accountId);
+    if (!accountEntity.isPresent()){
+      throw new ParamNotFound("No id macth");
+    }
+    accountEntity.get().setBalance(accountEntity.get().getBalance()-amount);
+    IAccountRepository.save(accountEntity.get());
+  }*/

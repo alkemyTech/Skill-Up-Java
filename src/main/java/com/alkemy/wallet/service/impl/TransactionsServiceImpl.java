@@ -75,7 +75,7 @@ public class TransactionsServiceImpl implements ITransactionService {
       transactionEntity.setUser(accountEntity.getUser());
       transactionEntity.setDescription(dto.getDescription());
       transactionEntity.setTransactionDate(new Date());
-      this.accountService.updateBalance(dto.getAccountId(),dto.getAmount());
+      this.accountService.updateBalance(dto.getAccountId(),dto.getAmount(),dto.getType() );
 
 
 

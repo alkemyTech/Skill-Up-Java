@@ -2,6 +2,7 @@ package com.alkemy.wallet.service.implementation;
 
 import com.alkemy.wallet.dto.UserRegisteredDto;
 import com.alkemy.wallet.dto.UserRequestDto;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.mapper.UserMapper;
 import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.User;
@@ -40,6 +41,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ResponseEntity<UserRegisteredDto> registerUser(UserRequestDto user ) {
 
+        String token;
+
         //Check One or more fields are empty
         if ( user.name() == null || user.lastName() == null || user.email() == null || user.password() == null )
             return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( null );
@@ -49,8 +52,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if ( existingUser != null ) {
             if ( existingUser.getSoftDelete() == Boolean.TRUE) {
                 existingUser.setSoftDelete( Boolean.FALSE );
-                //Add UserService update
-                return ResponseEntity.status( HttpStatus.OK ).body( null );
+                userService.reactivateAccount(existingUser);
+                token = jwtUtil.generateToken(existingUser);
+                return ResponseEntity.status( HttpStatus.OK ).body(userMapper.convertToRegisteredDto(existingUser,token) );
             }
             else {
                 return ResponseEntity.status( HttpStatus.CONFLICT ).body(null);
@@ -58,11 +62,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         User userSaved = userService.createUser(user);
+        token = jwtUtil.generateToken(userSaved);
 
         accountService.createAccountByUserId(userSaved.getUserId(), Currency.ARS);
         accountService.createAccountByUserId(userSaved.getUserId(),Currency.USD);
 
-        String token = jwtUtil.generateToken(userSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.convertToRegisteredDto(userSaved,token));
     }
@@ -78,7 +82,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( username, password ) );
 
-        final UserDetails userDetails = userService.loadUserByUsername( authenticationRequest.getEmail() );
+        User user = null;
+        final UserDetails userDetails = user= userService.loadUserByUsername(authenticationRequest.getEmail());
+
+        if(user.getSoftDelete())
+            throw new ResourceNotFoundException("User does not exist");
 
         if ( userDetails == null )
             return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );

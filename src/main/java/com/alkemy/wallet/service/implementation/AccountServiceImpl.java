@@ -102,12 +102,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountDto> getAccountsByUserId(int userId, String userToken) {
         User user = userService.loadUserByUsername(jwtUtil.extractClaimUsername(userToken.substring(7)));
-        if (user.getRole().getName().name().equals("USER")) {
-            throw new ForbiddenAccessException("Can only access if you are an Admin");
-        } else {
-            List<Account> accounts = accountRepository.findAccountsByUserId(userService.getUserById(userId));
-            return accounts.stream().map(accountMapper::convertToDto).collect(Collectors.toList());
-        }
+        List<Account> accounts = accountRepository.findAccountsByUserId(userService.getUserById(userId));
+        return accounts.stream().map(accountMapper::convertToDto).collect(Collectors.toList());
+
     }
 
     @Override

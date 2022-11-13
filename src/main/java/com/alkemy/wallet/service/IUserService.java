@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.alkemy.wallet.model.request.UserRequestDto;
 import com.alkemy.wallet.model.response.UserResponseDto;
 import com.alkemy.wallet.model.response.list.UserListResponseDto;
+import org.springframework.data.domain.Page;
 
 public interface IUserService {
 
@@ -18,4 +19,6 @@ public interface IUserService {
     UserResponseDto deleteUserById(Long id);
     User save(User accountUser);
     Optional<User> findById(Long id);
+
+    Page<UserResponseDto> findAll(Integer pageNumber, Integer pageSize);
 }

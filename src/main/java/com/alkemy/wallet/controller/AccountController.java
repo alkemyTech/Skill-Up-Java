@@ -1,7 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
-import com.alkemy.wallet.model.response.AccountResponseDto;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

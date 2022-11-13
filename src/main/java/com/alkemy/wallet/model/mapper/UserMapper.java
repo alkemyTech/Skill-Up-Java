@@ -1,10 +1,10 @@
 package com.alkemy.wallet.model.mapper;
 
-import com.alkemy.wallet.model.request.UserRequestDto;
-import com.alkemy.wallet.model.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
-import com.alkemy.wallet.model.response.list.UserListResponseDto;
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -54,9 +54,7 @@ public class UserMapper {
         return entity2Return;
     }
 
-    public UserListResponseDto entityList2DtoList(List<User> entityList) {
-        return UserListResponseDto.builder()
-                .users(entityList.stream().map(this::entity2Dto).collect(Collectors.toList()))
-                .build();
+    public List<UserResponseDto> entityList2DtoList(List<User> entityList) {
+        return entityList.stream().map(this::entity2Dto).collect(Collectors.toList());
     }
 }

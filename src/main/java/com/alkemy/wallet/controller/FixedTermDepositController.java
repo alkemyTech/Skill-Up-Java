@@ -1,7 +1,7 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.request.FixedTermDepositRequestDto;
-import com.alkemy.wallet.model.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.dto.request.FixedTermDepositRequestDto;
+import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
 import com.alkemy.wallet.service.IFixedTermDepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

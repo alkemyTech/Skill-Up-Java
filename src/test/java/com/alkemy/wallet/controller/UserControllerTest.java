@@ -3,7 +3,7 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.response.list.UserListResponseDto;
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IUserService;

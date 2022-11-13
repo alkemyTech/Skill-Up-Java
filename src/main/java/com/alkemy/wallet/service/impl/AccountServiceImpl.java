@@ -1,19 +1,24 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.model.dto.request.AccountRequestDto;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.AccountMapper;
-import com.alkemy.wallet.model.response.AccountResponseDto;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -25,27 +30,55 @@ import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ ={@Lazy})
 public class AccountServiceImpl implements IAccountService {
 
-    private final IAccountRepository accountRepository;
-    private final AccountMapper accountMapper;
+    private final IAccountRepository repository;
+    private final AccountMapper mapper;
     private final IAuthService authService;
-
-    private static final String EL_USUARIO_CON_ID = "The user with id ";
+    private final IUserService userService;
 
     @Override
-    public Account getAccountById(long idAccount) {
-        Optional<Account> account = accountRepository.findById(idAccount);
+    public Account getAccountById(Long id) {
+        Optional<Account> account = repository.findById(id);
         if (account.isEmpty())
-            throw new IllegalArgumentException(EL_USUARIO_CON_ID + idAccount + " not available");
+            throw new NoSuchElementException(String.format("Account with id %s was not found", id));
         return account.get();
     }
 
-    //Se debe hacer el PR de esta funcionalidad
     @Override
-    public AccountResponseDto createAccount(AccountResponseDto dto) {
-        return null;
+    public Account getByCurrencyAndUserId(String currency, Long userId) {
+        Optional<Account> response = repository.findByCurrencyAndUserId(currency, userId);
+        if (response.isEmpty())
+            throw new NoSuchElementException("The account doesn't exist or the user is not present");
+        return response.get();
+    }
+
+    @Override
+    public void editBalanceAndSave(Account account, Double newBalance) {
+        account.setBalance(newBalance);
+        repository.save(account);
+    }
+
+    @Override
+    public AccountResponseDto createAccount(AccountRequestDto request, String token) {
+        User loggedUser = authService.getUserFromToken(token);
+        loggedUser.getAccounts().forEach(account -> {
+            if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
+                throw new EntityExistsException(String.format("An account in %s already exist", request.getCurrency().toUpperCase()));
+        });
+        AccountCurrencyEnum currency;
+        double transactionLimit;
+        if (specificTypeOfCurrency(request.getCurrency()).equals(ARS)) {
+            currency = ARS;
+            transactionLimit = 300000.0;
+        } else {
+            currency = USD;
+            transactionLimit = 1000.0;
+        }
+        Account account = mapper.dto2Entity(request, currency, transactionLimit, loggedUser);
+        userService.addAccount(loggedUser, account);
+        return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
@@ -67,28 +100,14 @@ public class AccountServiceImpl implements IAccountService {
         arsAccount.setTransactionLimit(300000.0);
         arsAccount.setUser(user);
 
-        accountRepository.save(usdAccount);
-        accountRepository.save(arsAccount);
+        repository.save(usdAccount);
+        repository.save(arsAccount);
 
         List<Account> accountList = new ArrayList<>();
         accountList.add(usdAccount);
         accountList.add(arsAccount);
 
         return accountList;
-    }
-
-    @Override
-    public AccountResponseDto editAccountBalance(long idAccount, Double newBalance) {
-        Optional<Account> account = accountRepository.findById(idAccount);
-        if (account.isEmpty())
-            throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
-
-        //TODO cambiar mensaje
-        if (account.get().getBalance() <= newBalance)
-            throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
-
-        account.get().setBalance(newBalance);
-        return accountMapper.entity2Dto(accountRepository.save(account.get()));
     }
 
     @Override
@@ -99,7 +118,7 @@ public class AccountServiceImpl implements IAccountService {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
         long idUser = authService.getUserFromToken(token).getId();
-        List<Account> accounts = accountRepository.findAccountByUserId(idUser);
+        List<Account> accounts = repository.findAccountByUserId(idUser);
         if (accounts.isEmpty())
             throw new IllegalArgumentException("User not available");
 
@@ -135,47 +154,40 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<AccountResponseDto> getAccountUserById(long idUser) {
-        List<Account> account = accountRepository.findAccountByUserId(idUser);
-        if (account.isEmpty())
-            return Collections.emptyList();
-        return accountMapper.entityList2DtoList(account);
+    public List<Account> getAccountsByUserId(Long userId) {
+        List<Account> accounts = repository.findAccountByUserId(userId);
+        if (accounts.isEmpty())
+            throw new NoSuchElementException("The user does not have accounts yet");
+        return accounts;
     }
 
     @Override
-    public AccountResponseDto updateAccount(long accountId, double newTransactionLimit, String token) {
+    public AccountResponseDto updateAccount(Long id, Double newTransactionLimit, String token) {
         User user = authService.getUserFromToken(token);
         Account accountToUpdate = null;
         for (Account account : user.getAccounts()) {
-            if (account.getId().equals(accountId)) {
+            if (account.getId().equals(id)) {
                 accountToUpdate = account;
             }
         }
         if (accountToUpdate == null) {
-            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", accountId));
+            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", id));
         }
         accountToUpdate.setTransactionLimit(newTransactionLimit);
 
-        return accountMapper.entity2Dto(accountRepository.save(accountToUpdate));
-    }
-
-    @Override
-    public Optional<Account> findTopByUserId(Long userId) {
-        Optional<Account> account = accountRepository.findTopByUserId(userId);
-        if (account.isEmpty())
-            throw new IllegalArgumentException(String.format("The account with the id %x is not available", userId));
-        return account;
-    }
-
-    @Override
-    public void save(Account account) {
-        accountRepository.save(account);
+        return mapper.entity2Dto(repository.save(accountToUpdate));
     }
 
     @Override
     public Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         pageable.next().getPageNumber();
-        return accountRepository.findAll(pageable).map(accountMapper::entity2Dto);
+        return repository.findAll(pageable).map(mapper::entity2Dto);
+    }
+
+    private AccountCurrencyEnum specificTypeOfCurrency(String type) {
+        if (USD.name().equalsIgnoreCase(type))
+            return USD;
+        return ARS;
     }
 }

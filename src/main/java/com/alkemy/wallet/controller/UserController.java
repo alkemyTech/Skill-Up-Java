@@ -27,18 +27,13 @@ public class UserController {
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
             summary = "Retrieves a list of users", description = "<h3>Lists registered users</h3>" +
             "<p>You can use the pagination param, which lists a maximum of 10 users per page." +
-            "</br><b>Note: </b>By omitting the parameter, it will return the total list of users.</p>")
+            "</br><b>Note: </b>By omitting the parameter, it will return the total list of users.</p>") 
     @Parameters(value = { @Parameter(name = "page", description = "Number of page", example = "1", in = ParameterIn.QUERY)})
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Found Users", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))}),
             @ApiResponse(responseCode="401", description = "Unauthorizated")})
     //Mapping---------------------------------------
     @GetMapping()
-    public ResponseEntity<List<UserDTO>> getUsers(){
-        List<UserDTO>users = userService.getAllUsers();
-        return ResponseEntity.ok().body(users);
-    }
-    @GetMapping(path = "/pages")
     public ResponseEntity<UserPageDTO> getUsersByPage(@RequestParam(value = "page" ) Integer page){
         UserPageDTO userPageDTO =  userService.getUsersByPage(page);
         return ResponseEntity.ok().body(userPageDTO);

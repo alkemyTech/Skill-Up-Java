@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface IAccountService {
     public AccountDTO createAccount(int userId, String currency);
-
+    AccountDTO createAccountWithToken(String token, String currency);
     List<AccountDTO> getAccountsByUser(Integer id);
 
     Map<String, Object> getAccounts();

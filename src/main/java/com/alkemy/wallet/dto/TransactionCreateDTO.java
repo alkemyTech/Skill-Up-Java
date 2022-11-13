@@ -15,22 +15,17 @@ public class TransactionCreateDTO {
 
     Double amount;
 
-    TypeList type;
 
     String description;
-
-    Instant transactionDate;
 
     @NotNull
     Integer account_id;
 
 
 
-    public TransactionCreateDTO(Double amount, TypeList type, String description, Instant transactionDate, Integer account_id) {
+    public TransactionCreateDTO(Double amount, String description, Integer account_id) {
         this.amount = amount;
-        this.type = type;
         this.description = description;
-        this.transactionDate = transactionDate;
         this.account_id = account_id;
     }
 

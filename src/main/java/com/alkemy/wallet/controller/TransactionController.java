@@ -109,10 +109,10 @@ public class TransactionController {
                             schema = @Schema(defaultValue = "server couldn't complete the action")) })
     })
     //end Swagger notation
-    @GetMapping(value = "/all/{userId}")
+    @GetMapping(value = "/{userId}")
 //    @PreAuthorize("hasRole('USER_ROLE')")
-    public ResponseEntity<TransactionPaginatedDto> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page) {
-        return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page,userId));
+    public ResponseEntity<TransactionPaginatedDto> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page,userId, token));
     }
 
 
@@ -177,24 +177,6 @@ public class TransactionController {
     public ResponseEntity<TransactionDetailDto> sendUsd(@RequestBody TransactionTransferRequestDto transactionTransferRequestDto,
                                                         @Parameter(description = "authentication token") @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(transactionService.sendUsd(token, transactionTransferRequestDto));
-    }
-
-    @Operation(summary = "paginate transactions by user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = " pagination succesfull",
-                    content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TransactionPaginatedDto.class)) }),
-            @ApiResponse(responseCode = "400", description = "The request was not valid",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "There is missing data to enter or a data was entered incorrectly")),}),
-            @ApiResponse(responseCode = "500", description = "The server encountered an unexpected condition",
-                    content = {@Content(mediaType = "text/plain",
-                            schema = @Schema(defaultValue = "server couldn't complete the action")) })
-    })
-    //end Swagger notation
-    @GetMapping
-    public ResponseEntity <TransactionPaginatedDto> paginateTransactionsByUser(@Parameter(description = "Num page") @Param("page") Integer page,@Parameter(description = "User Id") @Param("userId") Integer userId){
-        return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page, userId));
     }
 
 }

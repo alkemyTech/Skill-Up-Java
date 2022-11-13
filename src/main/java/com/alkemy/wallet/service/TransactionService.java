@@ -28,6 +28,6 @@ public interface TransactionService {
     TransactionDetailDto sendArs(String token, TransactionTransferRequestDto transactionTransferRequestDto);
     TransactionDetailDto sendUsd(String token, TransactionTransferRequestDto transactionTransferRequestDto);
 
-    TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId);
+    TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId, String token);
 
 }

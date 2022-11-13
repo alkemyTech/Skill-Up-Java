@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.implementation;
 
-import ch.qos.logback.core.CoreConstants;
 import com.alkemy.wallet.dto.FixedTermDepositDto;
 import com.alkemy.wallet.dto.FixedTermDepositSimulateDto;
 import com.alkemy.wallet.exception.FixedTermDepositException;
@@ -10,7 +9,6 @@ import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Currency;
 import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.model.User;
-import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.FixedTermDepositRepository;
 import com.alkemy.wallet.security.JWTUtil;
 import com.alkemy.wallet.service.AccountService;
@@ -21,11 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional()
@@ -39,17 +33,11 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
     private final UserServiceImpl userService;
     private final AccountService accountService;
 
-
-
-
-
     @Override
     public FixedTermDepositDto createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto, String token) throws FixedTermDepositException {
-        fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
         FixedTermDeposit fixedTermDeposit = mapper.convertToEntity(fixedTermDepositDto);
         Timestamp timestamp = new Timestamp(new Date().getTime());
         fixedTermDeposit.setCreationDate(timestamp);
-
 
         Long days = (((fixedTermDeposit.getClosingDate().getTime()) - fixedTermDeposit.getCreationDate().getTime()) / 86400000);
         if (days < 30) {
@@ -63,7 +51,6 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
         accountService.reduceBalance(account.getAccountId(),fixedTermDepositDto.getAmount());
         fixedTermDepositRepository.save(fixedTermDeposit);
         return fixedTermDepositDto;
-
     }
 
 

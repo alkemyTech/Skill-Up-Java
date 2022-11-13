@@ -2,6 +2,7 @@ package com.alkemy.wallet.mapper;
 
 import com.alkemy.wallet.dto.TransactionCreateDTO;
 import com.alkemy.wallet.dto.TransactionDTO;
+import com.alkemy.wallet.dto.TransactionResponseDTO;
 import com.alkemy.wallet.dto.TransactionUpdateDTO;
 import com.alkemy.wallet.model.Transaction;
 import org.modelmapper.ModelMapper;
@@ -43,5 +44,9 @@ public class TransactionMapper {
     //TODO : Check Ids...
     public Transaction transCreateDTO2Entity(TransactionCreateDTO dto) {
         return modelMapper.map(dto , Transaction.class);
+    }
+
+    public TransactionResponseDTO transEntity2ResponseDTO(Transaction lastTrans) {
+        return modelMapper.map(lastTrans, TransactionResponseDTO.class);
     }
 }

@@ -1,8 +1,6 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.dto.TransactionCreateDTO;
-import com.alkemy.wallet.dto.TransactionDTO;
-import com.alkemy.wallet.dto.TransactionUpdateDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.ITransactionService;
@@ -29,8 +27,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
@@ -56,21 +56,19 @@ public class TransactionController {
     ResponseEntity<TransactionDTO> transactionDetails(@PathVariable Integer transactionId , @RequestHeader("Authorization") String bearerToken) throws ParseException {
 
 
-        // extraigo el token del Bearer
         String token = bearerToken.substring("Bearer ".length());
-        // llamo método estático
         Integer user_id = GetTokenData.getUserIdFromToken(token);
         return ResponseEntity.ok(transactionService.getTransactionById(transactionId , user_id ));
 
     }
 
     @GetMapping("/{userId}")
-    ResponseEntity<List<TransactionDTO>> transactionsListByUserId(@PathVariable Integer userId , @RequestParam Integer page){
-        /*UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        System.out.println(userDetails.getUsername());*/
-       return ResponseEntity.ok( transactionService.findAllByUserId(userId, page) );
+    ResponseEntity<TransactionPageDTO> transactionsListByUserId(@PathVariable Integer userId , @RequestParam Integer page){
+
+
+        return ResponseEntity.ok( transactionService.findAllByUserId(userId, page) );
     }
+
 
 
 
@@ -101,18 +99,15 @@ public class TransactionController {
         // llamo método estático
         Integer user_id = GetTokenData.getUserIdFromToken(token);
 
-
         transactionService.updateTransaction(transactionUpdateDTO,transactionId , user_id);
         return ResponseEntity.ok().build();
 
     }
     @PostMapping("/sendArs")
-    ResponseEntity<?> transferMoney(@RequestBody @Valid TransactionCreateDTO transaction,
-                                    @RequestHeader(value = "Authorization") String token){
-
-        transactionService.makeTransaction(transaction, new PaymentStrategy(),token);
-        transactionService.makeTransaction(transaction, new IncomeStrategy());
-        return new ResponseEntity<>( HttpStatus.CREATED);
+    ResponseEntity<TransactionResponseDTO> transferMoney(@RequestBody @Valid TransactionCreateDTO transaction,
+                                                         @RequestHeader(value = "Authorization") String token)throws ParseException{
+        TransactionResponseDTO response = transactionService.sendMoney(transaction, token, "ARS");
+        return ResponseEntity.ok().body(response);
 
     }
 }

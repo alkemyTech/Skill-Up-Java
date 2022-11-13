@@ -23,8 +23,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("update Transaction u set u.description = :description where u.id = :id")
     void updateDescription(@Param(value = "id") Integer id, @Param(value = "description") String description);
 
-    @Query("select u from Transaction u where u.account_id in :ids order by u.transactionDate desc")
-    List<Transaction> findAllByAccountsId(@Param(value="ids") Collection<Integer> ids, Pageable pageable);
+    @Query("select t from Transaction t where t.account.user.id = ?1 order by t.transactionDate DESC")
+    List<Transaction> findByUserId(Integer id);
+
 
     @Query("select t from Transaction t where t.account.id in ?1 order by t.transactionDate DESC")
     Page<Transaction> findByAccountIds(Collection<Integer> account_ids, Pageable pageable);

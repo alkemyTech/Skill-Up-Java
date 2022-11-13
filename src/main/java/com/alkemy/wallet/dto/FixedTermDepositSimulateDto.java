@@ -3,11 +3,12 @@ package com.alkemy.wallet.dto;
 import com.alkemy.wallet.model.Currency;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
-@Getter@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FixedTermDepositSimulateDto {
     @JsonProperty("amount")
     private Double amount;

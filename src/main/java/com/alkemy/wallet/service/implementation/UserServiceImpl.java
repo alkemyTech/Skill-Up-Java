@@ -112,6 +112,8 @@ public class UserServiceImpl implements UserService {
             else{
                 if(user.getUserId()==id)
                     userRepository.deleteById(id);
+                else
+                    throw new ForbiddenAccessException("You cannot delete another user");
             }
 
         } catch ( EmptyResultDataAccessException exception ) {

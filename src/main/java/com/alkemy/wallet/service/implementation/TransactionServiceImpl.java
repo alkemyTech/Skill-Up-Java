@@ -64,14 +64,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         Double newTransactionAmount = transactionDepositRequestDto.getAmount();
-        accountDto = accountService.increaseBalance(accountDto.id(), newTransactionAmount);
-
-
-
-        TransactionDepositDto transactionDepositDto = new TransactionDepositDto(
-                newTransactionAmount,
-                transactionDepositRequestDto.getDescription());
-
 
         if(newTransactionAmount <= 0) {
             throw new InvalidAmountException("The amount must be greater than 0");
@@ -81,6 +73,11 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TransactionLimitExceededException("The transaction limit of " + accountDto.transactionLimit() + " was exceeded by a deposit of " + newTransactionAmount);
         }
 
+        accountDto = accountService.increaseBalance(accountDto.id(), newTransactionAmount);
+
+        TransactionDepositDto transactionDepositDto = new TransactionDepositDto(
+                newTransactionAmount,
+                transactionDepositRequestDto.getDescription());
 
         transactionDepositDto.setAccount(accountMapper.convertToEntity(accountDto));
         Transaction newTransaction = transactionRepository.save(transactionMapper.convertToEntity(transactionDepositDto));

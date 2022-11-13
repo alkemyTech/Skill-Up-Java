@@ -9,6 +9,9 @@ import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -88,5 +91,12 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Optional<User> findById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public Page<UserResponseDto> findAll(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        pageable.next().getPageNumber();
+        return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 }

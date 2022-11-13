@@ -9,6 +9,7 @@ import com.alkemy.wallet.model.response.list.UserListResponseDto;
 import com.alkemy.wallet.service.impl.UserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,5 +36,12 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserListResponseDto> getUsers() {
         return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<UserResponseDto>> findAll(
+            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return  ResponseEntity.ok(service.findAll(pageNumber, pageSize));
     }
 }

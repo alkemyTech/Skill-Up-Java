@@ -1,14 +1,17 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.AccountDTOSlim;
 import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.enumeration.ErrorList;
 import com.alkemy.wallet.exception.NotFoundException;
 import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.mapper.AccountMapper;
+import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.repository.AccountRepository;
+import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.IAccountService;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.time.Instant;
+import java.util.List;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +42,11 @@ public class AccountServiceImpl implements IAccountService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private TransactionRepository transactionRepository;
+    @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private TransactionMapper transacctionMapper;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
@@ -46,8 +54,10 @@ public class AccountServiceImpl implements IAccountService {
     public AccountDTO createAccount(int userId, String currency) {
         // Encuentro la lista de cuentas con el UserId pasado por parametro
         List<Account> accountsByUserId = this.accountRepository.findAccountsByUserID(userId);
-        //List<Account> accountsByUserId = this.accountRepository.findByUserID(userId); TODO:Probar metodo para remplazar el de arriba
-        // Busco si alguna de las cuentas pertenecientes al UserId ya tiene la currency igual a la pasada por parametro
+        // List<Account> accountsByUserId = this.accountRepository.findByUserID(userId);
+        // TODO:Probar metodo para remplazar el de arriba
+        // Busco si alguna de las cuentas pertenecientes al UserId ya tiene la currency
+        // igual a la pasada por parametro
         boolean repeatedAccount = accountsByUserId.stream()
                 .anyMatch(i -> currency.equals(i.getCurrency().name()));
 
@@ -68,7 +78,7 @@ public class AccountServiceImpl implements IAccountService {
             return accountMapper.convertToAccountDTO(accountEntity);
 
         } else {
-            throw new TransactionException(ErrorList.ACCOUNT_UNIQUE.getMessage());
+            return  null;
         }
     }
 
@@ -81,17 +91,22 @@ public class AccountServiceImpl implements IAccountService {
 
         return accountMapper.accountEntityList2DTOList(result);
     }
+
     @Override
-    public Map<String, Object>getAccounts() {
+    public Map<String, Object> getAccounts() {
         List<Account> accounts = accountRepository.findAll();
-        Map accountsMap = new HashMap<String, List<Account>>(){{put("Accounts",accounts);}};
+        Map accountsMap = new HashMap<String, List<Account>>() {
+            {
+                put("Accounts", accounts);
+            }
+        };
         return accountsMap;
     }
 
     @Override
     public AccountPageDTO getAccountsByPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
-        Page<Account> accounts =  accountRepository.findAll(pageWithTenElements);
+        Page<Account> accounts = accountRepository.findAll(pageWithTenElements);
         List<Account> accountsList = accounts.getContent();
 
         AccountPageDTO accountPageDTO = new AccountPageDTO();
@@ -105,9 +120,8 @@ public class AccountServiceImpl implements IAccountService {
         previousPageBuilder.scheme("http");
         previousPageBuilder.replaceQueryParam("page", page - 1);
 
-        accountPageDTO.setNextPage(accounts.getTotalPages() == page  ? null : nextPageBuilder.build().toUriString());
-        accountPageDTO.setPreviusPage(page == 1  ?  null : previousPageBuilder.build().toUriString());
-
+        accountPageDTO.setNextPage(accounts.getTotalPages() == page ? null : nextPageBuilder.build().toUriString());
+        accountPageDTO.setPreviusPage(page == 1 ? null : previousPageBuilder.build().toUriString());
 
         accountPageDTO.setUserDTOList(accountMapper.accountEntityList2DTOList(accountsList));
 

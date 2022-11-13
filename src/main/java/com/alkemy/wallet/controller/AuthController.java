@@ -24,10 +24,11 @@ public class AuthController {
         UserResponseDTO userResponse = userService.createUser(userCreateDTO);
         return ResponseEntity.ok().body(userResponse);
     }
-	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
-		String token = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
-		return ResponseEntity.ok().body(token);
-	}
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+        String token = userService.login(loginDTO.getEmail(), loginDTO.getPassword());
+        return ResponseEntity.ok().body(token);
+    }
 
 }

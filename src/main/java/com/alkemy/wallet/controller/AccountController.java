@@ -5,7 +5,19 @@ import com.alkemy.wallet.dto.ApiErrorDTO;
 import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.dto.UserDTO;
 import com.alkemy.wallet.service.IAccountService;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.service.impl.AccountServiceImpl;
+import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.IncomeStrategy;
+import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
+import com.alkemy.wallet.util.GetTokenData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.json.simple.parser.ParseException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -22,11 +34,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/accounts")
 public class AccountController {
     @Autowired
+    private AccountServiceImpl accountService;
+    @Autowired
+    private IAccountService iaccountService;
+
+    @Operation(security = {
+            @SecurityRequirement(name = "Bearer") }, summary = "Bringing balances", description = "<h3>Endpoint that Bring the balance of the accounts</h3>"
+                    +
+                    "</br><b>Note: </b>Responds with the account(s) held by the logged in user.</p>")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class)) }) })
+    @GetMapping("/balance")
+    public ResponseEntity<List<AccountDTOSlim>> getBalance(@RequestHeader(value = "Authorization") String bearerToken)
+            throws ParseException {
+        // extraigo el token del Bearer
+        String token = bearerToken.substring("Bearer ".length());
+        // llamo método estático
+        Integer user_id = GetTokenData.getUserIdFromToken(token);
+        List<AccountDTOSlim> accounts = accountService.getAccount(user_id);
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
+    }
+
     private IAccountService accountService;
 
     //Documentation--------------------------------
@@ -64,8 +99,8 @@ public class AccountController {
         return ResponseEntity.ok().body(accounts);
     }
     @GetMapping("/pages")
-    public ResponseEntity<AccountPageDTO> getUsers(@RequestParam(value = "page"  , required = false) Integer page){
-        AccountPageDTO accounts =  accountService.getAccountsByPage(page);
+    public ResponseEntity<AccountPageDTO> getUsers(@RequestParam(value = "page", required = false) Integer page) {
+        AccountPageDTO accounts = accountService.getAccountsByPage(page);
         return ResponseEntity.ok().body(accounts);
     }
 }

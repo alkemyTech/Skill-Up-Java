@@ -60,7 +60,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     @Override
     public FixedTermDepositResponseDTO createFXD(String token, FixedTermDepositRequestDTO requestDTO) {
         // Validate minimum days
-        if(requestDTO.getDays() < 30) {
+        if (requestDTO.getDays() < 30) {
             throw new FixedTermException(ErrorList.MINIMUN_DAYS_FXD.getMessage());
         }
 
@@ -69,10 +69,11 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         User user = userRepository.findByEmail(authentication.getName());
 
         // Retrieve account by currency and user id
-        Account account = accountRepository.findByCurrencyAndUserId(CurrencyList.valueOf(requestDTO.getCurrency()), user.getId());
+        Account account = accountRepository.findByCurrencyAndUserId(CurrencyList.valueOf(requestDTO.getCurrency()),
+                user.getId());
 
         // Validate amount
-        if(requestDTO.getAmount() > account.getBalance()) {
+        if (requestDTO.getAmount() > account.getBalance()) {
             throw new FixedTermException(ErrorList.INSUFFICIENT_BALANCE.getMessage());
         }
 
@@ -91,12 +92,11 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         responseDTO.setCreationDate(dateFXD);
         responseDTO.setClosingDate(closingDateFXD);
         responseDTO.setAccount(account);
-        //Create Transaction
-        transactionService.makeTransaction(new InvestStrategy(),account, requestDTO.getAmount());
+        // Create Transaction
+        transactionService.makeTransaction(new InvestStrategy(), account, requestDTO.getAmount());
 
         fixedTermDepositRepository.save(
-                fixedTermDepositMapper.dtoToEntity(responseDTO)
-        );
+                fixedTermDepositMapper.dtoToEntity(responseDTO));
         return responseDTO;
     }
 

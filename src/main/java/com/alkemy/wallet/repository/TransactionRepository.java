@@ -26,7 +26,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
     @Query("select t from Transaction t where t.account.user.id = ?1 order by t.transactionDate DESC")
     List<Transaction> findByUserId(Integer id);
 
-
     @Query("select t from Transaction t where t.account.id in ?1 order by t.transactionDate DESC")
     Page<Transaction> findByAccountIds(Collection<Integer> account_ids, Pageable pageable);
 

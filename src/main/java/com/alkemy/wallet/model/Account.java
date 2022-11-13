@@ -1,6 +1,7 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.enumeration.CurrencyList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Set;
 
 @Getter
 @Setter

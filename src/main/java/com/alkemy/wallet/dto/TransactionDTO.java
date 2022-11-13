@@ -11,8 +11,6 @@ import java.time.Instant;
 @Data
 public class TransactionDTO {
 
-
-
     Double amount;
 
     TypeList type;
@@ -21,12 +19,6 @@ public class TransactionDTO {
 
     Instant transactionDate;
 
-
     Integer account_id;
-
-
-
-
-
 
 }

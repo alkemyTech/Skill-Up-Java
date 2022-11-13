@@ -1,9 +1,11 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.ITransactionService;
+import com.alkemy.wallet.service.impl.AccountServiceImpl;
 import com.alkemy.wallet.service.impl.transaction.util.DepositStrategy;
 import com.alkemy.wallet.service.impl.transaction.util.IncomeStrategy;
 import com.alkemy.wallet.service.impl.transaction.util.PaymentStrategy;
@@ -38,7 +40,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -46,16 +47,14 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
 
-
-
-
     @Autowired
     ITransactionService transactionService;
+    @Autowired
+    AccountServiceImpl accountService;
 
 
 
@@ -75,10 +74,9 @@ public class TransactionController {
     @GetMapping("/{transactionId}/")
     ResponseEntity<TransactionDTO> transactionDetails(@PathVariable Integer transactionId ,@RequestHeader("Authorization") String bearerToken) throws ParseException {
 
-
         String token = bearerToken.substring("Bearer ".length());
         Integer user_id = GetTokenData.getUserIdFromToken(token);
-        return ResponseEntity.ok(transactionService.getTransactionById(transactionId , user_id ));
+        return ResponseEntity.ok(transactionService.getTransactionById(transactionId, user_id));
 
     }
     //Documentation--------------------------------
@@ -93,10 +91,10 @@ public class TransactionController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))})})
     //Mapping---------------------------------------
     @GetMapping("/{userId}")
-    ResponseEntity<TransactionPageDTO> transactionsListByUserId(@PathVariable Integer userId , @RequestParam Integer page){
+    ResponseEntity<TransactionPageDTO> transactionsListByUserId(@PathVariable Integer userId,
+            @RequestParam Integer page) {
 
-
-        return ResponseEntity.ok( transactionService.findAllByUserId(userId, page) );
+        return ResponseEntity.ok(transactionService.findAllByUserId(userId, page));
     }
 
 
@@ -111,10 +109,10 @@ public class TransactionController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))})})
     //Mapping---------------------------------------
     @PostMapping("/deposit")
-    ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO ){
+    ResponseEntity<?> makeDeposit(@RequestBody @Valid TransactionCreateDTO transDTO) {
 
-     transactionService.makeTransaction(transDTO, new DepositStrategy());
-     return new ResponseEntity<>( HttpStatus.CREATED);
+        transactionService.makeTransaction(transDTO, new DepositStrategy());
+        return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
 
@@ -129,10 +127,10 @@ public class TransactionController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))})})
     //Mapping---------------------------------------
     @PostMapping("/payment")
-    ResponseEntity<?> makePayment(@RequestBody @Valid TransactionCreateDTO transaction ){
+    ResponseEntity<?> makePayment(@RequestBody @Valid TransactionCreateDTO transaction) {
 
-     transactionService.makeTransaction(transaction, new PaymentStrategy());
-     return new ResponseEntity<>( HttpStatus.CREATED);
+        transactionService.makeTransaction(transaction, new PaymentStrategy());
+        return new ResponseEntity<>(HttpStatus.CREATED);
 
     }
 
@@ -149,7 +147,9 @@ public class TransactionController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))})})
     //Mapping---------------------------------------
     @PatchMapping("/{transactionId}")
-    ResponseEntity<?> transactionModification(@PathVariable Integer transactionId , @RequestBody TransactionUpdateDTO transactionUpdateDTO , @RequestHeader("Authorization") String bearerToken) throws ParseException {
+    ResponseEntity<?> transactionModification(@PathVariable Integer transactionId,
+            @RequestBody TransactionUpdateDTO transactionUpdateDTO, @RequestHeader("Authorization") String bearerToken)
+            throws ParseException {
 
         // extraigo el token del Bearer
         String token = bearerToken.substring("Bearer ".length());
@@ -157,7 +157,7 @@ public class TransactionController {
         // llamo método estático
         Integer user_id = GetTokenData.getUserIdFromToken(token);
 
-        transactionService.updateTransaction(transactionUpdateDTO,transactionId , user_id);
+        transactionService.updateTransaction(transactionUpdateDTO, transactionId, user_id);
         return ResponseEntity.ok().build();
 
     }
@@ -174,9 +174,24 @@ public class TransactionController {
     //Mapping---------------------------------------
     @PostMapping("/sendArs")
     ResponseEntity<TransactionResponseDTO> transferMoney(@RequestBody @Valid TransactionCreateDTO transaction,
-                                                         @RequestHeader(value = "Authorization") String token)throws ParseException{
+            @RequestHeader(value = "Authorization") String token) throws ParseException {
         TransactionResponseDTO response = transactionService.sendMoney(transaction, token, "ARS");
         return ResponseEntity.ok().body(response);
 
+    }
+
+    @Operation(security = {
+            @SecurityRequirement(name = "Bearer") }, summary = "Make a Send USD", description = "<h3>Endpoint that create a payment and income transaction</h3>"
+                    + "<p>You send amount , account destiny id, and description"
+                    + "</br><b>Note: </b>Responds with a payment. Just create a transaction.</p>")
+    @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "Transaction created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class)) }) })
+    @PostMapping("/sendUsd")
+    public ResponseEntity<?> sendUsd(@RequestBody @Valid TransactionCreateDTO transactionDTO,
+            @RequestHeader(value = "Authorization") String bearerToken)
+            throws ParseException {
+        TransactionResponseDTO response = transactionService.sendMoney(transactionDTO, bearerToken, "USD");
+        return ResponseEntity.ok().body(response);
     }
 }

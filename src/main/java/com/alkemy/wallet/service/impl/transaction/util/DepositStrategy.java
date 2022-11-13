@@ -3,7 +3,7 @@ package com.alkemy.wallet.service.impl.transaction.util;
 import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.model.Account;
 
-public class DepositStrategy implements ITransactionStrategy{
+public class DepositStrategy implements ITransactionStrategy {
 
     @Override
     public TypeList type() {
@@ -13,7 +13,7 @@ public class DepositStrategy implements ITransactionStrategy{
     @Override
     public void make(double amount, Account account) {
         this.checkAccountTransactionLimit(amount, account);
-        account.setBalance(account.getBalance()+amount);
+        account.setBalance(account.getBalance() + amount);
 
     }
 }

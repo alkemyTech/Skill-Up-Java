@@ -12,6 +12,7 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Query(value = "SELECT * FROM accounts t WHERE t.user_id = ?1 ;", nativeQuery = true)
     List<Account> findAccountsByUserID(Integer user_id);
+
     Account findByCurrencyAndUserId(Enum currency, Integer id);
 
 }

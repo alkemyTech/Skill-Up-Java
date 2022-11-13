@@ -5,7 +5,7 @@ import com.alkemy.wallet.enumeration.TypeList;
 import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.model.Account;
 
-public class IncomeStrategy implements ITransactionStrategy{
+public class IncomeStrategy implements ITransactionStrategy {
     @Override
     public TypeList type() {
         return TypeList.INCOME;
@@ -13,6 +13,6 @@ public class IncomeStrategy implements ITransactionStrategy{
 
     @Override
     public void make(double amount, Account account) {
-            account.setBalance(account.getBalance()+amount);
+        account.setBalance(account.getBalance() + amount);
     }
 }

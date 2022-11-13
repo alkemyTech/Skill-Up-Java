@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.controller.exception.ExceptionCustom;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.User;
@@ -33,13 +32,13 @@ public class AccountServiceImpl implements IAccountService {
     private final AccountMapper accountMapper;
     private final IAuthService authService;
 
-    private static final String EL_USUARIO_CON_ID = "El usuario con id ";
+    private static final String EL_USUARIO_CON_ID = "The user with id ";
 
     @Override
     public Account getAccountById(long idAccount) {
         Optional<Account> account = accountRepository.findById(idAccount);
         if (account.isEmpty())
-            throw new ExceptionCustom(EL_USUARIO_CON_ID + idAccount + " no esta disponible");
+            throw new IllegalArgumentException(EL_USUARIO_CON_ID + idAccount + " not available");
         return account.get();
     }
 
@@ -102,7 +101,7 @@ public class AccountServiceImpl implements IAccountService {
         long idUser = authService.getUserFromToken(token).getId();
         List<Account> accounts = accountRepository.findAccountByUserId(idUser);
         if (accounts.isEmpty())
-            throw new ExceptionCustom("Usuario no disponible");
+            throw new IllegalArgumentException("User not available");
 
         List<AccountBalanceResponseDto> accountBalanceList = new ArrayList<>();
 
@@ -164,7 +163,7 @@ public class AccountServiceImpl implements IAccountService {
     public Optional<Account> findTopByUserId(Long userId) {
         Optional<Account> account = accountRepository.findTopByUserId(userId);
         if (account.isEmpty())
-            throw new ExceptionCustom("La cuenta con el id " + userId + " no esta disponible");
+            throw new IllegalArgumentException(String.format("The account with the id %x is not available", userId));
         return account;
     }
 

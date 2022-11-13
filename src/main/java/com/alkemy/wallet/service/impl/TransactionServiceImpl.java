@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.controller.exception.ExceptionCustom;
 import com.alkemy.wallet.model.entity.*;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -45,31 +44,31 @@ public class TransactionServiceImpl implements ITransactionService {
         String noDisponible = " not available";
         long idUser = authService.getUserFromToken(token).getId();
         if (idTargetUser == idUser)
-            throw new ExceptionCustom("Error cannot send money to the same user");
+            throw new IllegalArgumentException("Error cannot send money to the same user");
 
         Optional<User> user = userService.findById(idUser);
         if (user.isEmpty())
-            throw new ExceptionCustom(String.format("The user with id %d %s", idUser ,noDisponible));
+            throw new IllegalArgumentException(String.format("The user with id %d %s", idUser ,noDisponible));
 
         Optional<User> targetUser = userService.findById(idTargetUser);
         if (targetUser.isEmpty())
-            throw new ExceptionCustom("The user with id " + idTargetUser + noDisponible);
+            throw new IllegalArgumentException("The user with id " + idTargetUser + noDisponible);
 
         Optional<Account> accountUser = accountService.findTopByUserId(idUser);
         if (accountUser.isEmpty())
-            throw new ExceptionCustom("the account with id " + idUser + noDisponible);
+            throw new IllegalArgumentException("the account with id " + idUser + noDisponible);
 
         Optional<Account> accountTargetUser = accountService.findTopByUserId(idTargetUser);
         if (accountTargetUser.isEmpty())
-            throw new ExceptionCustom("the account with id " + idTargetUser + noDisponible);
+            throw new IllegalArgumentException("the account with id " + idTargetUser + noDisponible);
 
         validTypeOfMoney(typeMoney, money, accountUser.get(), accountTargetUser.get());
 
         if (accountUser.get().getBalance() < amount)
-            throw new ExceptionCustom("Available value exceeded error");
+            throw new IllegalArgumentException("Available value exceeded error");
 
         if (amount > accountUser.get().getTransactionLimit())
-            throw new ExceptionCustom("Exceed transaction limit");
+            throw new IllegalArgumentException("Exceed transaction limit");
 
         double balanceUser = accountUser.get().getBalance() - amount;
         double targetUserBalance = accountTargetUser.get().getBalance() + amount;
@@ -90,10 +89,10 @@ public class TransactionServiceImpl implements ITransactionService {
     private void validTypeOfMoney(int typeMoney, String money, Account accountUser, Account accountTargetUser) {
         String error = "Error can only send money in ";
         if (typeMoney == 1 && (!accountUser.getCurrency().equals(ARS) || !accountTargetUser.getCurrency().equals(ARS)))
-            throw new ExceptionCustom(error + money);
+            throw new IllegalArgumentException(error + money);
         else {
             if (typeMoney == 2 && (!accountUser.getCurrency().equals(USD) || !accountTargetUser.getCurrency().equals(USD)))
-                throw new ExceptionCustom(error + money);
+                throw new IllegalArgumentException(error + money);
         }
     }
 
@@ -105,6 +104,6 @@ public class TransactionServiceImpl implements ITransactionService {
         else if (TransactionTypeEnum.DEPOSIT.name().equalsIgnoreCase(type))
             return TransactionTypeEnum.DEPOSIT;
         else
-            throw new ExceptionCustom("Wrong transaction type");
+            throw new IllegalArgumentException("Wrong transaction type");
     }
 }

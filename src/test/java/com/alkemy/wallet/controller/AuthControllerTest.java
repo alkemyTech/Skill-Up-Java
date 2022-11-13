@@ -9,6 +9,7 @@ import com.alkemy.wallet.model.request.AuthRequestDto;
 import com.alkemy.wallet.model.request.UserRequestDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,8 +35,9 @@ class AuthControllerTest {
     private final JwtUtils jwtUtils = new JwtUtils();
     private final UserMapper mapper = new UserMapper();
     private final IRoleRepository roleRepository = Mockito.mock(IRoleRepository.class);
+    private final IAccountService accountService = Mockito.mock(IAccountService.class);
     private final IAuthService service = new AuthServiceImpl(passwordEncoder, authenticationManager,
-            userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository);
+            userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository, accountService);
 
     private final AuthController controller = new AuthController(service);
     private Role role;

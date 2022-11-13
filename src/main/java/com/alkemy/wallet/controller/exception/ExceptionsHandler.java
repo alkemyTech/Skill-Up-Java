@@ -58,18 +58,9 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
-    @ExceptionHandler(ExceptionCustom.class)
-    protected ResponseEntity<Map<String, String>> badRequest(ExceptionCustom exceptionCustom){
-        Map<String, String> messages=new HashMap<>();
-        messages.put("message", exceptionCustom.getMessage());
-        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
-        return new ResponseEntity<>(messages, BAD_REQUEST);
-    }
-
     @ExceptionHandler(BadCredentialsException.class)
-    protected ResponseEntity<Map<String, String>> badCredentialsHandler(BadCredentialsException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> badCredentialsHandler(BadCredentialsException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(UNAUTHORIZED.value()));
@@ -77,8 +68,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<Map<String, String>> accessDeniedHandler(AccessDeniedException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> accessDeniedHandler(AccessDeniedException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(UNAUTHORIZED.value()));
@@ -86,8 +77,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityExistsException.class)
-    protected ResponseEntity<Map<String, String>> entityExistHandler(EntityExistsException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> entityExistHandler(EntityExistsException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(CONFLICT.value()));
@@ -95,8 +86,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Map<String, String>> entityNotFoundHandler(EntityNotFoundException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> entityNotFoundHandler(EntityNotFoundException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(NOT_FOUND.value()));
@@ -104,8 +95,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<Map<String, String>> usernameNotFoundHandler(UsernameNotFoundException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> usernameNotFoundHandler(UsernameNotFoundException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(NOT_FOUND.value()));
@@ -113,8 +104,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MalformedJwtException.class)
-    protected ResponseEntity<Map<String, String>> malformedJwtHandler(MalformedJwtException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> malformedJwtHandler(MalformedJwtException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
@@ -122,8 +113,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    protected ResponseEntity<Map<String, String>> nullPointerHandler(NullPointerException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> nullPointerHandler(NullPointerException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
@@ -131,8 +122,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<Map<String, String>> nullPointerHandler(IllegalArgumentException ex){
-        Map<String, String> messages=new HashMap<>();
+    protected ResponseEntity<Map<String, String>> nullPointerHandler(IllegalArgumentException ex) {
+        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(BAD_REQUEST.value()));

@@ -43,18 +43,19 @@ class AccountControllerTest {
     private final JwtUtils jwtUtils = new JwtUtils();
     private final UserMapper mapper = new UserMapper();
     private final IRoleRepository roleRepository = Mockito.mock(IRoleRepository.class);
+    private final IAccountService accountService = Mockito.mock(IAccountService.class);
     private final IAuthService authService = new AuthServiceImpl(passwordEncoder, authenticationManager,
-            userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository);
+            userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository, accountService);
     private final IAccountService service = new AccountServiceImpl(accountRepository, accountMapper, authService);
     private final AccountController controller = new AccountController(service);
 
     private Account account;
     private User user;
-    private  LocalDateTime fecha;
+    private LocalDateTime fecha;
 
     @BeforeEach
     void setUp() {
-         fecha = LocalDateTime.now().plusMonths(-1);
+        fecha = LocalDateTime.now().plusMonths(-1);
         Set<Role> roles = new HashSet<>();
 
         roles.add(new Role(1L, "ADMIN", "Rol admin", LocalDateTime.now(), null));

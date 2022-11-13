@@ -74,7 +74,7 @@ class TransactionControllerTest {
         ResponseEntity<Map<String, String>> response = controller.moneySendInPesos(1L, 1000D, "INCOME", token);
 
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-        assertEquals(new ResponseEntity<>(Map.of("Mensaje", "operación realizada exitosamente"), HttpStatus.ACCEPTED), response);
+        assertEquals(new ResponseEntity<>(Map.of("Message", "operation performed successfully"), HttpStatus.ACCEPTED), response);
 
     }
 
@@ -96,6 +96,6 @@ class TransactionControllerTest {
         ResponseEntity<Map<String, String>> response = controller.moneySendInUsd(1L, 1000D, "INCOME", token);
 
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-        assertEquals(new ResponseEntity<>(Map.of("Mensaje", "operación realizada exitosamente"), HttpStatus.ACCEPTED), response);
+        assertEquals(new ResponseEntity<>(Map.of("Message", "operation performed successfully"), HttpStatus.ACCEPTED), response);
     }
 }

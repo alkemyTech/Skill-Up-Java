@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -226,7 +227,13 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
     @Override
-    public TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId) {
+    public TransactionPaginatedDto paginateTransactionsByUser(Integer page, Integer userId, String token) {
+
+        User user = userService.loadUserByUsername(jwtUtil.extractUserName(token.substring(7)));
+
+        if(user.getRole().getName().name()=="USER"){
+            throw new ForbiddenAccessException("Can only access if you are an Admin");
+        }
 
         Pageable pageable = PageRequest.of(page,10);
 

@@ -2,6 +2,7 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.response.AccountResponseDto;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface IAccountService {
     Account getAccountById(long idAccount);
     AccountResponseDto createAccount(AccountResponseDto dto);
 
-    List<Account> createUserAccounts();
+    List<Account> createUserAccounts(User user);
 
     AccountResponseDto editAccountBalance(long idAccount, Double newBalance);
 

@@ -50,7 +50,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<Account> createUserAccounts() {
+    public List<Account> createUserAccounts(User user) {
 
         Account usdAccount = new Account();
         usdAccount.setCreationDate(LocalDateTime.now());
@@ -58,6 +58,7 @@ public class AccountServiceImpl implements IAccountService {
         usdAccount.setCurrency(USD);
         usdAccount.setSoftDelete(false);
         usdAccount.setTransactionLimit(1000.0);
+        usdAccount.setUser(user);
 
         Account arsAccount = new Account();
         arsAccount.setCreationDate(LocalDateTime.now());
@@ -65,6 +66,7 @@ public class AccountServiceImpl implements IAccountService {
         arsAccount.setCurrency(ARS);
         arsAccount.setSoftDelete(false);
         arsAccount.setTransactionLimit(300000.0);
+        arsAccount.setUser(user);
 
         accountRepository.save(usdAccount);
         accountRepository.save(arsAccount);

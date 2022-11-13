@@ -2,6 +2,7 @@ package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
 import com.alkemy.wallet.auth.utility.JwtUtils;
+import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.RoleEnum;
 import com.alkemy.wallet.model.entity.User;
@@ -12,10 +13,12 @@ import com.alkemy.wallet.model.response.AuthResponseDto;
 import com.alkemy.wallet.model.response.UserResponseDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,11 +28,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ ={@Lazy})
 @Slf4j
 public class AuthServiceImpl implements IAuthService {
 
@@ -46,6 +50,7 @@ public class AuthServiceImpl implements IAuthService {
     private final UserMapper mapper;
 
     private final IRoleRepository roleRepository;
+    private final IAccountService accountService;
 
     @Override
     public UserResponseDto register(UserRequestDto request) {
@@ -63,7 +68,11 @@ public class AuthServiceImpl implements IAuthService {
         User entity = mapper.dto2Entity(request, roles);
         entity.setPassword(encode(entity.getPassword()));
         entity.setSoftDelete(false);
-        return mapper.entity2Dto(repository.save(entity));
+
+        List<Account> accountList = accountService.createUserAccounts(entity);
+        entity.setAccounts(accountList);
+
+    return mapper.entity2Dto(repository.save(entity));
     }
 
     @Override

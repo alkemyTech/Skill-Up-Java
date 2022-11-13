@@ -42,7 +42,7 @@ public class FixedTermDepositController {
     //Swagger Notation createFixedTermDeposit
     @Operation(summary = "Create FixedTermDeposit for logged in user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "FixedTermDeposit created",
+            @ApiResponse(responseCode = "200", description = "FixedTermDeposit created",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = FixedTermDepositDto.class))
                     }),
@@ -61,7 +61,7 @@ public class FixedTermDepositController {
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER_ROLE')")
     public  ResponseEntity< FixedTermDepositDto > createFixedTermDeposit(@RequestBody FixedTermDepositDto fixedTermDepositDto, @RequestHeader("Authorization") String token) throws FixedTermDepositException {
-        fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
+
         return ResponseEntity.ok(fixedTermDepositService.createFixedTermDeposit(fixedTermDepositDto, token));
 
     }

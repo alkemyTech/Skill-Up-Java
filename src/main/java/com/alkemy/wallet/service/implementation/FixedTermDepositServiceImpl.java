@@ -45,11 +45,13 @@ public class FixedTermDepositServiceImpl implements FixedTermDepositService {
 
     @Override
     public FixedTermDepositDto createFixedTermDeposit(FixedTermDepositDto fixedTermDepositDto, String token) throws FixedTermDepositException {
+        fixedTermDepositDto.setClosingDate(new Timestamp(fixedTermDepositDto.getClosingDate().getTime()+86400000));
         FixedTermDeposit fixedTermDeposit = mapper.convertToEntity(fixedTermDepositDto);
         Timestamp timestamp = new Timestamp(new Date().getTime());
         fixedTermDeposit.setCreationDate(timestamp);
 
-        Long days = ((fixedTermDeposit.getClosingDate().getTime()) - fixedTermDeposit.getCreationDate().getTime()) / 86400000;
+
+        Long days = (((fixedTermDeposit.getClosingDate().getTime()) - fixedTermDeposit.getCreationDate().getTime()) / 86400000);
         if (days < 30) {
             throw new FixedTermDepositException();
         }

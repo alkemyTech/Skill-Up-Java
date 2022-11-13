@@ -42,7 +42,7 @@ public class FixedTermDepositController {
     //Swagger Notation createFixedTermDeposit
     @Operation(summary = "Create FixedTermDeposit for logged in user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "FixedTermDeposit created",
+            @ApiResponse(responseCode = "200", description = "FixedTermDeposit created",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = FixedTermDepositDto.class))
                     }),

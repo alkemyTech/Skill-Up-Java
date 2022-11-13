@@ -4,6 +4,7 @@ import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.response.AccountResponseDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +26,6 @@ public interface IAccountService {
 
     Optional<Account> findTopByUserId(Long userId);
     void save(Account account);
+
+    Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize);
 }

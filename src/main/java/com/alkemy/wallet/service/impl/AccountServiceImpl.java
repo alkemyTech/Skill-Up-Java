@@ -10,6 +10,9 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,10 +20,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
@@ -175,5 +175,12 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public void save(Account account) {
         accountRepository.save(account);
+    }
+
+    @Override
+    public Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        pageable.next().getPageNumber();
+        return accountRepository.findAll(pageable).map(accountMapper::entity2Dto);
     }
 }

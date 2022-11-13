@@ -51,10 +51,10 @@ class UserController {
     //end Swagger notation
 
     @SecurityRequirement(name = "Bearer Authentication")
+    @PreAuthorize("hasRole('ADMIN_ROLE')")
     @GetMapping
-    //TODO: A este metodo lo puede acceser Usuarios autenticados tambien, agregarle algo para negar eso y que sea solo para admin
-    UserPaginatedDto getAll(@Param("page") Integer page) {
-        return userservice.getAllUsers(page);
+    UserPaginatedDto getAll(@Param("page") Integer page, @Parameter(description = "authentication token") @RequestParam( "Authorization" ) String token) {
+        return userservice.getAllUsers(page, token);
 
     }
 

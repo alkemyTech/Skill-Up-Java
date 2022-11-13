@@ -1,21 +1,30 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.dto.AccountDTO;
+import com.alkemy.wallet.dto.AccountPageDTO;
 import com.alkemy.wallet.enumeration.CurrencyList;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.model.Account;
-import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.UserRepository;
 import com.alkemy.wallet.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Properties;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -60,6 +69,38 @@ public class AccountServiceImpl implements IAccountService {
     public List<AccountDTO> getAccountsByUser(Integer id) {
         List<Account> result = accountRepository.findAccountsByUserID(id);
         return accountMapper.accountEntityList2DTOList(result);
+    }
+    @Override
+    public Map<String, Object>getAccounts() {
+        List<Account> accounts = accountRepository.findAll();
+        Map accountsMap = new HashMap<String, List<Account>>(){{put("Accounts",accounts);}};
+        return accountsMap;
+    }
+
+    @Override
+    public AccountPageDTO getAccountsByPage(Integer page) {
+        Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
+        Page<Account> accounts =  accountRepository.findAll(pageWithTenElements);
+        List<Account> accountsList = accounts.getContent();
+
+        AccountPageDTO accountPageDTO = new AccountPageDTO();
+        accountPageDTO.setTotalPages(accounts.getTotalPages());
+
+        ServletUriComponentsBuilder nextPageBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        nextPageBuilder.scheme("http");
+        nextPageBuilder.replaceQueryParam("page", page + 1);
+
+        ServletUriComponentsBuilder previousPageBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        previousPageBuilder.scheme("http");
+        previousPageBuilder.replaceQueryParam("page", page - 1);
+
+        accountPageDTO.setNextPage(accounts.getTotalPages() == page  ? null : nextPageBuilder.build().toUriString());
+        accountPageDTO.setPreviusPage(page == 1  ?  null : previousPageBuilder.build().toUriString());
+
+
+        accountPageDTO.setUserDTOList(accountMapper.accountEntityList2DTOList(accountsList));
+
+        return accountPageDTO;
     }
 
 }

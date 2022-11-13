@@ -1,8 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.dto.UserCreateDTO;
-import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.enumeration.RoleList;
 import com.alkemy.wallet.exception.RestServiceException;
 import com.alkemy.wallet.exception.NotFoundException;
@@ -15,7 +13,6 @@ import com.alkemy.wallet.security.config.JwtTokenProvider;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.util.EmailValidator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +28,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,26 +65,63 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
-    public List<UserDTO> getUsersByPage(Integer page) {
+    public UserPageDTO getUsersByPage(Integer page) {
         Pageable pageWithTenElements = PageRequest.of(page - 1, 10);
-        Page<User> users =  userRepository.findAll(pageWithTenElements);
-        List<User> userList = users.getContent();
-        return userMapper.userEntityList2DTOList(userList);
+        Page<User> usersPage =  userRepository.findAll(pageWithTenElements);
+        List<User> userList = usersPage.getContent();
+
+        UserPageDTO userPageDTO = new UserPageDTO();
+        int totalPages = usersPage.getTotalPages();
+        userPageDTO.setTotalPages(totalPages);
+
+        ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentRequestUri();
+        builder.scheme("http");
+
+        String nextPage = builder.replaceQueryParam("page", String.valueOf(page + 1)).toUriString();
+        String previusPage = builder.replaceQueryParam("page",String.valueOf(page - 1)).toUriString();
+
+        userPageDTO.setNextPage(totalPages == page  ? null : nextPage);
+        userPageDTO.setPreviusPage(page == 1  ?  null : previusPage);
+
+        userPageDTO.setUserDTOList(userMapper.userEntityList2DTOList(userList));
+        return userPageDTO;
     }
 
     @Override
-    public UserDTO getUserDatail(Integer id) {
+    public UserResponseDTO getUserDatail(Integer id) {
         Optional<User> entity =userRepository.findById(id);
         if(entity.isEmpty()){
             throw new NotFoundException("Invalid ID");
         }
-        return userMapper.userEntity2DTO(entity.get());
-        //TODO: modify dto to return
+        return userMapper.userEntity2DTODetails(entity.get());
+    }
+
+    @Override
+    public UserDTO updateUser(UserUpdateDTO userUpdateDTO, Integer id) {
+        Optional<User> result = userRepository.findById(id);
+        if(result.isEmpty()) {
+            throw new NotFoundException("Invalid ID");
+        }
+        User res = result.get();
+        userUpdateDTO.setId(id);
+        User user = userMapper.userUpdateDTO2Entity(userUpdateDTO);
+
+        String encodedPassword = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        user.setEmail(res.getEmail());
+        user.setRole(res.getRole());
+        user.setCreationDate(res.getCreationDate());
+
+        user.setUpdateDate(new Date());
+
+        User response = userRepository.save(user);
+        return userMapper.userEntity2DTO(response);
     }
 
     @Override
     public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
-		
+
 		if (EmailValidator.emailRegexMatches(userCreateDTO.getEmail())) {
 			try {
 				EmailValidator.emailRegexMatches(userCreateDTO.getEmail());
@@ -93,7 +129,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 				userCreateDTO.setPassword(encodedPassword);
 				Role userRole = roleRepository.findByName(RoleList.USER);
 				User user = userMapper.userCreateDTO2Entity(userCreateDTO, userRole);
-				userRepository.save(user);        
+				userRepository.save(user);
 				UserResponseDTO userResponseDTO = userMapper.userEntity2DTOResponse(user);
 				accountService.createAccount(userResponseDTO.getId(), "ARS");
 				accountService.createAccount(userResponseDTO.getId(), "USD");

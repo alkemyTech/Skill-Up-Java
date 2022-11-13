@@ -1,11 +1,11 @@
 package com.alkemy.wallet.mapper;
 
 import com.alkemy.wallet.config.util.DateFormatUtil;
-import com.alkemy.wallet.dto.UserCreateDTO;
-import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserResponseDTO;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import java.util.List;
 
 @Component
 public class UserMapper {
+    @Autowired
+    ModelMapper modelMapper;
     public User userDTO2Entity(UserDTO userDTO){
         User user = new User();
        // user.setId(userDTO.getId());
@@ -47,7 +49,7 @@ public class UserMapper {
         return dtos;
     }
 
-    public UserResponseDTO userEntity2DTOResponse(User user){
+    public UserResponseDTO userEntity2DTOResponse(User user) {
         UserResponseDTO userRegisterDTO = new UserResponseDTO();
         userRegisterDTO.setId(user.getId());
         userRegisterDTO.setFirstName(user.getFirstName());
@@ -55,6 +57,13 @@ public class UserMapper {
         userRegisterDTO.setEmail(user.getEmail());
         userRegisterDTO.setRole(user.getRole());
         return userRegisterDTO;
+    }
+    public User userUpdateDTO2Entity(UserUpdateDTO userUpdateDTO) {
+       return modelMapper.map(userUpdateDTO, User.class);
+    }
+
+    public UserResponseDTO userEntity2DTODetails(User user) {
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
     public User userCreateDTO2Entity(UserCreateDTO userCreateDTO, Role userRole) {

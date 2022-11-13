@@ -1,30 +1,26 @@
 package com.alkemy.wallet.service;
 
 
-import com.alkemy.wallet.dto.UserCreateDTO;
-import com.alkemy.wallet.dto.UserDTO;
-import com.alkemy.wallet.dto.UserResponseDTO;
-import com.alkemy.wallet.model.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.alkemy.wallet.dto.*;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
 public interface IUserService {
-    public List<UserDTO> getAllUsers();
+    List<UserDTO> getAllUsers();
 
-    public UserResponseDTO createUser(UserCreateDTO userDTO);
+    UserResponseDTO createUser(UserCreateDTO userDTO);
 
     void deleteUserById(Integer id);
-    
+
   //Declaracion de metodos para la seguridad
-    public String login(String email, String password);
+    String login(String email, String password);
 
-    public UserDetails loadUserByUsername(String email);
+    UserDetails loadUserByUsername(String email);
 
-    public List<UserDTO> getUsersByPage(Integer page);
+    UserPageDTO getUsersByPage(Integer page);
 
-    public UserDTO getUserDatail(Integer id);
+    UserResponseDTO getUserDatail(Integer id);
 
+    UserDTO updateUser(UserUpdateDTO userUpdateDTO, Integer id);
 }

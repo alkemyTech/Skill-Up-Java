@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,61 +37,70 @@ public class AccountController {
   private IUserService iuserService;
 
   private IAccountService iAccountService;
+
   @Autowired
-  AccountController (IAccountService iAccountService){
+  AccountController(IAccountService iAccountService) {
     this.iAccountService = iAccountService;
   }
 
-  @ApiOperation(value="Get accounts by id",notes="returns the accounts of an user as per the user id")
+  @ApiOperation(value = "Get accounts by id", notes = "returns the accounts of an user as per the user id")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Successfully retrieved"),
       @ApiResponse(code = 401, message = "Unauthorized-you are not an Admin or you are not logged as the correct User"),
       @ApiResponse(code = 404, message = "Not found - The user was not found")
   })
+  @PreAuthorize("hasRole('ADMIN')")
   @GetMapping("/{userId}")
-  public ResponseEntity<List<AccountDto>> getAccountById(@PathVariable("userId")@ApiParam(name = "userId", value = "User id", example = "1") Long userId){
+  public ResponseEntity<List<AccountDto>> getAccountById(
+      @PathVariable("userId") @ApiParam(name = "userId", value = "User id", example = "1") Long userId) {
     List<AccountDto> listAccounts = this.iAccountService.findAllByUser(userId);
     return ResponseEntity.ok().body(listAccounts);
   }
-  @ApiOperation(value="Get balance",notes="returns the balance of the accounts of a logged user")
+
+  @ApiOperation(value = "Get balance", notes = "returns the balance of the accounts of a logged user")
   @ApiResponse(code = 200, message = "Successfully retrieved")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @GetMapping("/balance")
-  public ResponseEntity<List<AccountBasicDto>> getBalance(){
+  public ResponseEntity<List<AccountBasicDto>> getBalance() {
 
     List<AccountBasicDto> accounts = iuserService.getAccountsBalance();
     return ResponseEntity.ok(accounts);
   }
 
-  @ApiOperation(value="create account",notes="creates and return and account")
+  @ApiOperation(value = "create account", notes = "creates and return and account")
   @ApiResponse(code = 201, message = "Successfully created")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @PostMapping()
   public ResponseEntity<Object> createAccount(
-      @RequestBody CurrencyDto currency)
-  {
+      @RequestBody CurrencyDto currency) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     Object accountDto = this.iAccountService.addAccount(email, currency);//TODO : VER OBJECT
     return ResponseEntity.status(HttpStatus.CREATED).body(accountDto);
   }
 
-  @ApiOperation(value="update by id",notes="updates and returns an account as per the account id")
+  @ApiOperation(value = "update by id", notes = "updates and returns an account as per the account id")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Successfully retrieved"),
       @ApiResponse(code = 401, message = "Unauthorized- you are not logged as the correct User")
   })
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
   @PutMapping("/{id}")
-  public ResponseEntity<AccountDto> updateAccount(@PathVariable @ApiParam(name = "id", value = "Account id", example = "1") Long id,@RequestParam @ApiParam(name = "transactionLimit", value = "transaction limit", example = "5000")  Double transactionLimitUpdated)
-  {
-      AccountDto dto=iAccountService.updateAccount(id,transactionLimitUpdated);
-      return ResponseEntity.ok().body(dto);
+  public ResponseEntity<AccountDto> updateAccount(
+      @PathVariable @ApiParam(name = "id", value = "Account id", example = "1") Long id,
+      @RequestParam @ApiParam(name = "transactionLimit", value = "transaction limit", example = "5000") Double transactionLimitUpdated) {
+    AccountDto dto = iAccountService.updateAccount(id, transactionLimitUpdated);
+    return ResponseEntity.ok().body(dto);
   }
-  @ApiOperation(value="Get all accounts",notes="returns all the accounts in the server")
+
+  @ApiOperation(value = "Get all accounts", notes = "returns all the accounts in the server")
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Successfully retrieved"),
       @ApiResponse(code = 401, message = "Unauthorized-you are not an Admin")
   })
   @GetMapping()
-  public ResponseEntity<PageDto<AccountDto>> getAllAccount (@PageableDefault(size = 10 )Pageable page, HttpServletRequest request){
-    PageDto<AccountDto> pageDto = iAccountService.findAllAccounts(page,request);
+  public ResponseEntity<PageDto<AccountDto>> getAllAccount(
+      @PageableDefault(size = 10) Pageable page, HttpServletRequest request) {
+    PageDto<AccountDto> pageDto = iAccountService.findAllAccounts(page, request);
     return ResponseEntity.ok().body(pageDto);
   }
 

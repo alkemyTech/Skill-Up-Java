@@ -10,6 +10,7 @@ import com.alkemy.wallet.exception.TransactionException;
 import com.alkemy.wallet.mapper.AccountMapper;
 import com.alkemy.wallet.mapper.TransactionMapper;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.AccountRepository;
 import com.alkemy.wallet.repository.TransactionRepository;
 import com.alkemy.wallet.repository.UserRepository;
@@ -91,6 +92,15 @@ public class AccountServiceImpl implements IAccountService {
 
         return accountMapper.accountEntityList2DTOList(result);
     }
+
+
+    @Override
+    public List<AccountDTOSlim> getAccount(Integer user_id) {
+        List<Account> accountsByUserId = this.accountRepository.findAccountsByUserID(user_id);
+        List<AccountDTOSlim> listAccounts = accountMapper.convertToListDTOSlim(accountsByUserId);
+        return listAccounts;
+    }
+
 
     @Override
     public Map<String, Object> getAccounts() {

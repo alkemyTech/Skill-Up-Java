@@ -40,9 +40,7 @@ import java.util.List;
 @RequestMapping("/accounts")
 public class AccountController {
     @Autowired
-    private AccountServiceImpl accountService;
-    @Autowired
-    private IAccountService iaccountService;
+    private IAccountService accountService;
 
     @Operation(security = {
             @SecurityRequirement(name = "Bearer") }, summary = "Bringing balances", description = "<h3>Endpoint that Bring the balance of the accounts</h3>"
@@ -61,8 +59,6 @@ public class AccountController {
         List<AccountDTOSlim> accounts = accountService.getAccount(user_id);
         return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
-
-    private IAccountService accountService;
 
     //Documentation--------------------------------
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
@@ -85,7 +81,7 @@ public class AccountController {
 
     //Documentation--------------------------------
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
-            summary = "Create account", description = "<h3>Get accounts by an user Id</h3>")
+            summary = "Get accounts by a userId", description = "<h3>Get accounts by an user Id</h3>")
     @Parameter(name = "id", description = "Id of the user you want to see the accounts details", example = "1", in = ParameterIn.QUERY)
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User accounts found succesfully",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))}),
@@ -98,6 +94,14 @@ public class AccountController {
         List<AccountDTO> accounts = accountService.getAccountsByUser(id);
         return ResponseEntity.ok().body(accounts);
     }
+    //Documentation--------------------------------
+    @Operation(security = {@SecurityRequirement(name = "Bearer")},
+            summary = "Get users accounts paginated", description = "<h3>Endpoint that gets accounts paginated</h3>")
+    @Parameter(name = "page", description = "Page to get", example = "1", in = ParameterIn.QUERY)
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Accounts found succesfully",
+            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))}),
+            @ApiResponse(responseCode="400", description = "Bad Request",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorDTO.class))})})
     @GetMapping("/pages")
     public ResponseEntity<AccountPageDTO> getUsers(@RequestParam(value = "page", required = false) Integer page) {
         AccountPageDTO accounts = accountService.getAccountsByPage(page);

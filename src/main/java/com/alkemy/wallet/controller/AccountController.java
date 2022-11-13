@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -109,13 +110,32 @@ public class AccountController {
 
     }
 
-    @GetMapping( "/all" )
-    public ResponseEntity<PaginatedAccountsDto> paginateAccounts( @Param( "page" ) Integer page ) {
-        return ResponseEntity.ok( accountService.getAccounts( page ) );
+    //Swagger Notation Paginated Accounts by User
+    @Operation(summary = "Paginates accounts of Users")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Request successful",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginatedAccountsDto.class))}),
+            @ApiResponse(responseCode = "400", description = "The request was not valid",
+                    content = {@Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "There is missing data to enter or a data was entered incorrectly")),}),
+            @ApiResponse(responseCode = "403", description = "User not authorized to perform the operation",
+                    content = {@Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "Cannot paginate users´s accounts")),}),
+            @ApiResponse(responseCode = "404", description = "The requested resource wasn't found or It doesn't exist",
+                    content = {@Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "Cannot paginate accounts because the page number or the user doesn't exist")),}),
+            @ApiResponse(responseCode = "500", description = "The server encountered an unexpected condition",
+                    content = {@Content(mediaType = "text/plain",
+                            schema = @Schema(defaultValue = "Server couldn't paginate accounts")),})
+    })
+    //End Swagger notation
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping( "/{userId}" )
+    public ResponseEntity<PaginatedAccountsDto> getPaginateAccountsByUserId( @PathVariable Integer userId, @Param( "page" ) Integer page, @RequestHeader("Authorization") String userToken ) {
+        return ResponseEntity.ok( accountService.getPaginatedAccountsByUserId( userId, page, userToken ) );
     }
 
-    @GetMapping( "/{userId}" )
-    public ResponseEntity<List<AccountDto>> getAccountsByUserId( @PathVariable Integer userId ) {
-        return ResponseEntity.ok( accountService.getAccountsByUserId( userId ) );
-    }
 }

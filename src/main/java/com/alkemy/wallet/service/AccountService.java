@@ -15,9 +15,9 @@ public interface AccountService {
     Account findAccountByUserIdAndCurrency(User user, Currency currency);
     AccountDto increaseBalance(int accountId, double amount);
     AccountDto getAccountById(Integer accountId);
-    List<AccountDto> getAccountsByUserId(int userId);
+    List<AccountDto> getAccountsByUserId(int userId, String userToken);
     List<AccountBalanceDto> getUserBalance(String username);
     AccountDetailDto updateAccount(AccountPatchDto account, Integer Id, String userToken) throws Exception;
     boolean hasUserAccountById(Integer userId, Integer accountId);
-    PaginatedAccountsDto getAccounts(int page);
+    PaginatedAccountsDto getPaginatedAccountsByUserId(int userId, int page, String userToken);
 }

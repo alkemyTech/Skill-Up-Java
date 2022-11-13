@@ -79,16 +79,12 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public AccountResponseDto editAccountBalance(long idAccount, Double newBalance) {
         Optional<Account> account = accountRepository.findById(idAccount);
-        if (account.isEmpty()) {
-            //throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
-            throw new ExceptionCustom(String.format("Account with id: %s was not found", idAccount));
-        }
+        if (account.isEmpty())
+            throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
 
         //TODO cambiar mensaje
-        if (account.get().getBalance() <= newBalance) {
-            //throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
-            throw new ExceptionCustom(String.format("Account with id: %s was not found", idAccount));
-        }
+        if (account.get().getBalance() <= newBalance)
+            throw new EntityNotFoundException(String.format("Account with id: %s was not found", idAccount));
 
         account.get().setBalance(newBalance);
         return accountMapper.entity2Dto(accountRepository.save(account.get()));

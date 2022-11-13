@@ -23,13 +23,13 @@ public class TransactionController {
     @PostMapping("/sendArs")
     public ResponseEntity<Map<String, String>> moneySendInPesos(@RequestParam("idTargetUser") Long idTargetUser, @RequestParam("mount") Double amount,
                                                                 @RequestParam("type") String type, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.sendMoney(idTargetUser, amount, "peso Argentino(ARS)", 1, type, token), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.sendMoney(idTargetUser, amount, "Argentine peso (ARS)", 1, type, token), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/sendUsd")
     public ResponseEntity<Map<String, String>> moneySendInUsd(@RequestParam("idTargetUser") Long idTargetUser, @RequestParam("mount") Double amount,
                                                               @RequestParam("type") String type, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.sendMoney(idTargetUser, amount, "dolar Estadounidense(USD)", 2, type, token), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(service.sendMoney(idTargetUser, amount, "US dollar (USD)", 2, type, token), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/transactions/payment")

@@ -42,34 +42,34 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public Map<String,String> sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token) {
-        String noDisponible = " no esta disponible";
+        String noDisponible = " not available";
         long idUser = authService.getUserFromToken(token).getId();
         if (idTargetUser == idUser)
-            throw new ExceptionCustom("Error no se puede enviar dinero al mismo usuario");
+            throw new ExceptionCustom("Error cannot send money to the same user");
 
         Optional<User> user = userService.findById(idUser);
         if (user.isEmpty())
-            throw new ExceptionCustom("El usuario con id " + idUser + noDisponible);
+            throw new ExceptionCustom(String.format("The user with id %d %s", idUser ,noDisponible));
 
         Optional<User> targetUser = userService.findById(idTargetUser);
         if (targetUser.isEmpty())
-            throw new ExceptionCustom("El usuario con id " + idTargetUser + noDisponible);
+            throw new ExceptionCustom("The user with id " + idTargetUser + noDisponible);
 
         Optional<Account> accountUser = accountService.findTopByUserId(idUser);
         if (accountUser.isEmpty())
-            throw new ExceptionCustom("La account con id " + idUser + noDisponible);
+            throw new ExceptionCustom("the account with id " + idUser + noDisponible);
 
         Optional<Account> accountTargetUser = accountService.findTopByUserId(idTargetUser);
         if (accountTargetUser.isEmpty())
-            throw new ExceptionCustom("La account con id " + idTargetUser + noDisponible);
+            throw new ExceptionCustom("the account with id " + idTargetUser + noDisponible);
 
         validTypeOfMoney(typeMoney, money, accountUser.get(), accountTargetUser.get());
 
         if (accountUser.get().getBalance() < amount)
-            throw new ExceptionCustom("Error valor disponible superado");
+            throw new ExceptionCustom("Available value exceeded error");
 
         if (amount > accountUser.get().getTransactionLimit())
-            throw new ExceptionCustom("Error supera el limite de transacciones");
+            throw new ExceptionCustom("Exceed transaction limit");
 
         double balanceUser = accountUser.get().getBalance() - amount;
         double targetUserBalance = accountTargetUser.get().getBalance() + amount;
@@ -77,18 +77,18 @@ public class TransactionServiceImpl implements ITransactionService {
         accountUser.get().setBalance((balanceUser));
         accountTargetUser.get().setBalance(targetUserBalance);
 
-        Transaction transaction = new Transaction(null, amount, specificTypeOfTransaction(type), "Transacción exitosa",
+        Transaction transaction = new Transaction(null, amount, specificTypeOfTransaction(type), "Successful transaction",
                 LocalDateTime.now(), targetUser.get(), accountUser.get());
 
         accountService.save(accountTargetUser.get());
         accountService.save(accountUser.get());
         repository.save(transaction);
 
-        return Map.of("Mensaje","operación realizada exitosamente");
+        return Map.of("Message","operation performed successfully");
     }
 
     private void validTypeOfMoney(int typeMoney, String money, Account accountUser, Account accountTargetUser) {
-        String error = "Error solo puede enviar dinero en ";
+        String error = "Error can only send money in ";
         if (typeMoney == 1 && (!accountUser.getCurrency().equals(ARS) || !accountTargetUser.getCurrency().equals(ARS)))
             throw new ExceptionCustom(error + money);
         else {
@@ -105,6 +105,6 @@ public class TransactionServiceImpl implements ITransactionService {
         else if (TransactionTypeEnum.DEPOSIT.name().equalsIgnoreCase(type))
             return TransactionTypeEnum.DEPOSIT;
         else
-            throw new ExceptionCustom("El tipo ingresado es incorrecto");
+            throw new ExceptionCustom("Wrong transaction type");
     }
 }

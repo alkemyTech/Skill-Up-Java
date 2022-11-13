@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model.mapper;
 
 import com.alkemy.wallet.model.request.AccountRequestDto;
-import com.alkemy.wallet.model.response.list.AccountListResponseDto;
 import com.alkemy.wallet.model.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.AccountCurrencyEnum;

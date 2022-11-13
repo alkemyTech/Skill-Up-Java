@@ -20,36 +20,37 @@ import static javax.persistence.FetchType.EAGER;
 @NoArgsConstructor
 @ToString
 @Builder
-@Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted=true WHERE id=?")
-@Where(clause = "deleted=false")
+@Table(name = "USERS")
+@SQLDelete(sql = "UPDATE users SET DELETED=true WHERE id=?")
+@Where(clause = "DELETED=false")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(nullable = false, name = "first_name")
+    @Column(nullable = false, name = "FIRST_NAME")
     private String firstName;
 
-    @Column(nullable = false, name = "last_name")
+    @Column(nullable = false, name = "LAST_NAME")
     private String lastName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, name = "EMAIL")
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "PASSWORD")
     private String password;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "created_at")
-    private LocalDateTime creationDate;
+    @Column(name = "CREATED_AT")
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "updated_at")
+    @Column(name = "UPDATED_AT")
     private LocalDateTime updateDate;
 
-    @Column(name = "deleted")
+    @Column(name = "DELETED")
     private boolean softDelete = Boolean.FALSE;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -58,9 +59,9 @@ public class User {
 
     @ManyToMany(fetch = EAGER)
     @JoinTable(
-            name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+            name = "REL_USER_ROLE",
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
     @ToString.Exclude
     private Set<Role> roles;
 

@@ -185,4 +185,10 @@ public class UserServiceImpl implements UserService {
         return userMapper.convertToUpdateDto(user);
 
     }
+
+
+    @Override
+    public void reactivateAccount(User user){
+        userRepository.save(user);
+    }
 }

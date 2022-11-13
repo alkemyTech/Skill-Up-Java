@@ -20,7 +20,6 @@ import static java.lang.Boolean.FALSE;
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete( sql = "UPDATE users SET soft_delete = true WHERE USER_ID=?" )
-@Where( clause = "soft_delete=false" )
 public class User implements UserDetails {
 
     @Id

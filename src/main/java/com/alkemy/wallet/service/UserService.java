@@ -17,4 +17,6 @@ public interface UserService extends UserDetailsService {
     UserUpdateDto updateUser(Integer id, UserUpdateDto userUpdateDto, String token);
 
     void deleteUser( Integer id, String token) throws ResourceNotFoundException;
+
+    void reactivateAccount(User user);
 }

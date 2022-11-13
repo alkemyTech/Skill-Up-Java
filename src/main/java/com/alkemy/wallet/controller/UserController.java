@@ -53,7 +53,7 @@ class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PreAuthorize("hasRole('ADMIN_ROLE')")
     @GetMapping
-    UserPaginatedDto getAll(@Param("page") Integer page, @Parameter(description = "authentication token") @RequestParam( "Authorization" ) String token) {
+    UserPaginatedDto getAll(@Param("page") Integer page, @Parameter(description = "authentication token") @RequestHeader( "Authorization" ) String token) {
         return userservice.getAllUsers(page, token);
 
     }

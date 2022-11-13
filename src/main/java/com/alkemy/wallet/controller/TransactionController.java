@@ -57,6 +57,7 @@ public class TransactionController {
     }
     //Swagger Notation createDeposit
     @Operation(summary = "Create deposit for specific account")
+    @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "deposit succesfull",
                     content = { @Content(mediaType = "application/json",
@@ -110,7 +111,7 @@ public class TransactionController {
     })
     //end Swagger notation
     @GetMapping(value = "/{userId}")
-//    @PreAuthorize("hasRole('USER_ROLE')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<TransactionPaginatedDto> listTransactions(@Parameter(description = "id of user to be searched") @PathVariable Integer userId, @Param("page") Integer page, @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(transactionService.paginateTransactionsByUser(page,userId, token));
     }

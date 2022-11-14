@@ -39,9 +39,7 @@ public class TransactionMapper {
                 .build();
     }
 
-    public TransactionListResponseDto entityList2DtoList(List<Transaction> entityList) {
-        return TransactionListResponseDto.builder()
-                .transactions(entityList.stream().map(this::entity2Dto).collect(Collectors.toList()))
-                .build();
+    public List<TransactionResponseDto> entityList2DtoList(List<Transaction> entityList) {
+        return entityList.stream().map(this::entity2Dto).collect(Collectors.toList());
     }
 }

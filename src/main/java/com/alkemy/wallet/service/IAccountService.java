@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.model.dto.request.AccountRequestDto;
+import com.alkemy.wallet.model.dto.request.UpdateAccountRequestDto;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.model.entity.Account;
@@ -21,11 +22,11 @@ public interface IAccountService {
 
     List<Account> createUserAccounts(User user);
 
-    List<AccountBalanceResponseDto> getAccountBalance(String token);
+    AccountBalanceResponseDto getAccountBalance(String token);
 
-    List<Account> getAccountsByUserId(Long userId);
+    List<AccountResponseDto> getAccountsByUserId(Long userId);
 
-    AccountResponseDto updateAccount(Long id, Double newTransactionLimit, String token);
+    AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token);
 
     Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize);
 }

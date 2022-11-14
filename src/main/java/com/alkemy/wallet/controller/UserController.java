@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -20,19 +23,25 @@ public class UserController {
     private final IUserService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserDetails(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> getUserDetails(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
         UserResponseDto response = service.getUserDetails(id, token);
         return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateById(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody UserRequestDto request) {
+    public ResponseEntity<UserResponseDto> updateById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @Validated @RequestBody UserRequestDto request) {
         UserResponseDto response = service.update(id, token, request);
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
+        service.deleteUserById(id, token);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping
-    public ResponseEntity<UserListResponseDto> getUsers() {
+    public ResponseEntity<List<UserResponseDto>> getUsers() {
         return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
     }
 

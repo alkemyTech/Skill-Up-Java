@@ -23,9 +23,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> signUp(@Validated @RequestBody UserRequestDto request) {
-        //UserResponseDto response = service.register(request);
-        //URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/auth/register").toUriString());
-        //return ResponseEntity.created(uri).body(response);
         return new ResponseEntity<>(service.register(request), HttpStatus.CREATED);
     }
 

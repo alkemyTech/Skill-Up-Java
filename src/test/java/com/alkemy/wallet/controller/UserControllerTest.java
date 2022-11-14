@@ -1,3 +1,4 @@
+/*
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.entity.Role;
@@ -59,4 +60,4 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(new ResponseEntity<>(listResponseDto, HttpStatus.OK), response);
     }
-}
+}*/

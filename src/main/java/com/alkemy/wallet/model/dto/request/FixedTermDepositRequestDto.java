@@ -2,7 +2,10 @@ package com.alkemy.wallet.model.dto.request;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Getter
@@ -11,9 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class FixedTermDepositRequestDto {
+    @NotNull(message = "Must declare the amount of money to deposit in fixed terms")
+    @Min(value = 1, message = "The amount must be 1 positive minimum")
     private Double amount;
-    private Long userId;
+    @NotNull(message = "Declare the id of the account")
     private Long accountId;
-    private Double interest;
-    private LocalDateTime ClosingDate;
+    @NotEmpty(message = "Must declare the closing date")
+    @NotBlank(message = "Closing date cannot be whitespaces")
+    private String closingDate;
 }

@@ -2,6 +2,7 @@ package com.alkemy.wallet.model.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,5 +18,5 @@ public class FixedTermDepositResponseDto {
     private Long accountId;
     private Double interest;
     private LocalDateTime createdAt;
-    private LocalDateTime closingDate;
+    private LocalDate closingDate;
 }

@@ -1,11 +1,10 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.dto.request.AccountRequestDto;
+import com.alkemy.wallet.model.dto.request.UpdateAccountRequestDto;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
-import com.alkemy.wallet.model.entity.Account;
-import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
-import com.alkemy.wallet.model.entity.User;
+import com.alkemy.wallet.model.entity.*;
 import com.alkemy.wallet.model.mapper.AccountMapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -16,21 +15,23 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
+import static com.alkemy.wallet.model.entity.TransactionTypeEnum.INCOME;
+import static com.alkemy.wallet.model.entity.TransactionTypeEnum.PAYMENT;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ ={@Lazy})
+@RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class AccountServiceImpl implements IAccountService {
 
     private final IAccountRepository repository;
@@ -111,70 +112,63 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<AccountBalanceResponseDto> getAccountBalance(String token) {
-        double valorPesoArs = 160.41;
-        double valorPesoUsd = 0.0062;
-        double porcentaje = 10;
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+    public AccountBalanceResponseDto getAccountBalance(String token) {
+        User loggedUser = authService.getUserFromToken(token);
 
-        long idUser = authService.getUserFromToken(token).getId();
-        List<Account> accounts = repository.findAccountByUserId(idUser);
-        if (accounts.isEmpty())
-            throw new IllegalArgumentException("User not available");
+        double incomesUSD = 0.0;
+        double paymentsUSD = 0.0;
 
-        List<AccountBalanceResponseDto> accountBalanceList = new ArrayList<>();
+        double incomesARS = 0.0;
+        double paymentsARS = 0.0;
 
-        for (Account account : accounts) {
-            AccountBalanceResponseDto accountBalanceResponseDTO;
+        for (Transaction transaction : loggedUser.getTransactions()) {
+            if (transaction.getType().equals(INCOME) && transaction.getAccount().getCurrency().equals(ARS))
+                incomesARS = incomesARS + transaction.getAmount();
+            if (transaction.getType().equals(INCOME) && transaction.getAccount().getCurrency().equals(USD))
+                incomesUSD = incomesUSD + transaction.getAmount();
 
-            LocalDate dateDB = LocalDate.of
-                    (account.getCreationDate().getYear(),
-                            account.getCreationDate().getMonth(),
-                            account.getCreationDate().getDayOfWeek().getValue());
-
-            Period duration = Period.between(dateDB, LocalDate.now());
-            accountBalanceResponseDTO = new AccountBalanceResponseDto();
-            if (duration.getMonths() > 0) {
-                double aumento = (account.getBalance() * porcentaje) / 100;
-                accountBalanceResponseDTO.setFixedTermDeposit(account.getBalance() + (aumento * duration.getMonths()));
-            }
-            if (account.getCurrency().equals(ARS)) {
-                double arsToUsd = Double.parseDouble(decimalFormat.format((account.getBalance() * valorPesoArs)));
-                accountBalanceResponseDTO.setBalanceUsd(arsToUsd);
-                accountBalanceResponseDTO.setBalanceArs(account.getBalance());
-                accountBalanceList.add(accountBalanceResponseDTO);
-            } else if (account.getCurrency().equals(USD)) {
-                double usdToArs = Double.parseDouble(decimalFormat.format((account.getBalance() * valorPesoUsd)));
-                accountBalanceResponseDTO.setBalanceUsd(account.getBalance());
-                accountBalanceResponseDTO.setBalanceArs(usdToArs);
-                accountBalanceList.add(accountBalanceResponseDTO);
-            }
+            if (transaction.getType().equals(PAYMENT) && transaction.getAccount().getCurrency().equals(ARS))
+                paymentsARS = paymentsARS + transaction.getAmount();
+            if (transaction.getType().equals(PAYMENT) && transaction.getAccount().getCurrency().equals(USD))
+                paymentsUSD = paymentsUSD + transaction.getAmount();
         }
-        return accountBalanceList;
+        double generalBalanceARS = incomesARS - paymentsARS;
+        double generalBalanceUSD = incomesUSD - paymentsUSD;
+
+        double amountFixedDepositsARS = 0.0;
+        double amountFixedDepositsUSD = 0.0;
+
+        for (FixedTermDeposit fixedTermDeposit : loggedUser.getFixedTermDeposits()) {
+            if (fixedTermDeposit.getAccount().getCurrency().equals(ARS))
+                amountFixedDepositsARS = amountFixedDepositsARS + fixedTermDeposit.getAmount();
+
+            if (fixedTermDeposit.getAccount().getCurrency().equals(USD))
+                amountFixedDepositsUSD = amountFixedDepositsUSD + fixedTermDeposit.getAmount();
+        }
+
+        return AccountBalanceResponseDto.builder()
+                .balanceUSD(generalBalanceUSD)
+                .balanceARS(generalBalanceARS)
+                .fixedTermDepositUSD(amountFixedDepositsUSD)
+                .fixedTermDepositARS(amountFixedDepositsARS)
+                .build();
     }
 
     @Override
-    public List<Account> getAccountsByUserId(Long userId) {
-        List<Account> accounts = repository.findAccountByUserId(userId);
+    public List<AccountResponseDto> getAccountsByUserId(Long userId) {
+        List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
             throw new NoSuchElementException("The user does not have accounts yet");
-        return accounts;
+        return mapper.entityList2DtoList(accounts);
     }
 
     @Override
-    public AccountResponseDto updateAccount(Long id, Double newTransactionLimit, String token) {
+    public AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token) {
         User user = authService.getUserFromToken(token);
-        Account accountToUpdate = null;
-        for (Account account : user.getAccounts()) {
-            if (account.getId().equals(id)) {
-                accountToUpdate = account;
-            }
-        }
-        if (accountToUpdate == null) {
-            throw new EntityNotFoundException(String.format("The Account with id:%s does not exist or does not belong to the user", id));
-        }
-        accountToUpdate.setTransactionLimit(newTransactionLimit);
-
+        Account accountToUpdate = getAccountById(id);
+            if (!user.getAccounts().contains(accountToUpdate))
+                throw new AccessDeniedException("The account does not exist or does not belong to current user");
+        accountToUpdate.setTransactionLimit(request.getTransactionLimit());
         return mapper.entity2Dto(repository.save(accountToUpdate));
     }
 

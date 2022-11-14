@@ -1,3 +1,4 @@
+/*
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
@@ -9,7 +10,7 @@ import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.AccountMapper;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.response.AccountResponseDto;
+import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
@@ -95,4 +96,4 @@ class AccountControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(new ResponseEntity<>(List.of(new AccountResponseDto(1L, "USD", 1500D, 3000D, 1L, fecha, null)), HttpStatus.OK), response);
     }
-}
+}*/

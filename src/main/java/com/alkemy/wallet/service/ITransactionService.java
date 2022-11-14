@@ -1,14 +1,15 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.model.entity.Transaction;
+import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
+import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
 public interface ITransactionService {
-    Transaction saveTransaction(Transaction transaction);
-    Optional<Transaction> getTransactionById(Long id);
-    void deleteTransaction(Long id);
-    Map<String,String> sendMoney(long idTargetUser, double amount, String money, int typeMoney, String type, String token);
 
+    TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request, String token);
+
+    TransactionResponseDto doTransaction(TransactionRequestDto request, String token);
+
+    List<TransactionResponseDto> listTransactionsByUserId(Long userId);
 }

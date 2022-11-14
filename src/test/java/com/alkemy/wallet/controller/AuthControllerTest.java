@@ -1,3 +1,4 @@
+/*
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
@@ -5,8 +6,8 @@ import com.alkemy.wallet.auth.utility.JwtUtils;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.request.AuthRequestDto;
-import com.alkemy.wallet.model.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.request.AuthRequestDto;
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -68,4 +69,4 @@ class AuthControllerTest {
 
         assertEquals(HttpStatus.OK, controller.login(new AuthRequestDto("admin@gmail.com", "12345")).getStatusCode());
     }
-}
+}*/

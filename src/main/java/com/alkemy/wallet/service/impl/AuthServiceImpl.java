@@ -7,10 +7,10 @@ import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.RoleEnum;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
-import com.alkemy.wallet.model.request.AuthRequestDto;
-import com.alkemy.wallet.model.request.UserRequestDto;
-import com.alkemy.wallet.model.response.AuthResponseDto;
-import com.alkemy.wallet.model.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.request.AuthRequestDto;
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.response.AuthResponseDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -18,7 +18,6 @@ import com.alkemy.wallet.service.IAuthService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,22 +32,16 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ ={@Lazy})
+@RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements IAuthService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final AuthenticationManager authenticationManager;
-
     private final UserDetailsCustomService userDetailsCustomService;
-
     private final JwtUtils jwtUtils;
-
     private final IUserRepository repository;
-
     private final UserMapper mapper;
-
     private final IRoleRepository roleRepository;
     private final IAccountService accountService;
 
@@ -112,12 +105,6 @@ public class AuthServiceImpl implements IAuthService {
         }
         log.info("{} with id {} found in the database", response.get().getName(), response.get().getId());
         return response.get();
-    }
-
-    @Override
-    public Role getRoleByName(String name) {
-        Optional<Role> response = roleRepository.findByName(name);
-        return response.orElse(null);
     }
 
     @Override

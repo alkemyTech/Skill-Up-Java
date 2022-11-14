@@ -10,9 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AccountBalanceResponseDto {
-    private Double balanceArs;
-    private Double balanceUsd;
+    private Double balanceARS;
+    private Double balanceUSD;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Double fixedTermDeposit;
+    private Double fixedTermDepositARS;
+    private Double fixedTermDepositUSD;
 
 }

@@ -1,7 +1,7 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.request.FixedTermDepositRequestDto;
-import com.alkemy.wallet.model.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.dto.request.FixedTermDepositRequestDto;
+import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
 import com.alkemy.wallet.service.IFixedTermDepositService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,8 @@ public class FixedTermDepositController {
     private final IFixedTermDepositService service;
 
     @PostMapping
-    public ResponseEntity<FixedTermDepositResponseDto> save(@RequestBody FixedTermDepositRequestDto requestDto,
-                                                            @RequestHeader String  token) {
-        return new ResponseEntity<>(service.save(requestDto, token), HttpStatus.OK);
+    public ResponseEntity<FixedTermDepositResponseDto> createFixedTem(@RequestBody FixedTermDepositRequestDto requestDto, @RequestHeader("Authorization") String  token) {
+        return new ResponseEntity<>(service.create(requestDto, token), HttpStatus.OK);
     }
 
 

@@ -1,6 +1,6 @@
-package com.alkemy.wallet.model.response.list;
+package com.alkemy.wallet.model.dto.response.list;
 
-import com.alkemy.wallet.model.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
 import lombok.*;
 
 import java.util.List;

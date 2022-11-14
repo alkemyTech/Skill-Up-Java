@@ -12,32 +12,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "transactions")
+@Table(name = "TRANSACTIONS")
 @Builder
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "AMOUNT")
     private Double amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "TYPE")
     @Enumerated(EnumType.STRING)
     private TransactionTypeEnum type;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "transaction_date")
-    private LocalDateTime transactionDate;
+    @Column(name = "TRANSACTION_DATE")
+    private LocalDateTime transactionDate = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ACCOUNT_ID")
     private Account account;
 }

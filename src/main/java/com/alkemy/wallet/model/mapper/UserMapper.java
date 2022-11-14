@@ -1,10 +1,9 @@
 package com.alkemy.wallet.model.mapper;
 
-import com.alkemy.wallet.model.request.UserRequestDto;
-import com.alkemy.wallet.model.response.UserResponseDto;
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
-import com.alkemy.wallet.model.response.list.UserListResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -41,9 +40,18 @@ public class UserMapper {
                 .build();
     }
 
-    public UserListResponseDto entityList2DtoList(List<User> entityList) {
-        return UserListResponseDto.builder()
-                .users(entityList.stream().map(this::entity2Dto).collect(Collectors.toList()))
-                .build();
+    public User refreshValues(UserRequestDto dto, User entity2Return) {
+        if (dto.getFirstName() != null && !dto.getFirstName().trim().isEmpty())
+            entity2Return.setFirstName(dto.getFirstName());
+        if (dto.getLastName() != null && !dto.getLastName().trim().isEmpty())
+            entity2Return.setLastName(dto.getLastName());
+        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty())
+            entity2Return.setPassword(dto.getPassword());
+        entity2Return.setUpdateDate(LocalDateTime.now());
+        return entity2Return;
+    }
+
+    public List<UserResponseDto> entityList2DtoList(List<User> entityList) {
+        return entityList.stream().map(this::entity2Dto).toList();
     }
 }

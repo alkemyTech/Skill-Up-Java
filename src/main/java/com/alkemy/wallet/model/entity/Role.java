@@ -12,23 +12,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name = "roles")
+@Table(name = "ROLES")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "NAME")
     private String name;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "created_at")
+    @Column(name = "CREATED_AT")
     private LocalDateTime creationDate;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "updated_at")
+    @Column(name = "UPDATED_AT")
     private LocalDateTime updateDate;
 }

@@ -1,32 +1,54 @@
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.model.response.AccountResponseDto;
-import com.alkemy.wallet.model.response.list.UserListResponseDto;
-import com.alkemy.wallet.service.impl.UserServiceImpl;
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
+import com.alkemy.wallet.service.IUserService;
+
+import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
-    //TODO use the interface, not the implementation
-    private final UserServiceImpl service;
+    private final IUserService service;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getUserDetails(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
+        UserResponseDto response = service.getUserDetails(id, token);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserResponseDto> updateById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @Validated @RequestBody UserRequestDto request) {
+        UserResponseDto response = service.update(id, token, request);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
+        service.deleteUserById(id, token);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping
-    public ResponseEntity<UserListResponseDto> getUsers() {
+    public ResponseEntity<List<UserResponseDto>> getUsers() {
         return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
     }
 
-    //TODO move this endpoint to AccountController
-    @GetMapping("/accounts/{userId}")
-    public ResponseEntity<AccountResponseDto> getAccountUserById(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(service.getAccountUserById(userId), HttpStatus.OK);
+    @GetMapping("/page")
+    public ResponseEntity<Page<UserResponseDto>> findAll(
+            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        return  ResponseEntity.ok(service.findAll(pageNumber, pageSize));
     }
 }

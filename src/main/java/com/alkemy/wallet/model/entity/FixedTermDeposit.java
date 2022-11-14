@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,32 +14,33 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Builder
-@Table(name = "fixed_term_deposits")
+@Table(name = "FIXED_TERM_DEPOSITS")
 public class FixedTermDeposit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "AMOUNT")
     private Double amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "INTEREST")
     private Double interest;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "created_at")
-    private LocalDateTime creationDate;
+    @Column(name = "CREATED_AT")
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    @Column(name = "closing_date")
-    private LocalDateTime closingDate;
+    @Column(name = "CLOSING_DATE")
+    private LocalDate closingDate;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ACCOUNT_ID")
     private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID")
     private User user;
 }

@@ -82,7 +82,7 @@ public class AccountController {
     //Documentation--------------------------------
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
             summary = "Get accounts by a userId", description = "<h3>Get accounts by an user Id</h3>")
-    @Parameter(name = "id", description = "Id of the user you want to see the accounts details", example = "1", in = ParameterIn.QUERY)
+    @Parameter(name = "id", description = "Id of the user you want to see the accounts details", example = "1", in = ParameterIn.PATH)
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "User accounts found succesfully",
             content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountDTO.class))}),
             @ApiResponse(responseCode="400", description = "Bad Request",

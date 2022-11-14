@@ -11,7 +11,8 @@ public enum ErrorList {
     ACCOUNTS_DIFERENT_CURRENCY("The transactions between accounts has diferent currency"),
     SAME_ACCOUNT("The account you select is the same account you owned"),
     PAGE_ERROR("The page you request not found, try page 1 or go to previous page"),
-    ACCOUNT_UNIQUE("A user can have only one account per currency")
+    ACCOUNT_UNIQUE("A user can have only one account per currency"),
+    PAGE_NOT_FOUND("The page requested doesen't exist")
     ;
 
 

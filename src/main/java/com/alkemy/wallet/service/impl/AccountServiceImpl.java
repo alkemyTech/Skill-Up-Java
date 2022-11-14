@@ -129,7 +129,7 @@ public class AccountServiceImpl implements IAccountService {
         ServletUriComponentsBuilder previousPageBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri();
         previousPageBuilder.scheme("http");
         previousPageBuilder.replaceQueryParam("page", page - 1);
-
+        if (accounts.getTotalPages()<page){throw new TransactionException(ErrorList.PAGE_NOT_FOUND.getMessage());}
         accountPageDTO.setNextPage(accounts.getTotalPages() == page ? null : nextPageBuilder.build().toUriString());
         accountPageDTO.setPreviusPage(page == 1 ? null : previousPageBuilder.build().toUriString());
 

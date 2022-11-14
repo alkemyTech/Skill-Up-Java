@@ -39,7 +39,7 @@ public class UserController {
     //Documentation--------------------------------
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
             summary = "Deletes a single user", description = "<h3>Deletes (soft delete) a single user by id</h3>")
-    @Parameters(value = { @Parameter(name = "id", description = "User id to delete", example = "1", in = ParameterIn.QUERY)})
+    @Parameters(value = { @Parameter(name = "id", description = "User id to delete", example = "1", in = ParameterIn.PATH)})
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
             @ApiResponse(responseCode="401", description = "Unauthorizated")})
     //Mapping---------------------------------------
@@ -50,8 +50,8 @@ public class UserController {
     }
     //Documentation--------------------------------
     @Operation(security = {@SecurityRequirement(name = "Bearer")},
-            summary = "Retrieves a single user", description = "<h3>Return a single user by id/h3>")
-    @Parameters(value = { @Parameter(name = "id", description = "User id", example = "1", in = ParameterIn.QUERY)})
+            summary = "Retrieves a single user", description = "<h3>Return a single user by id</h3>")
+    @Parameters(value = { @Parameter(name = "id", description = "User id", example = "1", in = ParameterIn.PATH)})
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Found User", content = {
             @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))}),
             @ApiResponse(responseCode="401", description = "Unauthorizated")})
@@ -63,7 +63,7 @@ public class UserController {
     }
      //Documentation--------------------------------
      @Operation(security = {@SecurityRequirement(name = "Bearer")},
-     summary = "Updates a single user", description = "<h3>Updates a single user by id/h3>")
+     summary = "Updates a single user", description = "<h3>Updates a single user by id</h3>")
     @Parameters(value = { @Parameter(name = "id", description = "User id", example = "1", in = ParameterIn.QUERY)})
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Updated user", content = {
          @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))}),

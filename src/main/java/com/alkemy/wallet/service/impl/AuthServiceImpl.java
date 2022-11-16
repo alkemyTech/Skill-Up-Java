@@ -70,6 +70,11 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public AuthResponseDto login(AuthRequestDto request) {
+        List<User> deletedUsers = repository.findAllDeleted();
+        deletedUsers.forEach(deletedUser -> {
+            if (request.getEmail().equalsIgnoreCase(deletedUser.getEmail()))
+                throw new EntityExistsException("User disabled");
+        });
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = generateToken(request.getEmail());
         return AuthResponseDto.builder()

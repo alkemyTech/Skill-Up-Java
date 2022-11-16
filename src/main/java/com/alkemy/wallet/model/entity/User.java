@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model.entity;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,7 +10,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Boolean.FALSE;
+import static java.time.LocalDateTime.now;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Getter
@@ -26,7 +29,7 @@ import static javax.persistence.FetchType.EAGER;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -44,16 +47,16 @@ public class User {
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "CREATED_AT")
-    private LocalDateTime creationDate = LocalDateTime.now();
+    private LocalDateTime creationDate = now();
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "UPDATED_AT")
     private LocalDateTime updateDate;
 
     @Column(name = "DELETED")
-    private boolean softDelete = Boolean.FALSE;
+    private boolean softDelete = FALSE;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude
     private List<Account> accounts;
 
@@ -65,11 +68,11 @@ public class User {
     @ToString.Exclude
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude
     private List<FixedTermDeposit> fixedTermDeposits;
 }

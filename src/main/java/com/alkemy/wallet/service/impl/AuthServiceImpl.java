@@ -73,7 +73,7 @@ public class AuthServiceImpl implements IAuthService {
         List<User> deletedUsers = repository.findAllDeleted();
         deletedUsers.forEach(deletedUser -> {
             if (request.getEmail().equalsIgnoreCase(deletedUser.getEmail()))
-                throw new EntityExistsException("User disabled");
+                throw new AccessDeniedException("User disabled");
         });
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         String token = generateToken(request.getEmail());

@@ -26,9 +26,7 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
 
     private final IUserRepository repository;
-
     private final UserMapper mapper;
-
     private final IAuthService authService;
 
     @Override

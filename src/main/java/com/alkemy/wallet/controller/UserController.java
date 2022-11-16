@@ -3,9 +3,6 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.service.IUserService;
-
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

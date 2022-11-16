@@ -8,6 +8,8 @@ import lombok.*;
 @Setter
 @Builder
 public class AuthResponseDto {
+
     private String email;
+
     private String token;
 }

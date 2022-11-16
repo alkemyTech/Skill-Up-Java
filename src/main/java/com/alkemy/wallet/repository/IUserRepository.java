@@ -13,7 +13,4 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM users WHERE email LIKE :email", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
-
-    Optional<User> findById(long id);
-    User save(User user);
 }

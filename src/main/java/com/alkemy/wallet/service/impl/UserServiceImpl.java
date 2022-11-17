@@ -63,11 +63,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserResponseDto getUserDetails(Long id, String token) {
-        User userFromToken = authService.getUserFromToken(token);
-        User dbUser = getEntityById(id);
-        if (!userFromToken.equals(dbUser))
+        User loggedUser = authService.getUserFromToken(token);
+        if (!loggedUser.getId().equals(id))
             throw new AccessDeniedException("Access denied");
-        return mapper.entity2Dto(dbUser);
+        loggedUser = getEntityById(id);
+        return mapper.entity2Dto(loggedUser);
     }
 
     @Override

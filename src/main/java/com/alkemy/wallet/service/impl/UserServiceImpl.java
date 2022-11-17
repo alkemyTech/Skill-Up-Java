@@ -81,16 +81,16 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUserById(Long id, String token) {
         User loggedUser = authService.getUserFromToken(token);
-        User dbUser = getEntityById(id);
-
         Role ADMIN_ROLE = authService.getRoleById(2L);
         Role USER_ROLE = authService.getRoleById(1L);
 
         if (loggedUser.getRoles().contains(ADMIN_ROLE)) {
+            User dbUser = getEntityById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);
             repository.delete(dbUser);
-        } else if (dbUser.getRoles().contains(USER_ROLE) && dbUser.equals(loggedUser)) {
+        } else if (loggedUser.getRoles().contains(USER_ROLE) && loggedUser.getId().equals(id)) {
+            User dbUser = getEntityById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);
             repository.delete(dbUser);

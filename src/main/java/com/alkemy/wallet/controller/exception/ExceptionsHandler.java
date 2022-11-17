@@ -20,6 +20,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -123,6 +124,15 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Map<String, String>> nullPointerHandler(IllegalArgumentException ex) {
+        Map<String, String> messages = new HashMap<>();
+        messages.put("message", ex.getMessage());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        return new ResponseEntity<>(messages, BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    protected ResponseEntity<Map<String, String>> noSuchElementHandler(NoSuchElementException ex) {
         Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));

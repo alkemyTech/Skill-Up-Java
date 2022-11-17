@@ -2,7 +2,6 @@ package com.alkemy.wallet.auth.security;
 
 import com.alkemy.wallet.auth.filter.JwtRequestFilter;
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
-import com.alkemy.wallet.model.entity.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(POST, "/auth/register", "/auth/login").permitAll()
 
                 .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())
+                .antMatchers(GET, "/accounts/{userId}").hasRole(ADMIN.getSimpleRoleName())
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling()

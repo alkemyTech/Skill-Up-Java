@@ -158,7 +158,7 @@ public class AccountServiceImpl implements IAccountService {
     public List<AccountResponseDto> getAccountsByUserId(Long userId) {
         List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
-            throw new NoSuchElementException("The user does not have accounts yet");
+            throw new NoSuchElementException("The user does not have accounts yet or the user does not exist");
         return mapper.entityList2DtoList(accounts);
     }
 

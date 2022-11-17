@@ -117,11 +117,11 @@ public class AuthServiceImpl implements IAuthService {
         return bCryptPasswordEncoder.encode(toEncode);
     }
 
-    private String generateToken(String userRequest) {
+    protected String generateToken(String userRequest) {
         return jwtUtils.generateToken(userDetailsCustomService.loadUserByUsername(userRequest));
     }
 
-    private Role saveRole(Long id) {
+    protected Role saveRole(Long id) {
         if (roleRepository.findById(id).isPresent()) {
             return getRoleById(id);
         }

@@ -139,4 +139,13 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
+
+    @ExceptionHandler(EnumConstantNotPresentException.class)
+    protected ResponseEntity<Map<String, String>> enumConstantNotPresentHandler(EnumConstantNotPresentException ex) {
+        Map<String, String> messages = new HashMap<>();
+        messages.put("message", ex.getMessage());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        return new ResponseEntity<>(messages, BAD_REQUEST);
+    }
 }

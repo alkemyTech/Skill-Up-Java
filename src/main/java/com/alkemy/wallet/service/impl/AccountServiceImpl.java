@@ -68,38 +68,25 @@ public class AccountServiceImpl implements IAccountService {
             if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
                 throw new EntityExistsException(String.format("An account in %s already exist", request.getCurrency().toUpperCase()));
         });
+
         AccountCurrencyEnum currency;
         double transactionLimit;
-        if (specificTypeOfCurrency(request.getCurrency()).equals(ARS)) {
+        if (getTypeOfCurrency(request.getCurrency()).equals(ARS)) {
             currency = ARS;
             transactionLimit = 300000.0;
         } else {
             currency = USD;
             transactionLimit = 1000.0;
         }
-        Account account = mapper.dto2Entity(request, currency, transactionLimit, loggedUser);
+        Account account = createNewAccount(loggedUser, currency, transactionLimit);
         userService.addAccount(loggedUser, account);
         return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
     public List<Account> createUserAccounts(User user) {
-
-        Account usdAccount = new Account();
-        usdAccount.setCreationDate(LocalDateTime.now());
-        usdAccount.setBalance(0.0);
-        usdAccount.setCurrency(USD);
-        usdAccount.setSoftDelete(false);
-        usdAccount.setTransactionLimit(1000.0);
-        usdAccount.setUser(user);
-
-        Account arsAccount = new Account();
-        arsAccount.setCreationDate(LocalDateTime.now());
-        arsAccount.setBalance(0.0);
-        arsAccount.setCurrency(ARS);
-        arsAccount.setSoftDelete(false);
-        arsAccount.setTransactionLimit(300000.0);
-        arsAccount.setUser(user);
+        Account usdAccount = createNewAccount(user, USD, 1000.0);
+        Account arsAccount = createNewAccount(user, ARS, 300000.0);
 
         repository.save(usdAccount);
         repository.save(arsAccount);
@@ -166,8 +153,8 @@ public class AccountServiceImpl implements IAccountService {
     public AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token) {
         User user = authService.getUserFromToken(token);
         Account accountToUpdate = getAccountById(id);
-            if (!user.getAccounts().contains(accountToUpdate))
-                throw new AccessDeniedException("The account does not exist or does not belong to current user");
+        if (!user.getAccounts().contains(accountToUpdate))
+            throw new AccessDeniedException("The account does not exist or does not belong to current user");
         accountToUpdate.setTransactionLimit(request.getTransactionLimit());
         return mapper.entity2Dto(repository.save(accountToUpdate));
     }
@@ -179,9 +166,22 @@ public class AccountServiceImpl implements IAccountService {
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 
-    private AccountCurrencyEnum specificTypeOfCurrency(String type) {
+    protected AccountCurrencyEnum getTypeOfCurrency(String type) {
         if (USD.name().equalsIgnoreCase(type))
             return USD;
-        return ARS;
+        if (ARS.name().equalsIgnoreCase(type))
+            return ARS;
+        throw new EnumConstantNotPresentException(AccountCurrencyEnum.class, "Account currency can only be ARS or USD");
+    }
+
+    protected Account createNewAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {
+        return Account.builder()
+                .creationDate(LocalDateTime.now())
+                .balance(0.0)
+                .currency(currency)
+                .softDelete(false)
+                .transactionLimit(transactionLimit)
+                .user(user)
+                .build();
     }
 }

@@ -53,7 +53,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
         return mapper.entity2Dto(repository.save(fixedTermDeposit));
     }
 
-    private LocalDate string2LocalDateTime(String dateTime) {
+    protected LocalDate string2LocalDateTime(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return LocalDate.parse(dateTime, formatter);
     }

@@ -32,12 +32,12 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserResponseDto update(Long id, String token, UserRequestDto request) {
         User userFromToken = authService.getUserFromToken(token);
-        User dbUser = getEntityById(id);
-
-        if (!userFromToken.equals(dbUser))
+        if (!userFromToken.getId().equals(id))
             throw new AccessDeniedException("Access denied");
+
+        User dbUser = getEntityById(id);
         if ((request.getEmail() != null && !request.getEmail().isEmpty()) || request.getRoleId() != null)
-            throw new IllegalArgumentException("Cannot modify the email and the role");
+            throw new IllegalArgumentException("Cannot modify the email or the role");
 
         dbUser = mapper.refreshValues(request, dbUser);
 

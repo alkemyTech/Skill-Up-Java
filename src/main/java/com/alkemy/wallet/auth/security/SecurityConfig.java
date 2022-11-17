@@ -2,10 +2,10 @@ package com.alkemy.wallet.auth.security;
 
 import com.alkemy.wallet.auth.filter.JwtRequestFilter;
 import com.alkemy.wallet.auth.service.UserDetailsCustomService;
+import com.alkemy.wallet.model.entity.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.alkemy.wallet.model.entity.RoleEnum.ADMIN;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -43,6 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests().antMatchers(POST, "/auth/register", "/auth/login").permitAll()
+
+                .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())
+
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement()

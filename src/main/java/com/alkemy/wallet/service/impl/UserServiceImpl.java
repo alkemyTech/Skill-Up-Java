@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -74,7 +75,7 @@ public class UserServiceImpl implements IUserService {
     public List<UserResponseDto> getUsers() {
         List<UserResponseDto> users = mapper.entityList2DtoList(repository.findAll());
         if (users.isEmpty())
-            throw new IllegalArgumentException(String.format("List is empty or null: %s", users));
+            throw new NoSuchElementException(String.format("List is empty or null: %s", users));
         return users;
     }
 

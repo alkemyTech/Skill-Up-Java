@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.alkemy.wallet.model.entity.RoleEnum.ADMIN;
+import static com.alkemy.wallet.model.entity.RoleEnum.USER;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -43,10 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers(POST, "/auth/register", "/auth/login").permitAll()
+                .authorizeRequests()
 
-                .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())
+                .antMatchers(POST, "/auth/register", "/auth/login").permitAll()
+                .antMatchers(GET, "/accounts/balance").hasAnyRole(ADMIN.getSimpleRoleName(), USER.getSimpleRoleName())
                 .antMatchers(GET, "/accounts/{userId}").hasRole(ADMIN.getSimpleRoleName())
+                .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())
 
                 .anyRequest().authenticated()
                 .and().exceptionHandling()

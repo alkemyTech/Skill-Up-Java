@@ -15,6 +15,6 @@ public interface IAccountRepository extends JpaRepository<Account, Long> {
     @Query(value = "SELECT * FROM accounts WHERE user_id = :userId", nativeQuery = true)
     List<Account> findAccountsByUserId(Long userId);
 
-    @Query(value = "SELECT * FROM accounts WHERE currency LIKE :currency AND user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM accounts WHERE currency_type LIKE :currency AND user_id = :userId", nativeQuery = true)
     Optional<Account> findByCurrencyAndUserId(@Param("currency") String currency, @Param("userId") Long userId);
 }

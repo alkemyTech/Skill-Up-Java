@@ -148,4 +148,6 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
+
+    // TODO: 19/11/2022 ExpiredJwtException 
 }

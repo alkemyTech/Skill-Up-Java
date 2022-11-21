@@ -11,15 +11,18 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IFixedTermDepositService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     private final FixedTermDepositMapper mapper;
@@ -37,19 +40,30 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
         long closingDateDays = DAYS.between(LocalDate.now(), string2LocalDateTime(requestDto.getClosingDate()));
 
-        Double fixedDepositAmount = requestDto.getAmount();
-        if ((closingDateDays < 30) && (account.getBalance() < fixedDepositAmount))
-            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s  or account has not enough money: %s", closingDateDays, fixedDepositAmount));
+        if (closingDateDays < 30)
+            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", closingDateDays));
+        if (account.getBalance() < requestDto.getAmount())
+            throw new IllegalArgumentException(String.format("Account has not enough money. Account: %s - To deposit: %s", account.getBalance(), requestDto.getAmount()));
 
-        Double newBalance = account.getBalance() - fixedDepositAmount;
+        Double newBalance = account.getBalance() - requestDto.getAmount();
         accountService.editBalanceAndSave(account, newBalance);
 
-        double interest = fixedDepositAmount;
+        double interest = requestDto.getAmount();
         for (int i = 0; i < closingDateDays; i++) {
             interest = interest + interest * 0.005;
         }
+        interest = interest - requestDto.getAmount();
+        interest = Math.round(interest * 100d) / 100d;
 
-        FixedTermDeposit fixedTermDeposit = mapper.dto2Entity(requestDto, interest, string2LocalDateTime(requestDto.getClosingDate()),account, user);
+        FixedTermDeposit fixedTermDeposit = FixedTermDeposit.builder()
+                .amount(requestDto.getAmount())
+                .interest(interest)
+                .creationDate(LocalDateTime.now())
+                .closingDate(string2LocalDateTime(requestDto.getClosingDate()))
+                .account(account)
+                .user(user)
+                .build();
+
         return mapper.entity2Dto(repository.save(fixedTermDeposit));
     }
 

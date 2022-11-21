@@ -127,17 +127,17 @@ public class AccountServiceImpl implements IAccountService {
 
         for (FixedTermDeposit fixedTermDeposit : loggedUser.getFixedTermDeposits()) {
             if (fixedTermDeposit.getAccount().getCurrency().equals(ARS))
-                amountFixedDepositsARS = amountFixedDepositsARS + fixedTermDeposit.getAmount();
+                amountFixedDepositsARS = amountFixedDepositsARS + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
 
             if (fixedTermDeposit.getAccount().getCurrency().equals(USD))
-                amountFixedDepositsUSD = amountFixedDepositsUSD + fixedTermDeposit.getAmount();
+                amountFixedDepositsUSD = amountFixedDepositsUSD + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
         }
 
         return AccountBalanceResponseDto.builder()
                 .balanceUSD(generalBalanceUSD)
                 .balanceARS(generalBalanceARS)
-                .fixedTermDepositUSD(amountFixedDepositsUSD)
-                .fixedTermDepositARS(amountFixedDepositsARS)
+                .fixedTermDepositUSD(Math.round(amountFixedDepositsUSD * 100d) / 100d)
+                .fixedTermDepositARS(Math.round(amountFixedDepositsARS * 100d) / 100d)
                 .build();
     }
 

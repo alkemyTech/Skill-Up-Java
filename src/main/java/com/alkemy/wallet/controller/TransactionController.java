@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
+import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +45,10 @@ public class TransactionController {
     @GetMapping("/{userId}")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsFromUser(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.listTransactionsByUserId(userId), OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<TransactionResponseDto> update(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @RequestBody UpdateTransactionRequestDto request) {
+        return ResponseEntity.status(OK).body(service.update(id, request, token));
     }
 }

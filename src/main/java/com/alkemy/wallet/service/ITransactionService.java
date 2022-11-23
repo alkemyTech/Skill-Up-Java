@@ -13,6 +13,8 @@ public interface ITransactionService {
 
     TransactionResponseDto update(Long id, UpdateTransactionRequestDto request, String token);
 
+    TransactionResponseDto getDetails (Long id, String token);
+
     Transaction getById(Long id);
 
     TransactionResponseDto payment(TransactionRequestDto request, String token);

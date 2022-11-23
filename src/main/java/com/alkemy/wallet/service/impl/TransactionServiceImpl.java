@@ -75,6 +75,15 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
+    public TransactionResponseDto getDetails(Long id, String token) {
+        User loggedUser = authService.getUserFromToken(token);
+        Transaction transaction = getById(id);
+        if (!transaction.getUser().equals(loggedUser))
+            throw new IllegalArgumentException("This transaction does not belong to current user");
+        return mapper.entity2Dto(transaction);
+    }
+
+    @Override
     public Transaction getById(Long id) {
         Optional<Transaction> dbResponse = repository.findById(id);
         if (dbResponse.isEmpty())

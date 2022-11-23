@@ -25,9 +25,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsCustomService userDetailsCustomService;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final JwtRequestFilter jwtRequestFilter;
 
     @Override
@@ -47,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 .antMatchers(POST, "/auth/register", "/auth/login").permitAll()
+                .antMatchers(GET, "/transactions/{userId}").hasRole(ADMIN.getSimpleRoleName())
                 .antMatchers(GET, "/accounts/balance").hasAnyRole(ADMIN.getSimpleRoleName(), USER.getSimpleRoleName())
                 .antMatchers(GET, "/accounts/{userId}").hasRole(ADMIN.getSimpleRoleName())
                 .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())

@@ -51,4 +51,9 @@ public class TransactionController {
     public ResponseEntity<TransactionResponseDto> update(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @RequestBody UpdateTransactionRequestDto request) {
         return ResponseEntity.status(OK).body(service.update(id, request, token));
     }
+
+    @GetMapping("/details/{id}")
+    public ResponseEntity<TransactionResponseDto> getDetails(@PathVariable("id") long id, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.status(OK).body(service.getDetails(id, token));
+    }
 }

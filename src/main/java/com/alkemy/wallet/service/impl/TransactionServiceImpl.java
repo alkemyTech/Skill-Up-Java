@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
+import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static com.alkemy.wallet.model.entity.TransactionTypeEnum.*;
 
@@ -59,6 +61,25 @@ public class TransactionServiceImpl implements ITransactionService {
         repository.save(payment);
         repository.save(income);
         return mapper.entity2Dto(payment);
+    }
+
+    @Override
+    public TransactionResponseDto update(Long id, UpdateTransactionRequestDto request, String token) {
+        User loggedUser = authService.getUserFromToken(token);
+        Transaction transaction = getById(id);
+        if (!loggedUser.getTransactions().contains(transaction))
+            throw new IllegalArgumentException("The transaction does not belong to the current logged user");
+        if (request.getDescription() != null && !request.getDescription().trim().isEmpty())
+            transaction.setDescription(request.getDescription());
+        return mapper.entity2Dto(repository.save(transaction));
+    }
+
+    @Override
+    public Transaction getById(Long id) {
+        Optional<Transaction> dbResponse = repository.findById(id);
+        if (dbResponse.isEmpty())
+            throw new NoSuchElementException(String.format("Could not found the transaction with id %s", id));
+        return dbResponse.get();
     }
 
     @Override

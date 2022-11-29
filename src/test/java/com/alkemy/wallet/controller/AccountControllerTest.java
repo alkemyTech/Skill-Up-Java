@@ -15,9 +15,9 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.impl.AccountServiceImpl;
-import com.alkemy.wallet.service.impl.AuthServiceImpl;
+import com.alkemy.wallet.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,7 +45,7 @@ class AccountControllerTest {
     private final UserMapper mapper = new UserMapper();
     private final IRoleRepository roleRepository = Mockito.mock(IRoleRepository.class);
     private final IAccountService accountService = Mockito.mock(IAccountService.class);
-    private final IAuthService authService = new AuthServiceImpl(passwordEncoder, authenticationManager,
+    private final IAuthenticationService authService = new AuthenticationServiceImpl(passwordEncoder, authenticationManager,
             userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository, accountService);
     private final IAccountService service = new AccountServiceImpl(accountRepository, accountMapper, authService);
     private final AccountController controller = new AccountController(service);

@@ -18,15 +18,15 @@ public interface IAccountService {
 
     Account getAccountById(Long id);
 
-    AccountResponseDto createAccount(AccountRequestDto request, String token);
+    AccountResponseDto createAccount(AccountRequestDto request);
 
     List<Account> createUserAccounts(User user);
 
-    AccountBalanceResponseDto getAccountBalance(String token);
+    AccountBalanceResponseDto getAccountBalance();
 
     List<AccountResponseDto> getAccountsByUserId(Long userId);
 
-    AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token);
+    AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request);
 
     Page<AccountResponseDto> findAll(Integer pageNumber);
 }

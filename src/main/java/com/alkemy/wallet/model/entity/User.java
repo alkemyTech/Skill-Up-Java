@@ -60,13 +60,10 @@ public class User {
     @ToString.Exclude
     private List<Account> accounts;
 
-    @ManyToMany(fetch = EAGER)
-    @JoinTable(
-            name = "REL_USER_ROLE",
-            joinColumns = {@JoinColumn(name = "USER_ID")},
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
+    @ManyToOne(fetch = EAGER)
+    @JoinColumn(name = "ROLE_ID")
     @ToString.Exclude
-    private Set<Role> roles;
+    private Role role;
 
     @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude

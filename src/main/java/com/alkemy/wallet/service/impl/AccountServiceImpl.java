@@ -8,7 +8,7 @@ import com.alkemy.wallet.model.entity.*;
 import com.alkemy.wallet.model.mapper.AccountMapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -36,7 +36,7 @@ public class AccountServiceImpl implements IAccountService {
 
     private final IAccountRepository repository;
     private final AccountMapper mapper;
-    private final IAuthService authService;
+    private final IAuthenticationService authService;
     private final IUserService userService;
 
     @Override
@@ -62,8 +62,8 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountResponseDto createAccount(AccountRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public AccountResponseDto createAccount(AccountRequestDto request) {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         loggedUser.getAccounts().forEach(account -> {
             if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
                 throw new EntityExistsException(String.format("An account in %s already exist", request.getCurrency().toUpperCase()));
@@ -99,8 +99,8 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountBalanceResponseDto getAccountBalance(String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public AccountBalanceResponseDto getAccountBalance() {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
 
         double incomesUSD = 0.0;
         double paymentsUSD = 0.0;
@@ -150,8 +150,8 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token) {
-        User user = authService.getUserFromToken(token);
+    public AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request) {
+        User user = userService.getByEmail(authService.getEmailFromContext());
         Account accountToUpdate = getAccountById(id);
         if (!user.getAccounts().contains(accountToUpdate))
             throw new AccessDeniedException("The account does not exist or does not belong to current user");

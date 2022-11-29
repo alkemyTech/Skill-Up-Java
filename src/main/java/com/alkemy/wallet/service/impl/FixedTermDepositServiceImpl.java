@@ -10,8 +10,9 @@ import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.FixedTermDepositMapper;
 import com.alkemy.wallet.repository.IFixedTermDepositRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IFixedTermDepositService;
+import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,11 +31,12 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     private final FixedTermDepositMapper mapper;
     private final IFixedTermDepositRepository repository;
     private final IAccountService accountService;
-    private final IAuthService authService;
+    private final IAuthenticationService authService;
+    private final IUserService userService;
 
     @Override
-    public FixedTermDepositResponseDto create(FixedTermDepositRequestDto requestDto, String token) {
-        User user = authService.getUserFromToken(token);
+    public FixedTermDepositResponseDto create(FixedTermDepositRequestDto requestDto) {
+        User user = userService.getByEmail(authService.getEmailFromContext());
         Account account = accountService.getByCurrencyAndUserId(requestDto.getCurrency(), user.getId());
 
         if (!user.getAccounts().contains(account))

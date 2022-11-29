@@ -3,7 +3,6 @@ package com.alkemy.wallet.model.dto.response;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @Getter
@@ -23,7 +22,7 @@ public class UserResponseDto {
 
     private String password;
 
-    private Set<String> roles;
+    private String role;
 
     private LocalDateTime createdAt;
 

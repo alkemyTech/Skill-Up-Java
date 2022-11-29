@@ -25,23 +25,23 @@ public class TransactionController {
     private final ITransactionService service;
 
     @PostMapping("/sendArs")
-    public ResponseEntity<TransactionResponseDto> sendARS(@Validated @RequestBody TransactionRequestDto request, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(ARS.name(), request, token), OK);
+    public ResponseEntity<TransactionResponseDto> sendARS(@Validated @RequestBody TransactionRequestDto request) {
+        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(ARS.name(), request), OK);
     }
 
     @PostMapping("/sendUsd")
-    public ResponseEntity<TransactionResponseDto> sendUsd(@Validated @RequestBody TransactionRequestDto request, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(USD.name(), request, token), OK);
+    public ResponseEntity<TransactionResponseDto> sendUsd(@Validated @RequestBody TransactionRequestDto request) {
+        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(USD.name(), request), OK);
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<TransactionResponseDto> deposit(@Validated @RequestBody TransactionRequestDto request, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.deposit(request, token), OK);
+    public ResponseEntity<TransactionResponseDto> deposit(@Validated @RequestBody TransactionRequestDto request) {
+        return new ResponseEntity<>(service.deposit(request), OK);
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<TransactionResponseDto> payment(@Validated @RequestBody TransactionRequestDto request, @RequestHeader("Authorization") String token) {
-        return new ResponseEntity<>(service.payment(request, token), OK);
+    public ResponseEntity<TransactionResponseDto> payment(@Validated @RequestBody TransactionRequestDto request) {
+        return new ResponseEntity<>(service.payment(request), OK);
     }
 
     @GetMapping("/{userId}")
@@ -51,13 +51,13 @@ public class TransactionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TransactionResponseDto> update(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @RequestBody UpdateTransactionRequestDto request) {
-        return ResponseEntity.status(OK).body(service.update(id, request, token));
+    public ResponseEntity<TransactionResponseDto> update(@PathVariable("id") Long id, @RequestBody UpdateTransactionRequestDto request) {
+        return ResponseEntity.status(OK).body(service.update(id, request));
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<TransactionResponseDto> getDetails(@PathVariable("id") long id, @RequestHeader("Authorization") String token) {
-        return ResponseEntity.status(OK).body(service.getDetails(id, token));
+    public ResponseEntity<TransactionResponseDto> getDetails(@PathVariable("id") long id) {
+        return ResponseEntity.status(OK).body(service.getDetails(id));
     }
 
     @GetMapping

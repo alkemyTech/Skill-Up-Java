@@ -6,7 +6,7 @@ import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UserControllerTest {
     private final IUserRepository repository = Mockito.mock(IUserRepository.class);
     private final UserMapper mapper = new UserMapper();
-    private final IAuthService authService = Mockito.mock(IAuthService.class);
+    private final IAuthenticationService authService = Mockito.mock(IAuthenticationService.class);
     private final IUserService service = new UserServiceImpl(repository, mapper, authService);
     private final UserController userController = new UserController(service);
 

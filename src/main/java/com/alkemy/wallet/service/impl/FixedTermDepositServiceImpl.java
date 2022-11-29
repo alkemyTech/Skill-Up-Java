@@ -35,33 +35,26 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     @Override
     public FixedTermDepositResponseDto create(FixedTermDepositRequestDto requestDto, String token) {
         User user = authService.getUserFromToken(token);
-        Account account = accountService.getAccountById(requestDto.getAccountId());
+        Account account = accountService.getByCurrencyAndUserId(requestDto.getCurrency(), user.getId());
 
         if (!user.getAccounts().contains(account))
-            throw new IllegalArgumentException(String.format("The account with id %s does not belong to the current user", requestDto.getAccountId()));
+            throw new IllegalArgumentException(
+                    String.format("The account with id %s does not belong to the current user",
+                            account.getId()));
 
-        long closingDateDays = DAYS.between(LocalDate.now(), string2LocalDateTime(requestDto.getClosingDate()));
+        long days = daysBetween2Dates(LocalDate.now(), string2LocalDate(requestDto.getClosingDate()));
+        if (days < 30)
+            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", days));
 
-        if (closingDateDays < 30)
-            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", closingDateDays));
-        if (account.getBalance() < requestDto.getAmount())
-            throw new IllegalArgumentException(String.format("Account has not enough money. Account: %s - To deposit: %s", account.getBalance(), requestDto.getAmount()));
-
+        Double interest = calculateInterest(requestDto.getAmount(), days);
         Double newBalance = account.getBalance() - requestDto.getAmount();
         accountService.editBalanceAndSave(account, newBalance);
-
-        double interest = requestDto.getAmount();
-        for (int i = 0; i < closingDateDays; i++) {
-            interest = interest + interest * 0.005;
-        }
-        interest = interest - requestDto.getAmount();
-        interest = Math.round(interest * 100d) / 100d;
 
         FixedTermDeposit fixedTermDeposit = FixedTermDeposit.builder()
                 .amount(requestDto.getAmount())
                 .interest(interest)
                 .creationDate(LocalDateTime.now())
-                .closingDate(string2LocalDateTime(requestDto.getClosingDate()))
+                .closingDate(string2LocalDate(requestDto.getClosingDate()))
                 .account(account)
                 .user(user)
                 .build();
@@ -71,26 +64,34 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     @Override
     public FixedTermDepositSimulationResponseDto simulateDeposit(FixedTermDepositSimulateRequestDto request) {
-        long daysTillClose = DAYS.between(LocalDate.now(), string2LocalDateTime(request.getClosingDate()));
-        if (daysTillClose < 30)
-            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", daysTillClose));
+        long days = daysBetween2Dates(LocalDate.now(), string2LocalDate(request.getClosingDate()));
+        if (days < 30)
+            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", days));
 
-        double interest = 0;
-        for (int i = 0; i < daysTillClose; i++) {
-            interest = interest + request.getAmount() * 0.005;
-        }
-
+        Double interest = calculateInterest(request.getAmount(), days);
         return FixedTermDepositSimulationResponseDto.builder()
                 .createdAt(LocalDate.now())
-                .closingDate(string2LocalDateTime(request.getClosingDate()))
+                .closingDate(string2LocalDate(request.getClosingDate()))
                 .amountInvested(request.getAmount())
                 .interestEarned(interest)
                 .totalEarned(request.getAmount() + interest)
                 .build();
     }
 
-    protected LocalDate string2LocalDateTime(String dateTime) {
+    protected LocalDate string2LocalDate(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return LocalDate.parse(dateTime, formatter);
+    }
+
+    protected Double calculateInterest(Double amount, Long days) {
+        double interest = 0;
+        for (int i = 0; i < days; i++) {
+            interest = interest + amount * 0.005;
+        }
+        return interest;
+    }
+
+    protected Long daysBetween2Dates(LocalDate date1, LocalDate date2) {
+        return DAYS.between(date1, date2);
     }
 }

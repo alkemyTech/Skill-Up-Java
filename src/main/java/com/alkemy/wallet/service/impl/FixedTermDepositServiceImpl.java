@@ -1,7 +1,9 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.dto.request.FixedTermDepositRequestDto;
+import com.alkemy.wallet.model.dto.request.FixedTermDepositSimulateRequestDto;
 import com.alkemy.wallet.model.dto.response.FixedTermDepositResponseDto;
+import com.alkemy.wallet.model.dto.response.FixedTermDepositSimulationResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.FixedTermDeposit;
 import com.alkemy.wallet.model.entity.User;
@@ -65,6 +67,26 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
                 .build();
 
         return mapper.entity2Dto(repository.save(fixedTermDeposit));
+    }
+
+    @Override
+    public FixedTermDepositSimulationResponseDto simulateDeposit(FixedTermDepositSimulateRequestDto request) {
+        long daysTillClose = DAYS.between(LocalDate.now(), string2LocalDateTime(request.getClosingDate()));
+        if (daysTillClose < 30)
+            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", daysTillClose));
+
+        double interest = 0;
+        for (int i = 0; i < daysTillClose; i++) {
+            interest = interest + request.getAmount() * 0.005;
+        }
+
+        return FixedTermDepositSimulationResponseDto.builder()
+                .createdAt(LocalDate.now())
+                .closingDate(string2LocalDateTime(request.getClosingDate()))
+                .amountInvested(request.getAmount())
+                .interestEarned(interest)
+                .totalEarned(request.getAmount() + interest)
+                .build();
     }
 
     protected LocalDate string2LocalDateTime(String dateTime) {

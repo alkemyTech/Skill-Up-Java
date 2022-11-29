@@ -7,7 +7,7 @@ import com.alkemy.wallet.model.dto.response.FixedTermDepositSimulationResponseDt
 
 public interface IFixedTermDepositService {
 
-     FixedTermDepositResponseDto create(FixedTermDepositRequestDto requestDto, String token);
+     FixedTermDepositResponseDto create(FixedTermDepositRequestDto requestDto);
 
      FixedTermDepositSimulationResponseDto simulateDeposit(FixedTermDepositSimulateRequestDto request);
 }

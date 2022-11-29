@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +25,14 @@ public class UserDetailsCustomService implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> dbResponse = repository.findByEmail(email);
-        if (dbResponse.isEmpty())
+        Optional<User> user = repository.findByEmail(email);
+        if (user.isEmpty())
             throw new UsernameNotFoundException(String.format("User not found for email %s", email));
-        return new org.springframework.security.core.userdetails.User(dbResponse.get().getEmail(), dbResponse.get().getPassword(), mapRolesToGrantedAuth(dbResponse.get().getRoles()));
+        return new org.springframework.security.core.userdetails.User(
+                user.get().getEmail(), user.get().getPassword(), mapRoleToGrantedAuth(user.get().getRole()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToGrantedAuth(Set<Role> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
+    private Collection<? extends GrantedAuthority> mapRoleToGrantedAuth(Role role) {
+        return Stream.of().map((object -> new SimpleGrantedAuthority(role.getName()))).toList();
     }
 }

@@ -7,9 +7,11 @@ import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAccountService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,29 +23,45 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class UserServiceImpl implements IUserService {
 
     private final IUserRepository repository;
     private final UserMapper mapper;
-    private final IAuthService authService;
+    private final IAccountService accountService;
+    private final IAuthenticationService authService;
 
     @Override
-    public UserResponseDto update(Long id, String token, UserRequestDto request) {
-        User userFromToken = authService.getUserFromToken(token);
-        if (!userFromToken.getId().equals(id))
+    public UserResponseDto save(UserRequestDto request, Role role) {
+        User user = mapper.dto2Entity(request, role);
+        user.setPassword(authService.encode(user.getPassword()));
+        user.setSoftDelete(false);
+        user.setAccounts(accountService.createUserAccounts(user));
+        return mapper.entity2Dto(repository.save(user));
+    }
+
+    @Override
+    public UserResponseDto update(Long id, UserRequestDto request) {
+        User loggedUser = getByEmail(authService.getEmailFromContext());
+
+        if (!loggedUser.getId().equals(id))
             throw new AccessDeniedException("Access denied");
+        if ((request.getEmail() != null && !request.getEmail().isEmpty()))
+            throw new IllegalArgumentException("Cannot modify the email");
+        if (request.getRoleId() != null)
+            throw new IllegalArgumentException("Cannot modify the role");
 
-        User dbUser = getEntityById(id);
-        if ((request.getEmail() != null && !request.getEmail().isEmpty()) || request.getRoleId() != null)
-            throw new IllegalArgumentException("Cannot modify the email or the role");
-
-        dbUser = mapper.refreshValues(request, dbUser);
-
+        loggedUser = mapper.refreshValues(request, loggedUser);
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty())
-            dbUser.setPassword(authService.encode(request.getPassword()));
+            loggedUser.setPassword(authService.encode(request.getPassword()));
 
-        return mapper.entity2Dto(repository.save(dbUser));
+        return mapper.entity2Dto(repository.save(loggedUser));
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        Optional<User> user = repository.findByEmail(email);
+        return user.orElse(null);
     }
 
     @Override
@@ -53,35 +71,30 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User getEntityById(Long id) {
-        Optional<User> dbResponse = repository.findById(id);
-        if (dbResponse.isEmpty())
-            throw new EntityNotFoundException(String.format("User not found for id %s", id));
-        return dbResponse.get();
+    public User getById(Long id) {
+        Optional<User> user = repository.findById(id);
+        return user.orElseThrow(() -> new EntityNotFoundException(String.format("User not found for id %s", id)));
     }
 
     @Override
-    public UserResponseDto getUserDetails(Long id, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public UserResponseDto getUserDetails(Long id) {
+        User loggedUser = getByEmail(authService.getEmailFromContext());
         if (!loggedUser.getId().equals(id))
             throw new AccessDeniedException("Access denied");
-        loggedUser = getEntityById(id);
         return mapper.entity2Dto(loggedUser);
     }
 
     @Override
-    public void deleteUserById(Long id, String token) {
-        User loggedUser = authService.getUserFromToken(token);
-        Role ADMIN_ROLE = authService.getRoleById(2L);
-        Role USER_ROLE = authService.getRoleById(1L);
+    public void deleteUserById(Long id) {
+        User loggedUser = getByEmail(authService.getEmailFromContext());
 
-        if (loggedUser.getRoles().contains(ADMIN_ROLE)) {
-            User dbUser = getEntityById(id);
+        if (loggedUser.getRole().getName().equals("ROLE_ADMIN")) {
+            User dbUser = getById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);
             repository.delete(dbUser);
-        } else if (loggedUser.getRoles().contains(USER_ROLE) && loggedUser.getId().equals(id)) {
-            User dbUser = getEntityById(id);
+        } else if (loggedUser.getRole().getName().equals("ROLE_USER") && loggedUser.getId().equals(id)) {
+            User dbUser = getById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);
             repository.delete(dbUser);

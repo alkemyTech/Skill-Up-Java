@@ -59,6 +59,8 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
+    /*
+
     @ExceptionHandler(BadCredentialsException.class)
     protected ResponseEntity<Map<String, String>> badCredentialsHandler(BadCredentialsException ex) {
         Map<String, String> messages = new HashMap<>();
@@ -67,7 +69,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("code", String.valueOf(UNAUTHORIZED.value()));
         return new ResponseEntity<>(messages, UNAUTHORIZED);
     }
-
+*/
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<Map<String, String>> accessDeniedHandler(AccessDeniedException ex) {
         Map<String, String> messages = new HashMap<>();
@@ -76,7 +78,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("code", String.valueOf(UNAUTHORIZED.value()));
         return new ResponseEntity<>(messages, UNAUTHORIZED);
     }
-
+/*
     @ExceptionHandler(EntityExistsException.class)
     protected ResponseEntity<Map<String, String>> entityExistHandler(EntityExistsException ex) {
         Map<String, String> messages = new HashMap<>();
@@ -120,7 +122,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("code", String.valueOf(BAD_REQUEST.value()));
         return new ResponseEntity<>(messages, BAD_REQUEST);
-    }
+    }*/
 
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<Map<String, String>> nullPointerHandler(IllegalArgumentException ex) {
@@ -131,7 +133,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
+    /*@ExceptionHandler(NoSuchElementException.class)
     protected ResponseEntity<Map<String, String>> noSuchElementHandler(NoSuchElementException ex) {
         Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
@@ -149,5 +151,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
-    // TODO: 19/11/2022 ExpiredJwtException 
+*/
+
+    // TODO: 19/11/2022 ExpiredJwtException SignatureException
 }

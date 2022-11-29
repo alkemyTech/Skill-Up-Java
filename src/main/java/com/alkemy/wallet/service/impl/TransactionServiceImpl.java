@@ -10,7 +10,7 @@ import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.TransactionMapper;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +35,14 @@ public class TransactionServiceImpl implements ITransactionService {
     private final ITransactionRepository repository;
     private final IAccountService accountService;
     private final IUserService userService;
-    private final IAuthService authService;
+    private final IAuthenticationService authService;
 
     @Override
-    public TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request) {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Account senderAccount = accountService.getByCurrencyAndUserId(currency, loggedUser.getId());
         Account receiverAccount = accountService.getAccountById(request.getAccountId());
-        User receiverUser = userService.getEntityById(receiverAccount.getUser().getId());
+        User receiverUser = userService.getById(receiverAccount.getUser().getId());
 
         if (receiverUser.equals(loggedUser))
             throw new InputMismatchException("Trying to make a PAYMENT to one of your accounts");
@@ -67,8 +67,8 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionResponseDto update(Long id, UpdateTransactionRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public TransactionResponseDto update(Long id, UpdateTransactionRequestDto request) {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Transaction transaction = getById(id);
         if (!loggedUser.getTransactions().contains(transaction))
             throw new IllegalArgumentException("The transaction does not belong to the current logged user");
@@ -78,8 +78,8 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionResponseDto getDetails(Long id, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public TransactionResponseDto getDetails(Long id) {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Transaction transaction = getById(id);
         if (!transaction.getUser().equals(loggedUser))
             throw new IllegalArgumentException("This transaction does not belong to current user");
@@ -95,14 +95,14 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionResponseDto payment(TransactionRequestDto request, String token) {
+    public TransactionResponseDto payment(TransactionRequestDto request) {
         Account receiverAccount = accountService.getAccountById(request.getAccountId());
-        return sendMoneyIndicatingCurrency(receiverAccount.getCurrency().name(), request, token);
+        return sendMoneyIndicatingCurrency(receiverAccount.getCurrency().name(), request);
     }
 
     @Override
-    public TransactionResponseDto deposit(TransactionRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
+    public TransactionResponseDto deposit(TransactionRequestDto request) {
+        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Account receiverAccount = accountService.getAccountById(request.getAccountId());
 
         if (!loggedUser.getAccounts().contains(receiverAccount))

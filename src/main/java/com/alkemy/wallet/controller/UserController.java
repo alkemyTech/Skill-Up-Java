@@ -17,20 +17,20 @@ public class UserController {
     private final IUserService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserDetails(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) {
-        UserResponseDto response = service.getUserDetails(id, token);
+    public ResponseEntity<UserResponseDto> getUserDetails(@PathVariable("id") Long id) {
+        UserResponseDto response = service.getUserDetails(id);
         return ResponseEntity.ok().body(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateById(@RequestHeader("Authorization") String token, @PathVariable("id") Long id, @RequestBody UserRequestDto request) {
-        UserResponseDto response = service.update(id, token, request);
+    public ResponseEntity<UserResponseDto> updateById(@PathVariable("id") Long id, @RequestBody UserRequestDto request) {
+        UserResponseDto response = service.update(id, request);
         return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestHeader("Authorization") String token) {
-        service.deleteUserById(id, token);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        service.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
 

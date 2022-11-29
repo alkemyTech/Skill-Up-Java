@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -72,14 +70,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserResponseDto> getUsers() {
-        List<UserResponseDto> users = mapper.entityList2DtoList(repository.findAll());
-        if (users.isEmpty())
-            throw new NoSuchElementException(String.format("List is empty or null: %s", users));
-        return users;
-    }
-
-    @Override
     public void deleteUserById(Long id, String token) {
         User loggedUser = authService.getUserFromToken(token);
         Role ADMIN_ROLE = authService.getRoleById(2L);
@@ -101,8 +91,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Page<UserResponseDto> findAll(Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<UserResponseDto> findAll(Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 5);
         pageable.next().getPageNumber();
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }

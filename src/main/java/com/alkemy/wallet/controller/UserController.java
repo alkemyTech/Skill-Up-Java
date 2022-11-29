@@ -5,11 +5,9 @@ import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -37,14 +35,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getUsers() {
-        return new ResponseEntity<>(service.getUsers(), HttpStatus.OK);
-    }
-
-    @GetMapping("/page")
-    public ResponseEntity<Page<UserResponseDto>> findAll(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        return  ResponseEntity.ok(service.findAll(pageNumber, pageSize));
+    public ResponseEntity<Page<UserResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
+        return  ResponseEntity.ok(service.findAll(pageNumber));
     }
 }

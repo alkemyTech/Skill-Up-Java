@@ -1,6 +1,7 @@
 package com.alkemy.wallet.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -33,13 +34,24 @@ public class User {
 	@Column(name = "ROLE_ID")
 	private String roleId; // Clave foranea hacia ID de Role
 	@Column(name = "CREATION_DATE")
-	private Timestamp creationDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date creationDate;
 	@Column(name = "UPDATE_DATE")
-	private Timestamp updateDate;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date updateDate;
 	@Column(name = "SOFT_DELETE")
 	private boolean softDelete = false;
 	
 	public User() {
-		
+	}
+	
+	@PrePersist
+	public void prePersist() {
+		this.creationDate = new Date();
+	}
+	
+	@PreUpdate
+	public void preUpdate() {
+		this.updateDate = new Date();
 	}
 }

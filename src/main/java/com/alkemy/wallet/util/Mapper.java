@@ -1,4 +1,4 @@
-package com.company.icons.helpers;
+package com.alkemy.wallet.util;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;

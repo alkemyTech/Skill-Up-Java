@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.*;
@@ -11,10 +12,10 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name="users")
-public class User {
+public class User implements Serializable{
 	
 	@Id
-	@Column(name = "USER_ID")
+	@Column(name = "USER_ID", unique=true, nullable=false)
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private long userId;
 	@Column(name = "FIRST_NAME", nullable=false)

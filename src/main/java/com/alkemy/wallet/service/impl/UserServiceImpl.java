@@ -81,7 +81,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseDto getUserDetails(Long id) {
+    public UserResponseDto getDetails(Long id) {
         User loggedUser = getByEmail(authService.getEmailFromContext());
         if (!loggedUser.getId().equals(id))
             throw new AccessDeniedException("Access denied");
@@ -89,7 +89,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void deleteUserById(Long id) {
+    public void deleteById(Long id) {
         User loggedUser = getByEmail(authService.getEmailFromContext());
         Role ADMIN = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().orElse(null);
         Role USER = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_USER")).findFirst().orElse(null);

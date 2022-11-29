@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserDetails(@PathVariable("id") Long id) {
-        UserResponseDto response = service.getUserDetails(id);
+        UserResponseDto response = service.getDetails(id);
         return ResponseEntity.ok().body(response);
     }
 
@@ -30,7 +30,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        service.deleteUserById(id);
+        service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

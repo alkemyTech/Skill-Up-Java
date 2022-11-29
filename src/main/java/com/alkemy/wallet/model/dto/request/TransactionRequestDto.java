@@ -16,6 +16,6 @@ public class TransactionRequestDto {
     @NotNull(message = "Cannot be a null amount of money")
     private Double amount;
     private String description;
-    @NotNull(message = "Must declares the account that send/receive the money")
+    @NotNull(message = "Must declares the account that receive the money")
     private Long accountId;
 }

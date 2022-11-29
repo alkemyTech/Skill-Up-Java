@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements ITransactionService {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Account senderAccount = accountService.getByCurrencyAndUserId(currency, loggedUser.getId());
         Account receiverAccount = accountService.getById(request.getAccountId());
-        User receiverUser = userService.getById(receiverAccount.getUser().getId());
+        User receiverUser = receiverAccount.getUser();
 
         if (receiverUser.equals(loggedUser))
             throw new InputMismatchException("Trying to make a PAYMENT to one of your accounts");
@@ -51,15 +51,18 @@ public class TransactionServiceImpl implements ITransactionService {
         if (request.getAmount() > senderAccount.getTransactionLimit())
             throw new InputMismatchException("Transaction limit reached");
         if (!senderAccount.getCurrency().equals(receiverAccount.getCurrency()))
-            throw new IllegalArgumentException(String.format("Trying to send money from an %s account to an %s account", senderAccount.getCurrency(), receiverAccount.getCurrency()));
+            throw new IllegalArgumentException(String.format("Trying to send money from an %s account to an %s account",
+                            senderAccount.getCurrency(), receiverAccount.getCurrency()));
 
         Double newBalanceSender = senderAccount.getBalance() - request.getAmount();
         Double newBalanceReceiver = receiverAccount.getBalance() + request.getAmount();
         accountService.editBalanceAndSave(senderAccount, newBalanceSender);
         accountService.editBalanceAndSave(receiverAccount, newBalanceReceiver);
 
-        Transaction payment = setValues(request.getAmount(), PAYMENT, request.getDescription(), loggedUser, receiverAccount);
-        Transaction income = setValues(request.getAmount(), INCOME, request.getDescription(), receiverUser, receiverAccount);
+        Transaction payment = setValues(
+                request.getAmount(), PAYMENT, request.getDescription(), loggedUser, receiverAccount);
+        Transaction income = setValues(
+                request.getAmount(), INCOME, request.getDescription(), receiverUser, receiverAccount);
 
         repository.save(payment);
         repository.save(income);
@@ -88,10 +91,9 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public Transaction getById(Long id) {
-        Optional<Transaction> dbResponse = repository.findById(id);
-        if (dbResponse.isEmpty())
-            throw new NoSuchElementException(String.format("Could not found the transaction with id %s", id));
-        return dbResponse.get();
+        Optional<Transaction> transaction = repository.findById(id);
+        return transaction.orElseThrow(() ->
+                new NullPointerException(String.format("Could not found the transaction with id %s", id)));
     }
 
     @Override
@@ -102,16 +104,17 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public TransactionResponseDto deposit(TransactionRequestDto request) {
-        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Account receiverAccount = accountService.getById(request.getAccountId());
+        User user = receiverAccount.getUser();
 
-        if (!loggedUser.getAccounts().contains(receiverAccount))
-            throw new NoSuchElementException("The logged user does not contain this account, do a PAYMENT instead");
+        if (!user.getEmail().equals(authService.getEmailFromContext()))
+            throw new IllegalArgumentException("The receiver user is different that the sender");
 
         double newBalance = receiverAccount.getBalance() + request.getAmount();
         accountService.editBalanceAndSave(receiverAccount, newBalance);
 
-        Transaction transaction = setValues(request.getAmount(), DEPOSIT, request.getDescription(), loggedUser, receiverAccount);
+        Transaction transaction = setValues(
+                request.getAmount(), DEPOSIT, request.getDescription(), user, receiverAccount);
         return mapper.entity2Dto(repository.save(transaction));
     }
 
@@ -119,7 +122,8 @@ public class TransactionServiceImpl implements ITransactionService {
     public List<TransactionResponseDto> listTransactionsByUserId(Long userId) {
         List<Transaction> transactions = repository.findTransactionsByUserId(userId);
         if (transactions.isEmpty())
-            throw new NoSuchElementException(String.format("The user with ID %s does not have transactions yet", userId));
+            throw new NoSuchElementException(
+                    String.format("The user with ID %s does not have transactions yet", userId));
         return mapper.entityList2DtoList(transactions);
     }
 
@@ -129,7 +133,8 @@ public class TransactionServiceImpl implements ITransactionService {
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 
-    protected Transaction setValues(Double amount, TransactionTypeEnum transactionType, String description, User user, Account account) {
+    protected Transaction setValues(Double amount, TransactionTypeEnum transactionType,
+                                    String description, User user, Account account) {
         return Transaction.builder()
                 .amount(amount)
                 .type(transactionType)

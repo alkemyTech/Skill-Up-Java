@@ -7,6 +7,7 @@ import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{userId}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsFromUser(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.listTransactionsByUserId(userId), OK);
     }
@@ -59,6 +61,7 @@ public class TransactionController {
     }
 
     @GetMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Page<TransactionResponseDto>> getAllPaged(@RequestParam("page") Integer pageNumber) {
         return ResponseEntity.status(OK).body(service.getAll(pageNumber));
     }

@@ -7,30 +7,34 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.alkemy.wallet.model.entity.RoleEnum.ADMIN;
-import static com.alkemy.wallet.model.entity.RoleEnum.USER;
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsCustomService userDetailsCustomService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtRequestFilter jwtRequestFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsCustomService).passwordEncoder(bCryptPasswordEncoder);
+        auth.userDetailsService(userDetailsCustomService).passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -41,15 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.cors().and().csrf().disable()
                 .authorizeRequests()
-
-                .antMatchers(POST, "/auth/register", "/auth/login").permitAll()
-                .antMatchers(GET, "/transactions/{userId}").hasRole(ADMIN.getSimpleRoleName())
-                .antMatchers(GET, "/accounts/balance").hasAnyRole(ADMIN.getSimpleRoleName(), USER.getSimpleRoleName())
-                .antMatchers(GET, "/accounts/{userId}").hasRole(ADMIN.getSimpleRoleName())
-                .antMatchers(GET, "/users").hasRole(ADMIN.getSimpleRoleName())
-
+                .antMatchers(POST, "/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement()

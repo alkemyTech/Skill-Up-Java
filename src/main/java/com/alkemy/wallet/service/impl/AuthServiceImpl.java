@@ -36,7 +36,6 @@ import java.util.Set;
 @Slf4j
 public class AuthServiceImpl implements IAuthService {
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsCustomService userDetailsCustomService;
     private final JwtUtils jwtUtils;
@@ -48,10 +47,8 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public UserResponseDto register(UserRequestDto request) {
         if (getByEmail(request.getEmail()) != null) {
-            log.error("User with email {} not found in the database", request.getEmail());
             throw new EntityExistsException(String.format("The email %s already exist in the data base", request.getEmail()));
         }
-        log.info("User {} found in the database", request.getEmail());
         Set<Role> roles = new HashSet<>();
         Role role = saveRole(request.getRoleId());
         if (role == null) {
@@ -105,16 +102,14 @@ public class AuthServiceImpl implements IAuthService {
     public Role getRoleById(Long roleId) {
         Optional<Role> response =  roleRepository.findById(roleId);
         if (response.isEmpty()) {
-            log.error("Role with id {} not found in the database", roleId);
             throw new NullPointerException(String.format("Invalid role id: %s. Try USER(1) or ADMIN(2)", roleId));
         }
-        log.info("{} with id {} found in the database", response.get().getName(), response.get().getId());
         return response.get();
     }
 
     @Override
     public String encode(String toEncode) {
-        return bCryptPasswordEncoder.encode(toEncode);
+        return new BCryptPasswordEncoder().encode(toEncode);
     }
 
     protected String generateToken(String userRequest) {
@@ -125,7 +120,6 @@ public class AuthServiceImpl implements IAuthService {
         if (roleRepository.findById(id).isPresent()) {
             return getRoleById(id);
         }
-        log.info("Role with id {} not found", id);
         roleRepository.save(new Role(1L, RoleEnum.USER.getFullRoleName(), RoleEnum.USER.getSimpleRoleName(), LocalDateTime.now(), null));
         roleRepository.save(new Role(2L, RoleEnum.ADMIN.getFullRoleName(), RoleEnum.ADMIN.getSimpleRoleName(), LocalDateTime.now(), null));
         return null;

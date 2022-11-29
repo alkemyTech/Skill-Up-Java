@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}")
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(service.getAccountsByUserId(userId), HttpStatus.OK);
     }
@@ -37,7 +39,8 @@ public class AccountController {
         return new ResponseEntity<>(service.updateAccount(id, request, token), HttpStatus.OK);
     }
 
-    @GetMapping()
+    @GetMapping
+    @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Page<AccountResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
         return  ResponseEntity.ok(service.findAll(pageNumber));
     }

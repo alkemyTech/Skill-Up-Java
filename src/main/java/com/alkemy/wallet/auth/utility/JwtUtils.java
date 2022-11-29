@@ -3,6 +3,8 @@ package com.alkemy.wallet.auth.utility;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,10 @@ import java.util.function.Function;
 @Service
 public class JwtUtils {
 
-    private final String SECRET_KEY = "${com.alkemy.wallet}";
+    private static final String SECRET = Encoders.BASE64
+            .encode(Keys.secretKeyFor(SignatureAlgorithm.HS512)
+                    .getEncoded());
+    private final long JWT_VALIDITY_TIME = 1000 * 60 * 60 * 10; //10 hours
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -30,8 +35,9 @@ public class JwtUtils {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET.getBytes())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -50,8 +56,9 @@ public class JwtUtils {
         return Jwts.builder().setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_VALIDITY_TIME))
+                .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

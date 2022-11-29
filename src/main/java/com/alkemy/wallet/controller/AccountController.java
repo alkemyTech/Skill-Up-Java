@@ -25,28 +25,28 @@ public class AccountController {
 
     @GetMapping("/balance")
     public ResponseEntity<AccountBalanceResponseDto> getAccountBalance() {
-        return new ResponseEntity<>(service.getAccountBalance(), HttpStatus.OK);
+        return new ResponseEntity<>(service.getBalance(), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(service.getAccountsByUserId(userId), HttpStatus.OK);
+        return new ResponseEntity<>(service.getListByUserId(userId), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<AccountResponseDto> updateAccount(@Validated @RequestBody UpdateAccountRequestDto request, @PathVariable("id") Long id) {
-        return new ResponseEntity<>(service.updateAccount(id, request), HttpStatus.OK);
+        return new ResponseEntity<>(service.update(id, request), HttpStatus.OK);
     }
 
     @GetMapping
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity<Page<AccountResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
-        return  ResponseEntity.ok(service.findAll(pageNumber));
+        return  ResponseEntity.ok(service.getAll(pageNumber));
     }
 
     @PostMapping
     public ResponseEntity<AccountResponseDto> createAccount(@Validated @RequestBody AccountRequestDto request) {
-        return new ResponseEntity<>(service.createAccount(request), CREATED);
+        return new ResponseEntity<>(service.create(request), CREATED);
     }
 }

@@ -52,7 +52,7 @@ class UserControllerTest {
 
     @Test
     void getUsers() {
-        Mockito.when(repository.findAll()).thenReturn(users1);
+        Mockito.when(repository.getAll()).thenReturn(users1);
 
         ResponseEntity<UserListResponseDto> response = userController.getUsers();
         UserListResponseDto listResponseDto = mapper.entityList2DtoList(users2);

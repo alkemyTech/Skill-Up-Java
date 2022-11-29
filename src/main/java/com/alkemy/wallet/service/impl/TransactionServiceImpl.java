@@ -41,7 +41,7 @@ public class TransactionServiceImpl implements ITransactionService {
     public TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request) {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Account senderAccount = accountService.getByCurrencyAndUserId(currency, loggedUser.getId());
-        Account receiverAccount = accountService.getAccountById(request.getAccountId());
+        Account receiverAccount = accountService.getById(request.getAccountId());
         User receiverUser = userService.getById(receiverAccount.getUser().getId());
 
         if (receiverUser.equals(loggedUser))
@@ -96,14 +96,14 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public TransactionResponseDto payment(TransactionRequestDto request) {
-        Account receiverAccount = accountService.getAccountById(request.getAccountId());
+        Account receiverAccount = accountService.getById(request.getAccountId());
         return sendMoneyIndicatingCurrency(receiverAccount.getCurrency().name(), request);
     }
 
     @Override
     public TransactionResponseDto deposit(TransactionRequestDto request) {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
-        Account receiverAccount = accountService.getAccountById(request.getAccountId());
+        Account receiverAccount = accountService.getById(request.getAccountId());
 
         if (!loggedUser.getAccounts().contains(receiverAccount))
             throw new NoSuchElementException("The logged user does not contain this account, do a PAYMENT instead");

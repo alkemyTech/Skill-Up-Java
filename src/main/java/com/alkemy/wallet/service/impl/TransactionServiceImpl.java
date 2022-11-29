@@ -14,6 +14,9 @@ import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -118,6 +121,12 @@ public class TransactionServiceImpl implements ITransactionService {
         if (transactions.isEmpty())
             throw new NoSuchElementException(String.format("The user with ID %s does not have transactions yet", userId));
         return mapper.entityList2DtoList(transactions);
+    }
+
+    @Override
+    public Page<TransactionResponseDto> getAll(Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 10);
+        return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 
     protected Transaction setValues(Double amount, TransactionTypeEnum transactionType, String description, User user, Account account) {

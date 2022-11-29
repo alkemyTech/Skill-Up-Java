@@ -5,6 +5,7 @@ import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.service.ITransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,10 @@ public class TransactionController {
     @GetMapping("/details/{id}")
     public ResponseEntity<TransactionResponseDto> getDetails(@PathVariable("id") long id, @RequestHeader("Authorization") String token) {
         return ResponseEntity.status(OK).body(service.getDetails(id, token));
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TransactionResponseDto>> getAllPaged(@RequestParam("page") Integer pageNumber) {
+        return ResponseEntity.status(OK).body(service.getAll(pageNumber));
     }
 }

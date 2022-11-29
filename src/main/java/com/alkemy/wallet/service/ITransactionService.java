@@ -4,6 +4,7 @@ import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Transaction;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -22,4 +23,6 @@ public interface ITransactionService {
     TransactionResponseDto deposit(TransactionRequestDto request, String token);
 
     List<TransactionResponseDto> listTransactionsByUserId(Long userId);
+
+    Page<TransactionResponseDto> getAll(Integer pageNumber);
 }

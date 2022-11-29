@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Service
@@ -32,10 +33,10 @@ public class UserDetailsCustomService implements UserDetailsService {
         if (user.get().isDeleted())
             throw new DisabledException("User account disabled");
         return new org.springframework.security.core.userdetails.User(
-                user.get().getEmail(), user.get().getPassword(), mapRoleToGrantedAuth(user.get().getRole()));
+                user.get().getEmail(), user.get().getPassword(), mapRolesToGrantedAuth(user.get().getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRoleToGrantedAuth(Role role) {
-        return Stream.of().map((object -> new SimpleGrantedAuthority(role.getName()))).toList();
+    private Collection<? extends GrantedAuthority> mapRolesToGrantedAuth(Set<Role> roles) {
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
     }
 }

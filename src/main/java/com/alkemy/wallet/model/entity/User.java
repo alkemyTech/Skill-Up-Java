@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
 import static java.time.LocalDateTime.now;
@@ -59,10 +60,13 @@ public class User {
     @ToString.Exclude
     private List<Account> accounts;
 
-    @ManyToOne(fetch = EAGER)
-    @JoinColumn(name = "ROLE_ID")
+    @ManyToMany(fetch = EAGER)
+    @JoinTable(
+            name = "REL_USER_ROLE",
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
     @ToString.Exclude
-    private Role role;
+    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude

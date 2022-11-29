@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
@@ -33,7 +35,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserResponseDto save(UserRequestDto request, Role role) {
-        User user = mapper.dto2Entity(request, role);
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        User user = mapper.dto2Entity(request, roles);
         user.setPassword(authService.encode(user.getPassword()));
         user.setDeleted(false);
         user.setAccounts(accountService.createUserAccounts(user));
@@ -87,13 +91,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteUserById(Long id) {
         User loggedUser = getByEmail(authService.getEmailFromContext());
-
-        if (loggedUser.getRole().getName().equals("ROLE_ADMIN")) {
+        Role ADMIN = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().orElse(null);
+        Role USER = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_USER")).findFirst().orElse(null);
+        if (loggedUser.getRoles().contains(ADMIN)) {
             User dbUser = getById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);
             repository.delete(dbUser);
-        } else if (loggedUser.getRole().getName().equals("ROLE_USER") && loggedUser.getId().equals(id)) {
+        } else if (loggedUser.getRoles().contains(USER)) {
             User dbUser = getById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
             repository.save(dbUser);

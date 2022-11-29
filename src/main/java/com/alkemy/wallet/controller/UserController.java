@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @GetMapping
-    @Secured({"ROLE_ADMIN"})
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Page<UserResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
         return  ResponseEntity.ok(service.findAll(pageNumber));
     }

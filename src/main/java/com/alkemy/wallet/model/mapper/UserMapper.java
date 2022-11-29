@@ -7,18 +7,22 @@ import com.alkemy.wallet.model.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class UserMapper {
 
-    public User dto2Entity(UserRequestDto dto, Role role) {
+    public User dto2Entity(UserRequestDto dto, Set<Role> roles) {
         return User.builder()
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail().toLowerCase())
                 .password(dto.getPassword())
                 .creationDate(LocalDateTime.now())
-                .role(role)
+                .roles(roles)
                 .build();
     }
 
@@ -31,7 +35,7 @@ public class UserMapper {
                 .password(entity.getPassword())
                 .createdAt(entity.getCreationDate())
                 .updatedAt(entity.getUpdateDate())
-                .role(entity.getRole().getName())
+                .roles(entity.getRoles().stream().map(Role::getName).toList())
                 .build();
     }
 

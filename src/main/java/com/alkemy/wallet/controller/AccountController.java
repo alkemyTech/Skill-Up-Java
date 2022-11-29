@@ -38,10 +38,8 @@ public class AccountController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<AccountResponseDto>> findAll(
-            @RequestParam(name = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        return  ResponseEntity.ok(service.findAll(pageNumber, pageSize));
+    public ResponseEntity<Page<AccountResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
+        return  ResponseEntity.ok(service.findAll(pageNumber));
     }
 
     @PostMapping

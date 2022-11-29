@@ -160,8 +160,8 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public Page<AccountResponseDto> findAll(Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 10);
         pageable.next().getPageNumber();
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }

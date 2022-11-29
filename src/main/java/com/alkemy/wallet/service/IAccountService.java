@@ -28,5 +28,5 @@ public interface IAccountService {
 
     AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request, String token);
 
-    Page<AccountResponseDto> findAll(Integer pageNumber, Integer pageSize);
+    Page<AccountResponseDto> findAll(Integer pageNumber);
 }

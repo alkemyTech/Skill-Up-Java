@@ -4,6 +4,7 @@ import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +29,8 @@ public class UserDetailsCustomService implements UserDetailsService {
         Optional<User> user = repository.findByEmail(email);
         if (user.isEmpty())
             throw new UsernameNotFoundException(String.format("User not found for email %s", email));
+        if (user.get().isDeleted())
+            throw new DisabledException("User account disabled");
         return new org.springframework.security.core.userdetails.User(
                 user.get().getEmail(), user.get().getPassword(), mapRoleToGrantedAuth(user.get().getRole()));
     }

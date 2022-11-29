@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
 import static java.time.LocalDateTime.now;
@@ -54,7 +53,7 @@ public class User {
     private LocalDateTime updateDate;
 
     @Column(name = "DELETED")
-    private boolean softDelete = FALSE;
+    private boolean deleted = FALSE;
 
     @OneToMany(mappedBy = "user", fetch = LAZY)
     @ToString.Exclude

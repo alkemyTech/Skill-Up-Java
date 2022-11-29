@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -72,6 +73,15 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 */
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<Map<String, String>> accessDeniedHandler(AccessDeniedException ex) {
+        Map<String, String> messages = new HashMap<>();
+        messages.put("message", ex.getMessage());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("code", String.valueOf(UNAUTHORIZED.value()));
+        return new ResponseEntity<>(messages, UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    protected ResponseEntity<Map<String, String>> handleDisabled(DisabledException ex) {
         Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));

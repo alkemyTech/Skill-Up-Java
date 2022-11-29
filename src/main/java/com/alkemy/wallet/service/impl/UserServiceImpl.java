@@ -35,7 +35,7 @@ public class UserServiceImpl implements IUserService {
     public UserResponseDto save(UserRequestDto request, Role role) {
         User user = mapper.dto2Entity(request, role);
         user.setPassword(authService.encode(user.getPassword()));
-        user.setSoftDelete(false);
+        user.setDeleted(false);
         user.setAccounts(accountService.createUserAccounts(user));
         return mapper.entity2Dto(repository.save(user));
     }

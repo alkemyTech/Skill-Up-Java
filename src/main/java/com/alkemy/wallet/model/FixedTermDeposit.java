@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Entity
-public class FixedTermDeposits {
+public class FixedTermDeposit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

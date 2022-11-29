@@ -16,17 +16,17 @@ public interface IAccountService {
 
     void editBalanceAndSave(Account account, Double newBalance);
 
-    Account getAccountById(Long id);
+    Account getById(Long id);
 
-    AccountResponseDto createAccount(AccountRequestDto request);
+    AccountResponseDto create(AccountRequestDto request);
 
-    List<Account> createUserAccounts(User user);
+    List<Account> createDefaultAccounts(User user);
 
-    AccountBalanceResponseDto getAccountBalance();
+    AccountBalanceResponseDto getBalance();
 
-    List<AccountResponseDto> getAccountsByUserId(Long userId);
+    List<AccountResponseDto> getListByUserId(Long userId);
 
-    AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request);
+    AccountResponseDto update(Long id, UpdateAccountRequestDto request);
 
-    Page<AccountResponseDto> findAll(Integer pageNumber);
+    Page<AccountResponseDto> getAll(Integer pageNumber);
 }

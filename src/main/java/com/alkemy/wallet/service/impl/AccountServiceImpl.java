@@ -40,19 +40,17 @@ public class AccountServiceImpl implements IAccountService {
     private final IUserService userService;
 
     @Override
-    public Account getAccountById(Long id) {
+    public Account getById(Long id) {
         Optional<Account> account = repository.findById(id);
-        if (account.isEmpty())
-            throw new NoSuchElementException(String.format("Account with id %s was not found", id));
-        return account.get();
+        return account.orElseThrow(() ->
+                new NullPointerException(String.format("Account with id %s was not found", id)));
     }
 
     @Override
     public Account getByCurrencyAndUserId(String currency, Long userId) {
-        Optional<Account> response = repository.findByCurrencyAndUserId(currency, userId);
-        if (response.isEmpty())
-            throw new NoSuchElementException("The account doesn't exist or the user is not present");
-        return response.get();
+        Optional<Account> account = repository.findByCurrencyAndUserId(currency, userId);
+        return account.orElseThrow(() ->
+                new NullPointerException("The account doesn't exist or the user is not present"));
     }
 
     @Override
@@ -62,11 +60,12 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountResponseDto createAccount(AccountRequestDto request) {
+    public AccountResponseDto create(AccountRequestDto request) {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         loggedUser.getAccounts().forEach(account -> {
             if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
-                throw new EntityExistsException(String.format("An account in %s already exist", request.getCurrency().toUpperCase()));
+                throw new EntityExistsException(String
+                        .format("An account in %s already exist", request.getCurrency().toUpperCase()));
         });
 
         AccountCurrencyEnum currency;
@@ -84,7 +83,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<Account> createUserAccounts(User user) {
+    public List<Account> createDefaultAccounts(User user) {
         Account usdAccount = createNewAccount(user, USD, 1000.0);
         Account arsAccount = createNewAccount(user, ARS, 300000.0);
 
@@ -99,7 +98,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountBalanceResponseDto getAccountBalance() {
+    public AccountBalanceResponseDto getBalance() {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
 
         double incomesUSD = 0.0;
@@ -142,7 +141,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<AccountResponseDto> getAccountsByUserId(Long userId) {
+    public List<AccountResponseDto> getListByUserId(Long userId) {
         List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
             throw new NoSuchElementException("The user does not have accounts yet or the user does not exist");
@@ -150,17 +149,16 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto request) {
-        User user = userService.getByEmail(authService.getEmailFromContext());
-        Account accountToUpdate = getAccountById(id);
-        if (!user.getAccounts().contains(accountToUpdate))
+    public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
+        Account account = getById(id);
+        if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
             throw new AccessDeniedException("The account does not exist or does not belong to current user");
-        accountToUpdate.setTransactionLimit(request.getTransactionLimit());
-        return mapper.entity2Dto(repository.save(accountToUpdate));
+        account.setTransactionLimit(request.getTransactionLimit());
+        return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
-    public Page<AccountResponseDto> findAll(Integer pageNumber) {
+    public Page<AccountResponseDto> getAll(Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, 10);
         pageable.next().getPageNumber();
         return repository.findAll(pageable).map(mapper::entity2Dto);

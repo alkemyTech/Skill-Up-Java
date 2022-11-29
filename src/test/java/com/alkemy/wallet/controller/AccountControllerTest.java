@@ -70,21 +70,21 @@ class AccountControllerTest {
     }
 
     @Test
-    void getAccountBalance() {
+    void getBalance() {
         Mockito.when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
         String tokenGenerado = jwtUtils.generateToken(userDetailsCustomService.loadUserByUsername("admin@gmail.com"));
 
         Mockito.when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
         Mockito.when(accountRepository.findAccountByUserId(1L)).thenReturn(List.of(account));
 
-        ResponseEntity<List<AccountBalanceResponseDto>> response = controller.getAccountBalance("Bearer " + tokenGenerado);
+        ResponseEntity<List<AccountBalanceResponseDto>> response = controller.getBalance("Bearer " + tokenGenerado);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(new ResponseEntity<>(List.of(new AccountBalanceResponseDto(18.6, 3000.0, 3300.0)), HttpStatus.OK), response);
 
         account.setCurrency(AccountCurrencyEnum.ARS);
         Mockito.when(accountRepository.findAccountByUserId(1L)).thenReturn(List.of(account));
-        assertEquals(HttpStatus.OK, controller.getAccountBalance("Bearer " + tokenGenerado).getStatusCode());
+        assertEquals(HttpStatus.OK, controller.getBalance("Bearer " + tokenGenerado).getStatusCode());
     }
 
     @Test

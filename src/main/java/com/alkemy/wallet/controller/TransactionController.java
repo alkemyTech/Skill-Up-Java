@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
-import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
+import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
+import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 

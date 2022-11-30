@@ -5,7 +5,7 @@ import com.alkemy.wallet.config.service.UserDetailsCustomService;
 import com.alkemy.wallet.config.utility.JwtUtils;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
-import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
+import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.AccountMapper;

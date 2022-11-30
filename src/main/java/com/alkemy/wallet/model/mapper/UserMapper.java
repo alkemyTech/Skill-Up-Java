@@ -7,10 +7,7 @@ import com.alkemy.wallet.model.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class UserMapper {

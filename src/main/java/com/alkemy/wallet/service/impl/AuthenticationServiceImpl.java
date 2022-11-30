@@ -1,7 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.auth.service.UserDetailsCustomService;
-import com.alkemy.wallet.auth.utility.JwtUtils;
+import com.alkemy.wallet.security.service.UserDetailsCustomService;
+import com.alkemy.wallet.security.jwt.JwtUtils;
 import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;

@@ -1,7 +1,7 @@
-package com.alkemy.wallet.auth.security;
+package com.alkemy.wallet.security.config;
 
-import com.alkemy.wallet.auth.filter.JwtRequestFilter;
-import com.alkemy.wallet.auth.service.UserDetailsCustomService;
+import com.alkemy.wallet.security.jwt.JwtRequestFilter;
+import com.alkemy.wallet.security.service.UserDetailsCustomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers(POST, "/auth/**").permitAll()
+                .antMatchers(POST, "/config/**").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement()

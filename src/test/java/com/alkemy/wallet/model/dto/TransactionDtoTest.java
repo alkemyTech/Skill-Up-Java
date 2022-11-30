@@ -1,3 +1,4 @@
+/*
 package com.alkemy.wallet.model.dto;
 
 import com.alkemy.wallet.model.TransactionDto;
@@ -55,3 +56,4 @@ public class TransactionDtoTest {
 
     }
 }
+*/

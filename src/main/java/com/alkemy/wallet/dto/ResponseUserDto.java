@@ -32,4 +32,7 @@ public class ResponseUserDto {
 //    private Role role;
 //    private List<AccountDto> accounts;
 
+    // Al refactorizar atributos en esta clase, se deberá actualizar la construcción del userDto
+    // en CustomUserDetailsService
+
 }

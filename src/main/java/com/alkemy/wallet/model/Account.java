@@ -35,10 +35,10 @@ public class Account {
     @NonNull
     @Column(name="soft_delete", nullable = false)
     private boolean softDelete;
-
-    @OneToMany(mappedBy="transaction")
-    List<Transaction> transactionList;
-
+//
+//    @OneToMany(mappedBy="transaction")
+//    List<Transaction> transactionList;
+//
 
     public Account() {
 

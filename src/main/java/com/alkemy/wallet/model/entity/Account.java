@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model.entity;
 
+import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;

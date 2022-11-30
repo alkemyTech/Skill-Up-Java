@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.alkemy.wallet.model.entity.RoleEnum.ADMIN;
-import static com.alkemy.wallet.model.entity.RoleEnum.USER;
+import static com.alkemy.wallet.model.constant.RoleEnum.ADMIN;
+import static com.alkemy.wallet.model.constant.RoleEnum.USER;
 import static java.time.LocalDateTime.now;
 
 @Service

@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import com.alkemy.wallet.model.dto.request.AccountRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateAccountRequestDto;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
-import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
-import static com.alkemy.wallet.model.entity.TransactionTypeEnum.INCOME;
-import static com.alkemy.wallet.model.entity.TransactionTypeEnum.PAYMENT;
+import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
+import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
+import static com.alkemy.wallet.model.constant.TransactionTypeEnum.INCOME;
+import static com.alkemy.wallet.model.constant.TransactionTypeEnum.PAYMENT;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})

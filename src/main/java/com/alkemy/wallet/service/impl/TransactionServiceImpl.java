@@ -5,7 +5,7 @@ import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
-import com.alkemy.wallet.model.entity.TransactionTypeEnum;
+import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.TransactionMapper;
 import com.alkemy.wallet.repository.ITransactionRepository;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.alkemy.wallet.model.entity.TransactionTypeEnum.*;
+import static com.alkemy.wallet.model.constant.TransactionTypeEnum.*;
 
 @Service
 @RequiredArgsConstructor

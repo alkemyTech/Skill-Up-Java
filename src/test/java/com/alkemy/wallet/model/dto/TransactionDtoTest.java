@@ -4,7 +4,7 @@ package com.alkemy.wallet.model.dto;
 import com.alkemy.wallet.model.TransactionDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
-import com.alkemy.wallet.model.entity.TransactionTypeEnum;
+import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import com.alkemy.wallet.model.entity.User;
 import org.junit.Before;
 import org.junit.Test;

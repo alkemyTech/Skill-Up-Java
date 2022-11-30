@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -18,25 +21,24 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserDetails(@PathVariable("id") Long id) {
-        UserResponseDto response = service.getDetails(id);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(OK).body(service.getDetails(id));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateById(@PathVariable("id") Long id, @RequestBody UserRequestDto request) {
-        UserResponseDto response = service.update(id, request);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<UserResponseDto> updateById(@PathVariable("id") Long id,
+                                                      @RequestBody UserRequestDto request) {
+        return ResponseEntity.status(OK).body(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         service.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
-    @GetMapping
     @Secured("ROLE_ADMIN")
+    @GetMapping
     public ResponseEntity<Page<UserResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
-        return  ResponseEntity.ok(service.findAll(pageNumber));
+        return ResponseEntity.status(OK).body(service.findAll(pageNumber));
     }
 }

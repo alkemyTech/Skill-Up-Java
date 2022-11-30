@@ -34,4 +34,6 @@ public class AuthController {
         ResponseUserDto newUser = customUserDetailsService.save(responseUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
+
+
 }

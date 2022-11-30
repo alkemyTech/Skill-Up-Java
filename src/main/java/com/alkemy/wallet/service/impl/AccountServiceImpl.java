@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -148,7 +147,7 @@ public class AccountServiceImpl implements IAccountService {
     public List<AccountResponseDto> getListByUserId(Long userId) {
         List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
-            throw new NoSuchElementException("The user does not have accounts yet or the user does not exist");
+            throw new NoSuchElementException("The user does not have accounts yet");
         return mapper.entityList2DtoList(accounts);
     }
 
@@ -156,7 +155,7 @@ public class AccountServiceImpl implements IAccountService {
     public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
         Account account = getById(id);
         if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
-            throw new InputMismatchException("The account does not exist or does not belong to current user");
+            throw new IllegalArgumentException("The account does not belong to current user");
         account.setTransactionLimit(request.getTransactionLimit());
         return mapper.entity2Dto(repository.save(account));
     }
@@ -173,7 +172,7 @@ public class AccountServiceImpl implements IAccountService {
             return USD;
         if (ARS.name().equalsIgnoreCase(type))
             return ARS;
-        throw new IllegalArgumentException("Account currency can only be ARS or USD");
+        throw new InputMismatchException("Account currency can only be ARS or USD");
     }
 
     protected Account createNewAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {

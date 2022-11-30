@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
@@ -189,5 +190,15 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
         messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, NOT_FOUND);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    protected ResponseEntity<Map<String, Object>> handleDateTimeParse(DateTimeParseException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", BAD_REQUEST.value());
+        messages.put("status", BAD_REQUEST.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 }

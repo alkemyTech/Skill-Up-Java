@@ -29,7 +29,7 @@ public class RoleServiceImpl implements IRoleService {
     public Role getById(Long id) {
         Optional<Role> response = repository.findById(id);
         return response.orElseThrow(() ->
-                new NullPointerException(String.format("Invalid role id: %s. Try ADMIN(1) or USER(2)", id)));
+                new IllegalArgumentException(String.format("Invalid role id: %s. Try ADMIN(1) or USER(2)", id)));
     }
 
     @Override

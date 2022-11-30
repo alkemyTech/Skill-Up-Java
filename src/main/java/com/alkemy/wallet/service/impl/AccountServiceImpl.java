@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
@@ -159,7 +156,7 @@ public class AccountServiceImpl implements IAccountService {
     public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
         Account account = getById(id);
         if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
-            throw new AccessDeniedException("The account does not exist or does not belong to current user");
+            throw new InputMismatchException("The account does not exist or does not belong to current user");
         account.setTransactionLimit(request.getTransactionLimit());
         return mapper.entity2Dto(repository.save(account));
     }

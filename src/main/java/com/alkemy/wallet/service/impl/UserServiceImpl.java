@@ -77,7 +77,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getById(Long id) {
         Optional<User> user = repository.findById(id);
-        return user.orElseThrow(() -> new EntityNotFoundException(String.format("User not found for id %s", id)));
+        return user.orElseThrow(() -> new NullPointerException(String.format("User not found for id %s", id)));
     }
 
     @Override

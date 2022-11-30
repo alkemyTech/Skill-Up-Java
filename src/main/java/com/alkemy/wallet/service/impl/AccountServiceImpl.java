@@ -169,7 +169,7 @@ public class AccountServiceImpl implements IAccountService {
             return USD;
         if (ARS.name().equalsIgnoreCase(type))
             return ARS;
-        throw new EnumConstantNotPresentException(AccountCurrencyEnum.class, "Account currency can only be ARS or USD");
+        throw new IllegalArgumentException("Account currency can only be ARS or USD");
     }
 
     protected Account createNewAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {

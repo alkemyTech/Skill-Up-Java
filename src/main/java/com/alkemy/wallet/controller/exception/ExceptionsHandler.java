@@ -1,6 +1,8 @@
 package com.alkemy.wallet.controller.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -32,136 +34,160 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     //validates the proper JSON format
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable
+    (HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, Object> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+        messages.put("code", BAD_REQUEST.value());
+        messages.put("status", BAD_REQUEST.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
     //validates fields annotated with @Valid
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid
+    (MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, Object> messages = new HashMap<>();
-        messages.put("errors", ex.getBindingResult().getFieldErrors().stream().map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage()).collect(Collectors.toList()));
+        messages.put("code", BAD_REQUEST.value());
+        messages.put("status", BAD_REQUEST.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        messages.put("message", ex.getBindingResult()
+                .getFieldErrors().stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.toList()));
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
     //to validate if a param annotated with @RequestParam in the endpoint is present
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMissingServletRequestParameter
+    (MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, Object> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+        messages.put("code", BAD_REQUEST.value());
+        messages.put("status", BAD_REQUEST.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, BAD_REQUEST);
     }
 
-    /*
-
-    @ExceptionHandler(BadCredentialsException.class)
-    protected ResponseEntity<Map<String, String>> badCredentialsHandler(BadCredentialsException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    @ExceptionHandler(SignatureException.class)
+    protected ResponseEntity<Map<String, Object>> handleSignatureException(SignatureException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", UNAUTHORIZED.value());
+        messages.put("status", UNAUTHORIZED.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(UNAUTHORIZED.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, UNAUTHORIZED);
     }
-*/
-    @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<Map<String, String>> accessDeniedHandler(AccessDeniedException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    protected ResponseEntity<Map<String, Object>> handleExpiredJwt(ExpiredJwtException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", UNAUTHORIZED.value());
+        messages.put("status", UNAUTHORIZED.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(UNAUTHORIZED.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", UNAUTHORIZED.value());
+        messages.put("status", UNAUTHORIZED.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", FORBIDDEN.value());
+        messages.put("status", FORBIDDEN.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, FORBIDDEN);
     }
 
     @ExceptionHandler(DisabledException.class)
-    protected ResponseEntity<Map<String, String>> handleDisabled(DisabledException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    protected ResponseEntity<Map<String, Object>> handleDisabled(DisabledException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", UNAUTHORIZED.value());
+        messages.put("status", UNAUTHORIZED.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(UNAUTHORIZED.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, UNAUTHORIZED);
-    }
-/*
-    @ExceptionHandler(EntityExistsException.class)
-    protected ResponseEntity<Map<String, String>> entityExistHandler(EntityExistsException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
-        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(CONFLICT.value()));
-        return new ResponseEntity<>(messages, CONFLICT);
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<Map<String, String>> entityNotFoundHandler(EntityNotFoundException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
-        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(NOT_FOUND.value()));
-        return new ResponseEntity<>(messages, NOT_FOUND);
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<Map<String, String>> usernameNotFoundHandler(UsernameNotFoundException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
-        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(NOT_FOUND.value()));
-        return new ResponseEntity<>(messages, NOT_FOUND);
     }
 
     @ExceptionHandler(MalformedJwtException.class)
-    protected ResponseEntity<Map<String, String>> malformedJwtHandler(MalformedJwtException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    protected ResponseEntity<Map<String, Object>> handleMalformedJwt(MalformedJwtException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", BAD_REQUEST.value());
+        messages.put("status", BAD_REQUEST.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
+        messages.put("message", ex.getMessage());
         return new ResponseEntity<>(messages, BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    protected ResponseEntity<Map<String, Object>> handleEntityExists(EntityExistsException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", CONFLICT.value());
+        messages.put("status", CONFLICT.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, CONFLICT);
+    }
+
+    @ExceptionHandler(InputMismatchException.class)
+    protected ResponseEntity<Map<String, Object>> handleInputMismatch(InputMismatchException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", CONFLICT.value());
+        messages.put("status", CONFLICT.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, CONFLICT);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    protected ResponseEntity<Map<String, Object>> handleUsernameNotFound(UsernameNotFoundException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", NOT_FOUND.value());
+        messages.put("status", NOT_FOUND.toString());
+        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, NOT_FOUND);
     }
 
     @ExceptionHandler(NullPointerException.class)
-    protected ResponseEntity<Map<String, String>> nullPointerHandler(NullPointerException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    protected ResponseEntity<Map<String, Object>> handleNullPointer(NullPointerException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", NOT_FOUND.value());
+        messages.put("status", NOT_FOUND.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
-        return new ResponseEntity<>(messages, BAD_REQUEST);
-    }*/
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, NOT_FOUND);
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<Map<String, String>> nullPointerHandler(IllegalArgumentException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    protected ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", CONFLICT.value());
+        messages.put("status", CONFLICT.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
-        return new ResponseEntity<>(messages, BAD_REQUEST);
+        messages.put("message", ex.getMessage());
+        return new ResponseEntity<>(messages, CONFLICT);
     }
 
-    /*@ExceptionHandler(NoSuchElementException.class)
-    protected ResponseEntity<Map<String, String>> noSuchElementHandler(NoSuchElementException ex) {
-        Map<String, String> messages = new HashMap<>();
-        messages.put("message", ex.getMessage());
+    @ExceptionHandler(NoSuchElementException.class)
+    protected ResponseEntity<Map<String, Object>> handleNoSuchElement(NoSuchElementException ex) {
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("code", NOT_FOUND.value());
+        messages.put("status", NOT_FOUND.toString());
         messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
-        return new ResponseEntity<>(messages, BAD_REQUEST);
-    }
-
-    @ExceptionHandler(EnumConstantNotPresentException.class)
-    protected ResponseEntity<Map<String, String>> enumConstantNotPresentHandler(EnumConstantNotPresentException ex) {
-        Map<String, String> messages = new HashMap<>();
         messages.put("message", ex.getMessage());
-        messages.put("timestamp", LocalDateTime.now().format(ISO_LOCAL_DATE_TIME));
-        messages.put("code", String.valueOf(BAD_REQUEST.value()));
-        return new ResponseEntity<>(messages, BAD_REQUEST);
+        return new ResponseEntity<>(messages, NOT_FOUND);
     }
-
-*/
-
-    // TODO: 19/11/2022 ExpiredJwtException SignatureException
 }

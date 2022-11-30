@@ -15,6 +15,7 @@ import java.util.List;
 
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.entity.AccountCurrencyEnum.USD;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -26,32 +27,33 @@ public class TransactionController {
 
     @PostMapping("/sendArs")
     public ResponseEntity<TransactionResponseDto> sendARS(@Validated @RequestBody TransactionRequestDto request) {
-        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(ARS.name(), request), OK);
+        return ResponseEntity.status(CREATED).body(service.sendMoneyIndicatingCurrency(ARS.name(), request));
     }
 
     @PostMapping("/sendUsd")
     public ResponseEntity<TransactionResponseDto> sendUsd(@Validated @RequestBody TransactionRequestDto request) {
-        return new ResponseEntity<>(service.sendMoneyIndicatingCurrency(USD.name(), request), OK);
+        return ResponseEntity.status(CREATED).body(service.sendMoneyIndicatingCurrency(USD.name(), request));
     }
 
     @PostMapping("/deposit")
     public ResponseEntity<TransactionResponseDto> deposit(@Validated @RequestBody TransactionRequestDto request) {
-        return new ResponseEntity<>(service.deposit(request), OK);
+        return ResponseEntity.status(CREATED).body(service.deposit(request));
     }
 
     @PostMapping("/payment")
     public ResponseEntity<TransactionResponseDto> payment(@Validated @RequestBody TransactionRequestDto request) {
-        return new ResponseEntity<>(service.payment(request), OK);
+        return ResponseEntity.status(CREATED).body(service.payment(request));
     }
 
-    @GetMapping("/{userId}")
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsFromUser(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(service.listTransactionsByUserId(userId), OK);
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<TransactionResponseDto>> getTransactionsFromUser(@PathVariable("userId") Long userId) {
+        return ResponseEntity.status(OK).body(service.listTransactionsByUserId(userId));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TransactionResponseDto> update(@PathVariable("id") Long id, @RequestBody UpdateTransactionRequestDto request) {
+    public ResponseEntity<TransactionResponseDto> update(@PathVariable("id") Long id,
+                                                         @RequestBody UpdateTransactionRequestDto request) {
         return ResponseEntity.status(OK).body(service.update(id, request));
     }
 
@@ -60,8 +62,8 @@ public class TransactionController {
         return ResponseEntity.status(OK).body(service.getDetails(id));
     }
 
-    @GetMapping
     @Secured({"ROLE_ADMIN"})
+    @GetMapping
     public ResponseEntity<Page<TransactionResponseDto>> getAllPaged(@RequestParam("page") Integer pageNumber) {
         return ResponseEntity.status(OK).body(service.getAll(pageNumber));
     }

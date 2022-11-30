@@ -7,7 +7,6 @@ import com.alkemy.wallet.model.dto.response.AccountResponseDto;
 import com.alkemy.wallet.service.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/accounts")
@@ -24,29 +24,30 @@ public class AccountController {
     private final IAccountService service;
 
     @GetMapping("/balance")
-    public ResponseEntity<AccountBalanceResponseDto> getAccountBalance() {
-        return new ResponseEntity<>(service.getBalance(), HttpStatus.OK);
+    public ResponseEntity<AccountBalanceResponseDto> getBalance() {
+        return ResponseEntity.status(OK).body(service.getBalance());
     }
 
-    @GetMapping("/{userId}")
     @Secured({"ROLE_ADMIN"})
+    @GetMapping("/{userId}")
     public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(service.getListByUserId(userId), HttpStatus.OK);
+        return ResponseEntity.status(OK).body(service.getListByUserId(userId));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<AccountResponseDto> updateAccount(@Validated @RequestBody UpdateAccountRequestDto request, @PathVariable("id") Long id) {
-        return new ResponseEntity<>(service.update(id, request), HttpStatus.OK);
+    public ResponseEntity<AccountResponseDto> update(@Validated @RequestBody UpdateAccountRequestDto request,
+                                                     @PathVariable("id") Long id) {
+        return ResponseEntity.status(OK).body(service.update(id, request));
     }
 
-    @GetMapping
     @Secured({"ROLE_ADMIN"})
-    public ResponseEntity<Page<AccountResponseDto>> findAll(@RequestParam(name = "page") Integer pageNumber) {
-        return  ResponseEntity.ok(service.getAll(pageNumber));
+    @GetMapping
+    public ResponseEntity<Page<AccountResponseDto>> getAll(@RequestParam(name = "page") Integer pageNumber) {
+        return ResponseEntity.status(OK).body(service.getAll(pageNumber));
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponseDto> createAccount(@Validated @RequestBody AccountRequestDto request) {
-        return new ResponseEntity<>(service.create(request), CREATED);
+    public ResponseEntity<AccountResponseDto> create(@Validated @RequestBody AccountRequestDto request) {
+        return ResponseEntity.status(CREATED).body(service.create(request));
     }
 }

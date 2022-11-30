@@ -1,8 +1,8 @@
 /*
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.auth.service.UserDetailsCustomService;
-import com.alkemy.wallet.auth.utility.JwtUtils;
+import com.alkemy.wallet.config.service.UserDetailsCustomService;
+import com.alkemy.wallet.config.utility.JwtUtils;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.config.authentication.AuthenticationManager;
+import org.springframework.config.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

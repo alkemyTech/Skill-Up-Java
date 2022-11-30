@@ -1,4 +1,4 @@
-package com.alkemy.wallet.auth.service;
+package com.alkemy.wallet.security.service;
 
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

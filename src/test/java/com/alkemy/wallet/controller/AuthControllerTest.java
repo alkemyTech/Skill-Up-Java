@@ -1,8 +1,8 @@
 /*
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.auth.service.UserDetailsCustomService;
-import com.alkemy.wallet.auth.utility.JwtUtils;
+import com.alkemy.wallet.config.service.UserDetailsCustomService;
+import com.alkemy.wallet.config.utility.JwtUtils;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
@@ -17,9 +17,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.config.authentication.AuthenticationManager;
+import org.springframework.config.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.config.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

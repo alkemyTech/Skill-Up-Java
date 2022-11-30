@@ -1,4 +1,4 @@
-package com.alkemy.wallet.auth.utility;
+package com.alkemy.wallet.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.model.constant.FinalValue;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Account;
@@ -18,11 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
@@ -91,8 +93,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteById(Long id) {
         User loggedUser = getByEmail(authService.getEmailFromContext());
-        Role ADMIN = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().orElse(null);
-        Role USER = loggedUser.getRoles().stream().filter(role -> role.getName().equals("ROLE_USER")).findFirst().orElse(null);
+        Role ADMIN = loggedUser.getRoles()
+                .stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().orElse(null);
+        Role USER = loggedUser.getRoles()
+                .stream().filter(role -> role.getName().equals("ROLE_USER")).findFirst().orElse(null);
         if (loggedUser.getRoles().contains(ADMIN)) {
             User dbUser = getById(id);
             dbUser.setUpdateDate(LocalDateTime.now());
@@ -110,7 +114,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Page<UserResponseDto> findAll(Integer pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         pageable.next().getPageNumber();
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }

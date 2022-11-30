@@ -28,6 +28,9 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Slf4j
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
+    protected static final double INTEREST_RATE = 0.005;
+    protected static final int MIN_DAYS = 30;
+
     private final FixedTermDepositMapper mapper;
     private final IFixedTermDepositRepository repository;
     private final IAccountService accountService;
@@ -45,8 +48,9 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
                             account.getId()));
 
         long days = daysBetween2Dates(LocalDate.now(), string2LocalDate(requestDto.getClosingDate()));
-        if (days < 30)
-            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", days));
+        if (days < MIN_DAYS)
+            throw new IllegalArgumentException(
+                    String.format("Closing Date is less than %s days: %s", MIN_DAYS, days));
 
         Double interest = calculateInterest(requestDto.getAmount(), days);
         Double newBalance = account.getBalance() - requestDto.getAmount();
@@ -67,8 +71,9 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     @Override
     public FixedTermDepositSimulationResponseDto simulateDeposit(FixedTermDepositSimulateRequestDto request) {
         long days = daysBetween2Dates(LocalDate.now(), string2LocalDate(request.getClosingDate()));
-        if (days < 30)
-            throw new IllegalArgumentException(String.format("Closing Date is less than 30 days: %s", days));
+        if (days < MIN_DAYS)
+            throw new IllegalArgumentException(
+                    String.format("Closing Date is less than %s days: %s", MIN_DAYS, days));
 
         Double interest = calculateInterest(request.getAmount(), days);
         return FixedTermDepositSimulationResponseDto.builder()
@@ -88,7 +93,7 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
     protected Double calculateInterest(Double amount, Long days) {
         double interest = 0;
         for (int i = 0; i < days; i++) {
-            interest = interest + amount * 0.005;
+            interest = interest + amount * INTEREST_RATE;
         }
         return interest;
     }

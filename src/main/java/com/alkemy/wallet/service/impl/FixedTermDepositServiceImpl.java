@@ -28,7 +28,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Slf4j
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
-    protected static final double INTEREST_RATE = 0.005;
+    protected static final double INTEREST_RATE = 0.05;
     protected static final int MIN_DAYS = 30;
 
     private final FixedTermDepositMapper mapper;
@@ -46,6 +46,8 @@ public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
             throw new IllegalArgumentException(
                     String.format("The account with id %s does not belong to the current user",
                             account.getId()));
+        if (requestDto.getAmount() > account.getBalance())
+            throw new IllegalArgumentException("Not enough money to deposit in fixed term");
 
         long days = daysBetween2Dates(LocalDate.now(), string2LocalDate(requestDto.getClosingDate()));
         if (days < MIN_DAYS)

@@ -5,7 +5,10 @@ import com.alkemy.wallet.model.dto.request.AccountRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateAccountRequestDto;
 import com.alkemy.wallet.model.dto.response.AccountBalanceResponseDto;
 import com.alkemy.wallet.model.dto.response.AccountResponseDto;
-import com.alkemy.wallet.model.entity.*;
+import com.alkemy.wallet.model.entity.Account;
+import com.alkemy.wallet.model.entity.FixedTermDeposit;
+import com.alkemy.wallet.model.entity.Transaction;
+import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.AccountMapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
@@ -28,12 +31,16 @@ import java.util.Optional;
 
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
+import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.INCOME;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.PAYMENT;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class AccountServiceImpl implements IAccountService {
+
+    protected static final double TRANSACTION_LIMIT_USD = 1000.0;
+    protected static final double TRANSACTION_LIMIT_ARS = 300000.0;
 
     private final IAccountRepository repository;
     private final AccountMapper mapper;
@@ -69,31 +76,28 @@ public class AccountServiceImpl implements IAccountService {
                         .format("An account in %s already exist", request.getCurrency().toUpperCase()));
         });
 
-        AccountCurrencyEnum currency;
-        double transactionLimit;
-        if (getTypeOfCurrency(request.getCurrency()).equals(ARS)) {
-            currency = ARS;
-            transactionLimit = 300000.0;
-        } else {
-            currency = USD;
-            transactionLimit = 1000.0;
-        }
-        Account account = createNewAccount(loggedUser, currency, transactionLimit);
+        AccountCurrencyEnum currency = getTypeOfCurrency(request.getCurrency());
+        Account account;
+        if (currency.equals(ARS))
+            account = createNewAccount(loggedUser, currency, TRANSACTION_LIMIT_ARS);
+        else
+            account = createNewAccount(loggedUser, currency, TRANSACTION_LIMIT_USD);
+
         userService.addAccount(loggedUser, account);
         return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
     public List<Account> createDefaultAccounts(User user) {
-        Account usdAccount = createNewAccount(user, USD, 1000.0);
-        Account arsAccount = createNewAccount(user, ARS, 300000.0);
+        Account arsAccount = createNewAccount(user, ARS, TRANSACTION_LIMIT_ARS);
+        Account usdAccount = createNewAccount(user, USD, TRANSACTION_LIMIT_USD);
 
-        repository.save(usdAccount);
         repository.save(arsAccount);
+        repository.save(usdAccount);
 
         List<Account> accountList = new ArrayList<>();
-        accountList.add(usdAccount);
         accountList.add(arsAccount);
+        accountList.add(usdAccount);
 
         return accountList;
     }
@@ -127,10 +131,12 @@ public class AccountServiceImpl implements IAccountService {
 
         for (FixedTermDeposit fixedTermDeposit : loggedUser.getFixedTermDeposits()) {
             if (fixedTermDeposit.getAccount().getCurrency().equals(ARS))
-                amountFixedDepositsARS = amountFixedDepositsARS + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
+                amountFixedDepositsARS = amountFixedDepositsARS
+                        + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
 
             if (fixedTermDeposit.getAccount().getCurrency().equals(USD))
-                amountFixedDepositsUSD = amountFixedDepositsUSD + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
+                amountFixedDepositsUSD = amountFixedDepositsUSD
+                        + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
         }
 
         return AccountBalanceResponseDto.builder()
@@ -160,7 +166,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public Page<AccountResponseDto> getAll(Integer pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, 10);
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         pageable.next().getPageNumber();
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }

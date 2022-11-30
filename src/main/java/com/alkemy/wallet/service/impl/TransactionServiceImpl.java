@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service.impl;
 
+import com.alkemy.wallet.model.constant.FinalValue;
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.*;
 
 @Service
@@ -129,7 +131,7 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public Page<TransactionResponseDto> getAll(Integer pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, 10);
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 

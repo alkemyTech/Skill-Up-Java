@@ -1,4 +1,4 @@
-package com.alkemy.wallet.util;
+package com.alkemy.wallet.mapper;
 
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;

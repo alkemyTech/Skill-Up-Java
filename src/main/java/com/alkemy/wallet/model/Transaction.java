@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import lombok.Data;
 
 import javax.persistence.*;

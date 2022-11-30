@@ -4,7 +4,7 @@ import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.util.Mapper;
+import com.alkemy.wallet.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

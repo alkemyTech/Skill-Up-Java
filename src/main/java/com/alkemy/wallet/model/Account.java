@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -34,6 +35,9 @@ public class Account {
     @NonNull
     @Column(name="soft_delete", nullable = false)
     private boolean softDelete;
+
+    @OneToMany(mappedBy="transaction")
+    List<Transaction> transactionList;
 
 
     public Account() {

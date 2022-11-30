@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,7 +13,4 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM users WHERE email LIKE :email", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
-
-    @Query(value = "SELECT * FROM users WHERE deleted=true", nativeQuery = true)
-    List<User> findAllDeleted();
 }

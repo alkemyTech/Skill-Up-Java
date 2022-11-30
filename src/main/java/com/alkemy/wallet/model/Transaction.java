@@ -28,8 +28,8 @@ public class Transaction {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "id_account")
-    Account account;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @Column(name = "timestamp")
     private Timestamp timestamp;

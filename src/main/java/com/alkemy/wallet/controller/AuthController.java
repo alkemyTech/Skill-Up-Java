@@ -26,7 +26,7 @@ public class AuthController {
 
     private AuthenticationManager authenticationManager;
     private CustomUserDetailsService customUserDetailsService;
-    private final JwtUtil jwtTokenUtil;
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, JwtUtil jwtTokenUtil) {
@@ -40,9 +40,6 @@ public class AuthController {
         ResponseUserDto newUser = customUserDetailsService.save(responseUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
-
-
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {

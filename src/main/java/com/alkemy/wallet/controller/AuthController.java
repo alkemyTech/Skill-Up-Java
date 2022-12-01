@@ -42,8 +42,6 @@ public class AuthController {
     }
 
 
-
-
     @PostMapping("/login")
     public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(

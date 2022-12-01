@@ -19,7 +19,7 @@ import java.util.List;
 public class AccountController {
 
     @Autowired
-    private AccountService accountService;
+    private IAccountService accountService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<AccountDto>> getAllContinentsController(@PathVariable Long userId) throws EmptyResultDataAccessException {

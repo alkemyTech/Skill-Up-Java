@@ -8,5 +8,5 @@ import java.util.HashSet;
 
 @Repository
 public interface ITransactionRepository extends JpaRepository<Transaction, Long> {
-    HashSet<Transaction> findByUserId(Long user_id);
+    HashSet<Transaction> findByAccountId(Long account_id);
 }

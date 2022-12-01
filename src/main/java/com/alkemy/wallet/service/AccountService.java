@@ -1,4 +1,3 @@
-package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.mapper.Mapper;
@@ -43,4 +42,5 @@ public class AccountService implements IAccountService {
         ).toList();
 
     }
+
 }

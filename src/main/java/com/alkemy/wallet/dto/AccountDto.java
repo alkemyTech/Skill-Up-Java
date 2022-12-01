@@ -1,3 +1,4 @@
+
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.User;
@@ -27,3 +28,4 @@ public class AccountDto {
     @NonNull
     private boolean softDelete;
 }
+

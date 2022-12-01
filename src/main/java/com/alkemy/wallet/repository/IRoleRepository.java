@@ -4,6 +4,7 @@
  */
 package com.alkemy.wallet.repository;
 
+
 import com.alkemy.wallet.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,5 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author marti
  */
 public interface IRoleRepository extends JpaRepository<Role, String> {
+
 
 }

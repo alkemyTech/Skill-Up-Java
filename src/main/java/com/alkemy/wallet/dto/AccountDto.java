@@ -1,18 +1,35 @@
+<<<<<<< HEAD
+package com.alkemy.wallet.dto;
+=======
+>>>>>>> de34d5630299564348cc9f34d9606d51c84044f6
+
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
-import lombok.Data;
+import lombok.NonNull;
 
-import java.io.Serializable;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
-/**
- * A DTO for the {@link com.alkemy.wallet.model.Account} entity
- */
-@Data
-public class AccountDto implements Serializable {
-    private final Long id;
-    private final Currency currency;
-    private final Double transactionLimit;
-    private final Double balance;
-    private final Long userId;
+public class AccountDto {
+
+    private Long id;
+
+    @NonNull
+    private Currency currency;
+
+    @NonNull
+
+    private Double transactionLimit;
+
+    @NonNull
+    private Double balance;
+
+    @NonNull
+    private Timestamp timestamp;
+
+    @NonNull
+    private boolean softDelete;
 }
+

@@ -1,12 +1,11 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.constant.FinalValue;
+import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
-import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.TransactionMapper;
 import com.alkemy.wallet.repository.ITransactionRepository;
@@ -121,18 +120,9 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public List<TransactionResponseDto> listTransactionsByUserId(Long userId) {
-        List<Transaction> transactions = repository.findTransactionsByUserId(userId);
-        if (transactions.isEmpty())
-            throw new NoSuchElementException(
-                    String.format("The user with ID %s does not have transactions yet", userId));
-        return mapper.entityList2DtoList(transactions);
-    }
-
-    @Override
-    public Page<TransactionResponseDto> getAll(Integer pageNumber) {
+    public Page<TransactionResponseDto> paginateTransactions(Long userId, Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        return repository.findAll(pageable).map(mapper::entity2Dto);
+        return repository.findTransactionsByUserId(userId, pageable).map(mapper::entity2Dto);
     }
 
     protected Transaction setValues(Double amount, TransactionTypeEnum transactionType,

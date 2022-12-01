@@ -2,9 +2,10 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.util.Mapper;
+import com.alkemy.wallet.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,21 @@ public class CustomUserDetailsService {
 //        accountService.addAccount(userSaved.getEmail(), Currency.ARS));
 
         ResponseUserDto userDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
+
+        return userDto;
+
+    }
+
+    public ResponseUserDto findByEmail(String email) throws ResourceNotFoundException {
+        if (!userRepository.existsByEmail(email)) {
+            throw new ResourceNotFoundException("User not found");
+        }
+        ResponseUserDto userDto = new ResponseUserDto();
+        userDto.setId(userRepository.findByEmail(email).getUserId());
+        userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
+        userDto.setLastName(userRepository.findByEmail(email).getLastName());
+        userDto.setEmail(userRepository.findByEmail(email).getEmail());
+        userDto.setPassword(userRepository.findByEmail(email).getPassword());
 
         return userDto;
 

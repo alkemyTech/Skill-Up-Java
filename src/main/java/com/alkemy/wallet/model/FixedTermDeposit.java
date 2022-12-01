@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 
 @Getter
@@ -24,10 +25,12 @@ public class FixedTermDeposit {
     private Double interest;
 
     @NotNull
-    private Timestamp creationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
 
     @NotNull
-    private Timestamp closingDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

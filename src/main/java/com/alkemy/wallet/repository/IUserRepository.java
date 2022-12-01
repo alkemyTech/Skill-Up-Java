@@ -1,7 +1,6 @@
-package com.alkemy.wallet.repository;
+        package com.alkemy.wallet.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import com.alkemy.wallet.model.User;
@@ -10,5 +9,7 @@ import com.alkemy.wallet.model.User;
 public interface IUserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByEmail(String username);
+
+    User findByEmail(String email);
 
 }

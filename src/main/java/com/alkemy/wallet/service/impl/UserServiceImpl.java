@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.constant.FinalValue;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Account;
@@ -92,24 +91,26 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void deleteById(Long id) {
-        User loggedUser = getByEmail(authService.getEmailFromContext());
-        Role ADMIN = loggedUser.getRoles()
-                .stream().filter(role -> role.getName().equals("ROLE_ADMIN")).findFirst().orElse(null);
-        Role USER = loggedUser.getRoles()
-                .stream().filter(role -> role.getName().equals("ROLE_USER")).findFirst().orElse(null);
-        if (loggedUser.getRoles().contains(ADMIN)) {
-            User dbUser = getById(id);
-            dbUser.setUpdateDate(LocalDateTime.now());
-            repository.save(dbUser);
-            repository.delete(dbUser);
-        } else if (loggedUser.getRoles().contains(USER)) {
-            User dbUser = getById(id);
-            dbUser.setUpdateDate(LocalDateTime.now());
-            repository.save(dbUser);
-            repository.delete(dbUser);
-        } else {
-            throw new AccessDeniedException("Access Denied");
+        User user = getByEmail(authService.getEmailFromContext());
+        Role ADMIN = user.getRoles()
+                .stream()
+                .filter(role -> role.getName().equals("ROLE_ADMIN"))
+                .findFirst()
+                .orElse(null);
+
+        if (ADMIN != null && user.getRoles().contains(ADMIN)) {
+            user = getById(id);
+            user.setUpdateDate(LocalDateTime.now());
+            repository.save(user);
+            repository.delete(user);
+            return;
         }
+        if (!user.getId().equals(id))
+            throw new AccessDeniedException("Access denied");
+
+        user.setUpdateDate(LocalDateTime.now());
+        repository.save(user);
+        repository.delete(user);
     }
 
     @Override

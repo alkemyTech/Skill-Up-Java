@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -27,9 +28,8 @@ public class TransactionService {
 //        return transactionDto;
 //    }
     public HashSet<TransactionDto> getByUserId(@Valid Long id) {
-        HashSet<Transaction> transactions = transactionRepository.findByUserId(id);
-        HashSet<TransactionDto> transactionDtos = new HashSet<>();
-        transactions.stream().map((transaction) -> transactionDtos.add(mapper.getMapper().map(transaction, TransactionDto.class)));
-        return transactionDtos;
+        return transactionRepository.findByUserId(id).stream().map((transaction) ->
+                        mapper.getMapper().map(transaction, TransactionDto.class))
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }

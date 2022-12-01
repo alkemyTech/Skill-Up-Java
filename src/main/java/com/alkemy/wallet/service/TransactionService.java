@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 
+import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Transaction;
@@ -27,8 +28,11 @@ public class TransactionService {
 //        transactionRepository.save(transaction);
 //        return transactionDto;
 //    }
-    public HashSet<TransactionDto> getByUserId(@Valid Long id) {
-        return transactionRepository.findByUserId(id).stream().map((transaction) ->
+
+    public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
+        //corregir para hacer una busqueda de cuentas
+
+        return transactionRepository.findByAccountId(account_id).stream().map((transaction) ->
                         mapper.getMapper().map(transaction, TransactionDto.class))
                 .collect(Collectors.toCollection(HashSet::new));
     }

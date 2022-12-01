@@ -20,17 +20,21 @@ public class User implements Serializable{
 	private long userId;
 	@Column(name = "FIRST_NAME", nullable=false)
 	@NotEmpty
+
 	private String firstName; 
 	@Column(name = "LAST_NAME", nullable=false)
 	@NotEmpty
+
 	private String lastName;
 	@Column(name = "EMAIL", unique=true, nullable=false)
 	@Email
 	@NotEmpty
+
 	private String email;
 	@Column(name = "PASSWORD", nullable=false)
 	@NotEmpty
 	private String password;
+
 	@ManyToOne
 	@Column(name = "ROLE_ID")
 	private String roleId; // Clave foranea hacia ID de Role
@@ -40,6 +44,7 @@ public class User implements Serializable{
 	@Column(name = "UPDATE_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
+
 	@Column(name = "SOFT_DELETE")
 	private boolean softDelete = false;
 	

@@ -1,4 +1,4 @@
-package com.alkemy.wallet.service;
+package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.enums.Currency;
 import lombok.Data;

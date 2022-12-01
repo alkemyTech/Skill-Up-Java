@@ -1,19 +1,19 @@
-<<<<<<< HEAD
-package com.alkemy.wallet.dto;
-=======
->>>>>>> de34d5630299564348cc9f34d9606d51c84044f6
 
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 public class AccountDto {
 
+    @Getter
+    @Setter
     private Long id;
 
     @NonNull

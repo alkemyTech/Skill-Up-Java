@@ -11,8 +11,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -45,12 +43,6 @@ public class TransactionController {
         return ResponseEntity.status(CREATED).body(service.payment(request));
     }
 
-    @Secured({"ROLE_ADMIN"})
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<TransactionResponseDto>> getTransactionsFromUser(@PathVariable("userId") Long userId) {
-        return ResponseEntity.status(OK).body(service.listTransactionsByUserId(userId));
-    }
-
     @PatchMapping("/{id}")
     public ResponseEntity<TransactionResponseDto> update(@PathVariable("id") Long id,
                                                          @RequestBody UpdateTransactionRequestDto request) {
@@ -63,8 +55,9 @@ public class TransactionController {
     }
 
     @Secured({"ROLE_ADMIN"})
-    @GetMapping
-    public ResponseEntity<Page<TransactionResponseDto>> getAllPaged(@RequestParam("page") Integer pageNumber) {
-        return ResponseEntity.status(OK).body(service.getAll(pageNumber));
+    @GetMapping("/{userId}")
+    public ResponseEntity<Page<TransactionResponseDto>> pageAllTransactions(
+            @PathVariable(value = "userId", required = true) Long userId, @RequestParam("page") Integer pageNumber) {
+        return ResponseEntity.status(OK).body(service.paginateTransactions(userId, pageNumber));
     }
 }

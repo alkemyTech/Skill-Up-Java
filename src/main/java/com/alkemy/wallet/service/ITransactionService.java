@@ -6,8 +6,6 @@ import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Transaction;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface ITransactionService {
 
     TransactionResponseDto sendMoneyIndicatingCurrency(String currencyType, TransactionRequestDto request);
@@ -22,7 +20,5 @@ public interface ITransactionService {
 
     TransactionResponseDto deposit(TransactionRequestDto request);
 
-    List<TransactionResponseDto> listTransactionsByUserId(Long userId);
-
-    Page<TransactionResponseDto> getAll(Integer pageNumber);
+    Page<TransactionResponseDto> paginateTransactions(Long userId, Integer pageNumber);
 }

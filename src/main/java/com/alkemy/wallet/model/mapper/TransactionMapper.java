@@ -4,9 +4,6 @@ import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Transaction;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class TransactionMapper {
 
@@ -20,9 +17,5 @@ public class TransactionMapper {
                 .accountId(entity.getAccount().getId())
                 .transactionDate(entity.getTransactionDate())
                 .build();
-    }
-
-    public List<TransactionResponseDto> entityList2DtoList(List<Transaction> entityList) {
-        return entityList.stream().map(this::entity2Dto).collect(Collectors.toList());
     }
 }

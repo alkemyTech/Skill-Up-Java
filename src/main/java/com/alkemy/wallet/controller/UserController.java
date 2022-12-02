@@ -28,4 +28,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseUserDto> findUser(@RequestBody ResponseUserDto user) {
+        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe?
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
+        }
+        else{
+            ResponseUserDto userFound = customUserDetailsService.findByEmail(user.getEmail());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userFound);
+        }
+    }
+
 }

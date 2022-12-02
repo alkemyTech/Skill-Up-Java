@@ -11,5 +11,5 @@ import java.util.List;
 public interface ITransactionRepository extends JpaRepository<Transaction, Long> {
     //HashSet<Transaction> findByAccountId(Long account_id);
 
-    //HashSet<Transaction> findByClientAccounts(List<Long> accounts_id);
+    HashSet<Transaction> findByAccount_idIn(List<Long> account_id);
 }

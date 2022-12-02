@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class AccountServiceTest {
 
     @InjectMocks
-    private IAccountService accountService;
+    private AccountService accountService;
 
     @Mock
     private IAccountRepository accountRepository;

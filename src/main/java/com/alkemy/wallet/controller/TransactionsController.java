@@ -21,6 +21,7 @@ public class TransactionsController {
 
     @Autowired
     private ITransactionRepository transactionRepository;
+
     private TransactionService transactionService;
 
     private IAccountService accountService;
@@ -31,8 +32,7 @@ public class TransactionsController {
 
     @GetMapping("/transactions/{userId}")
     public HashSet<TransactionDto> getTransactions(@PathVariable("userId") Long id) {
-        return null;
-        //return transactionService.getByUserId(accountService.getAccountsByUserId(id));
+        return transactionService.getByUserId(accountService.getAccountsByUserId(id));
     }
 
     @PatchMapping("/transactions/{id}")
@@ -41,16 +41,18 @@ public class TransactionsController {
         if (userId != null) {
             Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("La transaccion no existe"));
             transaction.setDescription(transactionDto.getDescription());
-            transactionDto = mapper.getMapper().map(transactionRepository.save(transaction), TransactionDto.class);
-            return ResponseEntity.status(HttpStatus.OK).body(transactionDto);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(mapper.getMapper()
+                            .map(transactionRepository.save(transaction), TransactionDto.class));
         } else throw new UserNotLoggedException("El usuario no está loggeado");
     }
 
     @GetMapping("/transactions/{id}")
     public ResponseEntity<TransactionDto> getTransaction(@PathVariable Long id, @RequestHeader(name = "Authorization") String token) {
         if (jwtUtil.getKey(token) != null) {
-            TransactionDto transactionDto = mapper.getMapper().map(transactionRepository.findById(id), TransactionDto.class);
-            return ResponseEntity.status(HttpStatus.OK).body(transactionDto);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(mapper.getMapper()
+                            .map(transactionRepository.findById(id), TransactionDto.class));
         } else throw new UserNotLoggedException("El usuario no está loggeado");
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -17,14 +18,14 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NonNull
+    @NotNull
     private Currency currency;
 
-    @NonNull
+    @NotNull
     @Column(name="transaction_limit", nullable = false)
     private Double transactionLimit;
 
-    @NonNull
+    @NotNull
     private Double balance;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -34,10 +35,10 @@ public class Account {
     @Column(name="user_id", nullable = false)
     private Long userId;
 
-    @NonNull
+    @NotNull
     private Timestamp timestamp;
 
-    @NonNull
+    @NotNull
     @Column(name="soft_delete", nullable = false)
     private boolean softDelete;
 //

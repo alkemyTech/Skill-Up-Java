@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 public class AccountDto {
@@ -16,20 +17,19 @@ public class AccountDto {
     @Setter
     private Long id;
 
-    @NonNull
+    @NotNull
     private Currency currency;
 
-    @NonNull
-
+    @NotNull
     private Double transactionLimit;
 
-    @NonNull
+    @NotNull
     private Double balance;
 
-    @NonNull
+    @NotNull
     private Timestamp timestamp;
 
-    @NonNull
+    @NotNull
     private boolean softDelete;
 }
 

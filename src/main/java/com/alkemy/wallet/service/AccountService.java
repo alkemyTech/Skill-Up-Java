@@ -28,17 +28,15 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AccountDto> getAccountsByUserId( Long userId ) throws EmptyResultDataAccessException {
+    public List<AccountDto> getAccountsByUserId(Long userId) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.getAccountsByUser(userId);
 
-        if (accounts.isEmpty()){
-            throw new EmptyResultDataAccessException("El usuario no posee cuentas",1 );
+        if (accounts.isEmpty()) {
+            throw new EmptyResultDataAccessException("El usuario no posee cuentas", 1);
         }
         return accounts.stream().map(account ->
-                    mapper.map(account, AccountDto.class)
+                mapper.map(account, AccountDto.class)
         ).toList();
 
     }
-
-
 }

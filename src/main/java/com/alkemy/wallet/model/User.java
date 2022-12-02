@@ -8,8 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Data
@@ -39,15 +37,14 @@ public class User implements Serializable{
 	private String password;
 
 	@ManyToOne
-	@JoinColumn(name = "role_id")
-	private Role role; // Clave foranea hacia ID de Role
+	@Column(name = "ROLE_ID")
+	private String roleId; // Clave foranea hacia ID de Role
 
 	@Column(name = "CREATION_DATE")
-	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date creationDate;
-
 	@Column(name = "UPDATE_DATE")
-	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date updateDate;
 
 	@Column(name = "SOFT_DELETE")

@@ -1,3 +1,5 @@
+package com.alkemy.wallet.service;
+
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -9,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 
 
 @Service

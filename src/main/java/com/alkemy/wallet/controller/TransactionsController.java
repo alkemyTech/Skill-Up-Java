@@ -1,11 +1,17 @@
 package com.alkemy.wallet.controller;
 
+import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.mapper.Mapper;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
+import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.model.enums.Currency;
+import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import com.alkemy.wallet.repository.ITransactionRepository;
+import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.TransactionService;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.util.JwtUtil;
@@ -29,6 +35,9 @@ public class TransactionsController {
     private JwtUtil jwtUtil;
 
     private Mapper mapper;
+
+    @Autowired
+    private IUserRepository userRepository;
 
     @GetMapping("/transactions/{userId}")
     public HashSet<TransactionDto> getTransactions(@PathVariable("userId") Long id) {
@@ -54,5 +63,30 @@ public class TransactionsController {
                     .body(mapper.getMapper()
                             .map(transactionRepository.findById(id), TransactionDto.class));
         } else throw new UserNotLoggedException("El usuario no está loggeado");
+    }
+
+    @PostMapping("/transactions/sendUsd")
+    public ResponseEntity<TransactionDto> sendUsd(@RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto destinedTransactionDto) {
+        if (jwtUtil.getKey(token) != null) {
+            Transaction transactionPayment = new Transaction();
+            User senderUser = userRepository.findById(Long.parseLong(jwtUtil.getKey(token))).orElseThrow(() -> new ResourceNotFoundException("Usuario inexistente"));
+            AccountDto senderAccount = accountService.getAccountByCurrency(senderUser.getUserId(), Currency.usd);
+            if (destinedTransactionDto.getAmount() <
+                    senderAccount.getBalance() && destinedTransactionDto.getAmount() < senderAccount.getTransactionLimit()) {
+
+                Transaction transactionIncome = new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedTransactionDto.getAccount());
+                transactionPayment = new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment, destinedTransactionDto.getDescription(), mapper.getMapper().map(senderAccount, Account.class));
+                transactionRepository.save(transactionIncome);
+                transactionRepository.save(transactionPayment);
+            } else new ResponseEntity<TransactionDto>(HttpStatus.BAD_REQUEST);
+
+            return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));
+        } else throw new UserNotLoggedException("El usuario no está loggeado");
+    }
+
+
+    @PostMapping("/transactions/sendArs")
+    public ResponseEntity<TransactionDto> sendArs(@RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto transactionDto) {
+        return null;
     }
 }

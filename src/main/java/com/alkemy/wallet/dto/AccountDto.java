@@ -18,12 +18,15 @@ public class AccountDto {
     private Long id;
 
     @NotNull
+    @Getter
     private Currency currency;
 
     @NotNull
+    @Getter
     private Double transactionLimit;
 
     @NotNull
+    @Getter
     private Double balance;
 
     @NotNull

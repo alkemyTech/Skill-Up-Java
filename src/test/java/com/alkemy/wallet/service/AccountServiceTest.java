@@ -5,6 +5,7 @@ import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
+import com.alkemy.wallet.service.interfaces.IAccountService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.when;
 class AccountServiceTest {
 
     @InjectMocks
-    private AccountService accountService;
+    private IAccountService accountService;
 
     @Mock
     private IAccountRepository accountRepository;

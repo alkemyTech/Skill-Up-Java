@@ -26,7 +26,7 @@ public class AuthController {
 
     private AuthenticationManager authenticationManager;
     private CustomUserDetailsService customUserDetailsService;
-    private final JwtUtil jwtTokenUtil;
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, JwtUtil jwtTokenUtil) {

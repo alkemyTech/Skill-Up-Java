@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ITransactionRepository extends JpaRepository<Transaction, Long> {
-    HashSet<Transaction> findByAccountId(Long account_id);
+    //HashSet<Transaction> findByAccountId(Long account_id);
 
-    HashSet<Transaction> findByClientAccounts(List<Long> accounts_id);
+    //HashSet<Transaction> findByClientAccounts(List<Long> accounts_id);
 }

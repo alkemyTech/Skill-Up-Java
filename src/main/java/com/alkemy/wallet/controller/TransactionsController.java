@@ -31,8 +31,8 @@ public class TransactionsController {
 
     @GetMapping("/transactions/{userId}")
     public HashSet<TransactionDto> getTransactions(@PathVariable("userId") Long id) {
-
-        return transactionService.getByUserId(accountService.getAccountsByUserId(id));
+        return null;
+        //return transactionService.getByUserId(accountService.getAccountsByUserId(id));
     }
 
     @PatchMapping("/transactions/{id}")

@@ -51,9 +51,6 @@ public class Role {
     private Date updateDate;
 
 
-    @OneToMany(mappedBy = "role", cascade=CascadeType.ALL)
-    @JsonIgnore
-    private List<User> users;
 
 
 }

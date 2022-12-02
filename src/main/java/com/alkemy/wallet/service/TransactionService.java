@@ -31,7 +31,7 @@ public class TransactionService {
 //        return transactionDto;
 //    }
 
-    public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
+    /*public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
 
         List<Long> accounts_id = new ArrayList<>();
         for (AccountDto accountDto : accounts) {
@@ -41,5 +41,5 @@ public class TransactionService {
         return transactionRepository.findByClientAccounts(accounts_id).stream().map((transaction) ->
                         mapper.getMapper().map(transaction, TransactionDto.class))
                 .collect(Collectors.toCollection(HashSet::new));
-    }
+    }*/
 }

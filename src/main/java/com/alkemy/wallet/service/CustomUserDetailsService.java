@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @Service
 public class CustomUserDetailsService {
@@ -62,6 +64,19 @@ public class CustomUserDetailsService {
 
     }
 
+    public ResponseUserDto update(@Valid ResponseUserDto responseUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
+        if (!userRepository.existsByEmail(responseUserDto.getEmail())) {
+            throw new ResourceNotFoundException("User email does not exists");
+        }
+
+        userRepository.findByEmail(responseUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
+        userRepository.findByEmail(responseUserDto.getEmail()).setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
+        userRepository.findByEmail(responseUserDto.getEmail()).setFirstName(responseUserDto.getFirstName());
+        userRepository.findByEmail(responseUserDto.getEmail()).setLastName(responseUserDto.getLastName());
+
+        return responseUserDto;
+    }
+
     public ResponseUserDto findByEmail(String email) throws ResourceNotFoundException {
         if (!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("User not found");
@@ -74,6 +89,9 @@ public class CustomUserDetailsService {
         userDto.setPassword(userRepository.findByEmail(email).getPassword());
 
         return userDto;
+    }
 
+    public Boolean existsById(long id){
+        return userRepository.existsById(id);
     }
 }

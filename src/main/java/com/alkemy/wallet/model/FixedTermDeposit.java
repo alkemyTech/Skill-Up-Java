@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 
+
 @Getter
 @Setter
 @Table(name = "FIXED_DEPOSITS")
@@ -29,12 +30,12 @@ public class FixedTermDeposit {
 
     @NotNull
     @Column(name = "CREATION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate creationDate;
 
     @NotNull
     @Column(name = "CLOSING_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

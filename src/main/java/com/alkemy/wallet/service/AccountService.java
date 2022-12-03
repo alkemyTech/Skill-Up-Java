@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.AccountUpdateDto;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -50,4 +51,13 @@ public class AccountService implements IAccountService {
         }
         return null;
     }
+
+    @Override
+    public AccountDto updateAccount(Long id, AccountUpdateDto newTransactionLimit) {
+        Account account = accountRepository.findById(id).orElseThrow();
+        mapper.map(newTransactionLimit, account);
+        Account accountUpdated = accountRepository.save(account);
+        return mapper.map(accountUpdated, AccountDto.class);
+    }
+
 }

@@ -7,17 +7,12 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CustomUserDetailsService {
@@ -74,10 +69,10 @@ public class CustomUserDetailsService {
             throw new ResourceNotFoundException("User email does not exists");
         }
 
-        userRepository.findOne(responseUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
-        userRepository.findOne(responseUserDto.getEmail()).setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
-        userRepository.findOne(responseUserDto.getEmail()).setFirstName(responseUserDto.getFirstName());
-        userRepository.findOne(responseUserDto.getEmail()).setLastName(responseUserDto.getLastName());
+        userRepository.findByEmail(responseUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
+        userRepository.findByEmail(responseUserDto.getEmail()).setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
+        userRepository.findByEmail(responseUserDto.getEmail()).setFirstName(responseUserDto.getFirstName());
+        userRepository.findByEmail(responseUserDto.getEmail()).setLastName(responseUserDto.getLastName());
 
         return responseUserDto;
     }
@@ -87,33 +82,16 @@ public class CustomUserDetailsService {
             throw new ResourceNotFoundException("User not found");
         }
         ResponseUserDto userDto = new ResponseUserDto();
-        userDto.setId(userRepository.findOne(email).getUserId());
-        userDto.setFirstName(userRepository.findOne(email).getFirstName());
-        userDto.setLastName(userRepository.findOne(email).getLastName());
-        userDto.setEmail(userRepository.findOne(email).getEmail());
-        userDto.setPassword(userRepository.findOne(email).getPassword());
+        userDto.setId(userRepository.findByEmail(email).getUserId());
+        userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
+        userDto.setLastName(userRepository.findByEmail(email).getLastName());
+        userDto.setEmail(userRepository.findByEmail(email).getEmail());
+        userDto.setPassword(userRepository.findByEmail(email).getPassword());
 
         return userDto;
     }
 
     public Boolean existsById(long id){
         return userRepository.existsById(id);
-    }
-
-    public List<ResponseUserDto> findAll(){
-        List<User> listaUser = userRepository.findAll();
-        List<ResponseUserDto> listaResponse = new ArrayList<>();
-        for (User user: listaUser){
-            ResponseUserDto responseUserDto = mapper.getMapper().map(user, ResponseUserDto.class);
-            listaResponse.add(responseUserDto);
-        }
-        return listaResponse;
-    }
-
-    public Page<ResponseUserDto> findAllPageable(Pageable pageable){
-        Page<User> listaUser = userRepository.findAll(pageable);
-        return new PageImpl<ResponseUserDto>(
-                findAll(), listaUser.getPageable(), listaUser.getTotalElements()
-        );
     }
 }

@@ -1,13 +1,12 @@
 package com.alkemy.wallet.model;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-
-import lombok.Data;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Data
@@ -17,7 +16,7 @@ public class User implements Serializable{
 	@Id
 	@Column(name = "USER_ID", unique=true, nullable=false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+	private long id;
 
 	@Column(name = "FIRST_NAME", nullable=false)
 	@NotEmpty
@@ -37,8 +36,8 @@ public class User implements Serializable{
 	private String password;
 
 	@ManyToOne
-	@Column(name = "ROLE_ID")
-	private String roleId; // Clave foranea hacia ID de Role
+	@JoinColumn(name = "ROLE_ID")
+	private Role role; // Clave foranea hacia ID de Role
 
 	@Column(name = "CREATION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)

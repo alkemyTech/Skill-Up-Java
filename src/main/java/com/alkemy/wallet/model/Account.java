@@ -2,7 +2,9 @@ package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,32 +21,34 @@ public class Account {
     private Long id;
 
     @NotNull
+    @Column(name = "currency")
     private Currency currency;
 
     @NotNull
-    @Column(name="transaction_limit", nullable = false)
+    @Getter
+    @Setter
+    @Column(name = "transaction_limit", nullable = false)
     private Double transactionLimit;
 
     @NotNull
+    @Getter
+    @Setter
+    @Column(name = "balance")
     private Double balance;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
-    @Column(name="user_id", nullable = false)
-    private Long userId;
+//    @Column(name="user_id", nullable = false)
+//    private Long userId;
 
     @NotNull
     private Timestamp timestamp;
 
     @NotNull
-    @Column(name="soft_delete", nullable = false)
+    @Column(name = "soft_delete", nullable = false)
     private boolean softDelete;
-//
-//    @OneToMany(mappedBy="transaction")
-//    List<Transaction> transactionList;
-//
 
     public Account() {
 

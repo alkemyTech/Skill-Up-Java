@@ -5,16 +5,17 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
 @Data
-@Table(name="transaction")
+@Table(name = "transaction")
 public class Transaction {
 
     @Id
-    @Column(name = "TRANSACTION_ID", unique=true, nullable=false)
+    @Column(name = "TRANSACTION_ID", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -27,7 +28,7 @@ public class Transaction {
     @Column(name = "TYPE")
     private TypeOfTransaction type;
 
-    @Column(name="DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @ManyToOne
@@ -37,5 +38,16 @@ public class Transaction {
     @Column(name = "TRANSACTION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date transactionDate;
+
+    public Transaction() {
+
+    }
+
+    public Transaction(Double amount, TypeOfTransaction type, String description, Account account) {
+        this.amount = amount;
+        this.type = type;
+        this.description = description;
+        this.account = account;
+    }
 
 }

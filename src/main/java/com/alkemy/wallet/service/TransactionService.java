@@ -25,21 +25,17 @@ public class TransactionService {
     @Autowired
     ITransactionRepository transactionRepository;
 
-    //    public TransactionDto save(@Valid TransactionDto transactionDto) {
-//        Transaction transaction = mapper.getMapper().map(transactionDto, Transaction.class);
-//        transactionRepository.save(transaction);
-//        return transactionDto;
-//    }
-
-    /*public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
+    public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
 
         List<Long> accounts_id = new ArrayList<>();
         for (AccountDto accountDto : accounts) {
             accounts_id.add(mapper.getMapper().map(accountDto, Long.class));
         }
 
-        return transactionRepository.findByClientAccounts(accounts_id).stream().map((transaction) ->
+        return transactionRepository.findByAccount_idIn(accounts_id).stream().map((transaction) ->
                         mapper.getMapper().map(transaction, TransactionDto.class))
                 .collect(Collectors.toCollection(HashSet::new));
-    }*/
+
+    }
+
 }

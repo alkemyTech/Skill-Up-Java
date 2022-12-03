@@ -14,8 +14,8 @@ import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IFixedTermDepositService;
 import com.alkemy.wallet.service.IUserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,8 +24,8 @@ import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class FixedTermDepositServiceImpl implements IFixedTermDepositService {
 
     protected static final double INTEREST_RATE = 0.05;

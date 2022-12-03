@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ import static com.alkemy.wallet.model.constant.TransactionTypeEnum.INCOME;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.PAYMENT;
 
 @Service
+@Transactional
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class AccountServiceImpl implements IAccountService {
 
@@ -44,49 +46,29 @@ public class AccountServiceImpl implements IAccountService {
     private final IUserService userService;
 
     @Override
-    public Account getById(Long id) {
-        Optional<Account> account = repository.findById(id);
-        return account.orElseThrow(() ->
-                new NullPointerException(String.format("Account with id %s was not found", id)));
-    }
-
-    @Override
-    public Account getByCurrencyAndUserId(String currency, Long userId) {
-        Optional<Account> account = repository.findByCurrencyAndUserId(currency, userId);
-        return account.orElseThrow(() ->
-                new NullPointerException("The account doesn't exist or the user is not present"));
-    }
-
-    @Override
-    public void editBalanceAndSave(Account account, Double newBalance) {
-        account.setBalance(newBalance);
-        repository.save(account);
-    }
-
-    @Override
     public AccountResponseDto create(AccountRequestDto request) {
-        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
-        loggedUser.getAccounts().forEach(account -> {
+        User user = userService.getByEmail(authService.getEmailFromContext());
+        user.getAccounts().forEach(account -> {
             if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
                 throw new EntityExistsException(String
                         .format("An account in %s already exist", request.getCurrency().toUpperCase()));
         });
 
-        AccountCurrencyEnum currency = getTypeOfCurrency(request.getCurrency());
+        AccountCurrencyEnum currency = getCurrencyType(request.getCurrency());
         Account account;
         if (currency.equals(ARS))
-            account = createNewAccount(loggedUser, currency, TRANSACTION_LIMIT_ARS);
+            account = buildAccount(user, currency, TRANSACTION_LIMIT_ARS);
         else
-            account = createNewAccount(loggedUser, currency, TRANSACTION_LIMIT_USD);
+            account = buildAccount(user, currency, TRANSACTION_LIMIT_USD);
 
-        userService.addAccount(loggedUser, account);
+        userService.addAccount(user, account);
         return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
     public List<Account> createDefaultAccounts(User user) {
-        Account arsAccount = createNewAccount(user, ARS, TRANSACTION_LIMIT_ARS);
-        Account usdAccount = createNewAccount(user, USD, TRANSACTION_LIMIT_USD);
+        Account arsAccount = buildAccount(user, ARS, TRANSACTION_LIMIT_ARS);
+        Account usdAccount = buildAccount(user, USD, TRANSACTION_LIMIT_USD);
 
         repository.save(arsAccount);
         repository.save(usdAccount);
@@ -99,8 +81,22 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
+    public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
+        Account account = getById(id);
+        if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
+            throw new IllegalArgumentException("The account does not belong to current user");
+        account.setTransactionLimit(request.getTransactionLimit());
+        return mapper.entity2Dto(account);
+    }
+
+    @Override
+    public void editBalanceAndSave(Account account, Double newBalance) {
+        account.setBalance(newBalance);
+    }
+
+    @Override
     public AccountBalanceResponseDto getBalance() {
-        User loggedUser = userService.getByEmail(authService.getEmailFromContext());
+        User user = userService.getByEmail(authService.getEmailFromContext());
 
         double incomesUSD = 0.0;
         double paymentsUSD = 0.0;
@@ -108,7 +104,7 @@ public class AccountServiceImpl implements IAccountService {
         double incomesARS = 0.0;
         double paymentsARS = 0.0;
 
-        for (Transaction transaction : loggedUser.getTransactions()) {
+        for (Transaction transaction : user.getTransactions()) {
             if (transaction.getType().equals(INCOME) && transaction.getAccount().getCurrency().equals(ARS))
                 incomesARS = incomesARS + transaction.getAmount();
             if (transaction.getType().equals(INCOME) && transaction.getAccount().getCurrency().equals(USD))
@@ -125,7 +121,7 @@ public class AccountServiceImpl implements IAccountService {
         double amountFixedDepositsARS = 0.0;
         double amountFixedDepositsUSD = 0.0;
 
-        for (FixedTermDeposit fixedTermDeposit : loggedUser.getFixedTermDeposits()) {
+        for (FixedTermDeposit fixedTermDeposit : user.getFixedTermDeposits()) {
             if (fixedTermDeposit.getAccount().getCurrency().equals(ARS))
                 amountFixedDepositsARS = amountFixedDepositsARS
                         + fixedTermDeposit.getAmount() + fixedTermDeposit.getInterest();
@@ -144,20 +140,25 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
+    public Account getByCurrencyAndUserId(String currency, Long userId) {
+        Optional<Account> account = repository.findByCurrencyAndUserId(currency, userId);
+        return account.orElseThrow(() ->
+                new NullPointerException("The account doesn't exist or the user is not present"));
+    }
+
+    @Override
+    public Account getById(Long id) {
+        Optional<Account> account = repository.findById(id);
+        return account.orElseThrow(() ->
+                new NullPointerException(String.format("Account with id %s was not found", id)));
+    }
+
+    @Override
     public List<AccountResponseDto> getListByUserId(Long userId) {
         List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
             throw new NoSuchElementException("The user does not have accounts yet");
         return mapper.entityList2DtoList(accounts);
-    }
-
-    @Override
-    public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
-        Account account = getById(id);
-        if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
-            throw new IllegalArgumentException("The account does not belong to current user");
-        account.setTransactionLimit(request.getTransactionLimit());
-        return mapper.entity2Dto(repository.save(account));
     }
 
     @Override
@@ -167,7 +168,7 @@ public class AccountServiceImpl implements IAccountService {
         return repository.findAll(pageable).map(mapper::entity2Dto);
     }
 
-    protected AccountCurrencyEnum getTypeOfCurrency(String type) {
+    protected AccountCurrencyEnum getCurrencyType(String type) {
         if (USD.name().equalsIgnoreCase(type))
             return USD;
         if (ARS.name().equalsIgnoreCase(type))
@@ -175,7 +176,7 @@ public class AccountServiceImpl implements IAccountService {
         throw new InputMismatchException("Account currency can only be ARS or USD");
     }
 
-    protected Account createNewAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {
+    protected Account buildAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {
         return Account.builder()
                 .creationDate(LocalDateTime.now())
                 .balance(0.0)

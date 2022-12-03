@@ -16,7 +16,7 @@ public class FixedTermDepositController {
 
     @Autowired
     private IFixedTermService fixedTermService;
-    
+
     @PostMapping("/fixedDeposit")
     public ResponseEntity<FixedTermDto> createFixedDeposit (@RequestBody FixedTermDto fixedTermDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto));

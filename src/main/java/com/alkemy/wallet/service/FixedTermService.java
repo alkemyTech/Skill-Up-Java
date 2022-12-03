@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Currency;
-import java.util.Date;
 
 @Service
 public class FixedTermService implements IFixedTermService {

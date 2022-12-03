@@ -82,7 +82,7 @@ public class CustomUserDetailsService {
             throw new ResourceNotFoundException("User not found");
         }
         ResponseUserDto userDto = new ResponseUserDto();
-        userDto.setId(userRepository.findByEmail(email).getUserId());
+        userDto.setId(userRepository.findByEmail(email).getId());
         userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
         userDto.setLastName(userRepository.findByEmail(email).getLastName());
         userDto.setEmail(userRepository.findByEmail(email).getEmail());

@@ -70,7 +70,7 @@ public class TransactionsController {
         if (jwtUtil.getKey(token) != null) {
             Transaction transactionPayment = new Transaction();
             User senderUser = userRepository.findById(Long.parseLong(jwtUtil.getKey(token))).orElseThrow(() -> new ResourceNotFoundException("Usuario inexistente"));
-            AccountDto senderAccount = accountService.getAccountByCurrency(senderUser.getUserId(), Currency.usd);
+            AccountDto senderAccount = accountService.getAccountByCurrency(senderUser.getId(), Currency.usd);
             if (destinedTransactionDto.getAmount() <
                     senderAccount.getBalance() && destinedTransactionDto.getAmount() < senderAccount.getTransactionLimit()) {
 

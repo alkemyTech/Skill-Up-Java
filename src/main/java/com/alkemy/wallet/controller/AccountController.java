@@ -1,6 +1,7 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.AccountUpdateDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.service.interfaces.IAccountService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,4 +35,11 @@ public class AccountController {
             return null;
         } else throw new UserNotLoggedException("El usuario no está loggeado");
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AccountDto> updateAccountController(@PathVariable Long id, @Valid @RequestBody AccountUpdateDto newTransactionLimit)  {
+        AccountDto account = accountService.updateAccount(id, newTransactionLimit);
+        return ResponseEntity.status(HttpStatus.OK).body(account);
+    }
+
 }

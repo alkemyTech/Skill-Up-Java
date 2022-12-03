@@ -13,15 +13,15 @@ public interface IUserService {
 
     UserResponseDto update(Long id, UserRequestDto request);
 
-    User getByEmail(String email);
+    void deleteById(Long id);
+
+    UserResponseDto getDetails(Long id);
 
     void addAccount(User user, Account account);
 
     User getById(Long id);
 
-    UserResponseDto getDetails(Long id);
-
-    void deleteById(Long id);
+    User getByEmail(String email);
 
     Page<UserResponseDto> findAll(Integer pageNumber);
 }

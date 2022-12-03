@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/all")
+    @GetMapping("/users")
     public ResponseEntity<String> findAllUsers(@RequestParam Map<String, Object> params, Model model) {
         int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) -1) : 0;
 

@@ -7,12 +7,17 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService {
@@ -82,7 +87,7 @@ public class CustomUserDetailsService {
             throw new ResourceNotFoundException("User not found");
         }
         ResponseUserDto userDto = new ResponseUserDto();
-        userDto.setId(userRepository.findByEmail(email).getUserId());
+        userDto.setId(userRepository.findByEmail(email).getId());
         userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
         userDto.setLastName(userRepository.findByEmail(email).getLastName());
         userDto.setEmail(userRepository.findByEmail(email).getEmail());
@@ -93,5 +98,22 @@ public class CustomUserDetailsService {
 
     public Boolean existsById(long id){
         return userRepository.existsById(id);
+    }
+
+    public List<ResponseUserDto> findAll(){
+        List<User> listaUser = userRepository.findAll();
+        List<ResponseUserDto> listaResponse = new ArrayList<>();
+        for (User user: listaUser){
+            ResponseUserDto responseUserDto = mapper.getMapper().map(user, ResponseUserDto.class);
+            listaResponse.add(responseUserDto);
+        }
+        return listaResponse;
+    }
+
+    public Page<ResponseUserDto> findAllPageable(Pageable pageable){
+        Page<User> listaUser = userRepository.findAll(pageable);
+        return new PageImpl<ResponseUserDto>(
+                findAll(), listaUser.getPageable(), listaUser.getTotalElements()
+        );
     }
 }

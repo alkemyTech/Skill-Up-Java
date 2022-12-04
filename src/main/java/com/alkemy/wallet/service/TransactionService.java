@@ -19,6 +19,7 @@ import com.alkemy.wallet.service.interfaces.ITransactionService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,17 +39,16 @@ public class TransactionService implements ITransactionService {
     ITransactionRepository transactionRepository;
 
     @Autowired
-    private IUserService userService;
+    IUserService userService;
 
     @Autowired
-    private IUserRepository userRepository;
+    IUserRepository userRepository;
+
 
     @Autowired
-    private ITransactionService transactionService;
-    @Autowired
-    private IAccountService accountService;
+    IAccountService accountService;
 
-    private JwtUtil jwtUtil;
+    JwtUtil jwtUtil;
 
 
     @Override
@@ -70,16 +70,15 @@ public class TransactionService implements ITransactionService {
         transactionRepository.save(transactionIncome);
         return mapper.getMapper().map(transactionRepository.save(transactionPayment), TransactionDto.class);
     }
-    @Override
-    public ResponseEntity<Object> makeTransaction (String token , TransactionDto destinedTransactionDto)
-    {
-        try {
 
+    @Override
+    public ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto) {
+        try {
             userService.checkLoggedUser(token);
             User senderUser = userRepository.findById(Long.parseLong(jwtUtil.getKey(token))).orElseThrow(() -> new ResourceNotFoundException("Usuario inexistente"));
             AccountDto senderAccount = accountService.getAccountByCurrency(senderUser.getId(), Currency.usd);
             accountService.checkAccountLimit(senderAccount, destinedTransactionDto);
-            TransactionDto transactionPayment = transactionService.createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedTransactionDto.getAccount()),
+            TransactionDto transactionPayment = createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedTransactionDto.getAccount()),
                     new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment, destinedTransactionDto.getDescription(), mapper.getMapper().map(senderAccount, Account.class)));
 
             return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));

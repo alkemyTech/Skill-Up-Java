@@ -3,7 +3,9 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService implements IUserService {
     private JwtUtil jwtUtil;
 

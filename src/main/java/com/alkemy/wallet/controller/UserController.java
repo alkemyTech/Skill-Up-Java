@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.CustomUserDetailsService;
+import io.swagger.annotations.ApiModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/users")
+@ApiModel("Controlador de usuario")
 public class UserController {
 
     private final CustomUserDetailsService customUserDetailsService;

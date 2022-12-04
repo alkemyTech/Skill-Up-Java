@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name="users")
+@ApiModel("Usuario")
 public class User implements Serializable{
 	
 	@Id

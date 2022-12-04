@@ -1,19 +1,19 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Entity
 @Table(name = "account")
 @Data
+@ApiModel("Cuenta")
 public class Account {
 
     @Id

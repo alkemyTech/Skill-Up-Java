@@ -1,4 +1,4 @@
-package com.alkemy.wallet.model;
+package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.FixedTermDto;
 import com.alkemy.wallet.service.interfaces.IFixedTermService;

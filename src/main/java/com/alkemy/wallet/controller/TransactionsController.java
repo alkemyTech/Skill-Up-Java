@@ -79,8 +79,10 @@ public class TransactionsController {
     }
 
     @PostMapping("/transactions/sendUsd")
+
     public ResponseEntity<Object> sendUsd(@RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
+
     }
 
     @PostMapping("/transactions/sendArs")

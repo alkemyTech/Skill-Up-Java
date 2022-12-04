@@ -1,9 +1,13 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
+
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.exception.AccountLimitException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
+
+import com.alkemy.wallet.dto.AccountUpdateDto;
+
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
@@ -57,10 +61,20 @@ public class AccountService implements IAccountService {
     }
 
     @Override
+
     public boolean checkAccountLimit(AccountDto senderAccount, TransactionDto destinedTransactionDto) {
         if (destinedTransactionDto.getAmount() <
                 senderAccount.getBalance() && destinedTransactionDto.getAmount() < senderAccount.getTransactionLimit())
             return true;
         else throw new AccountLimitException("No Tiene dinero suficiente o excedio el limite de transferencia");
     }
+
+    public AccountDto updateAccount(Long id, AccountUpdateDto newTransactionLimit) {
+        Account account = accountRepository.findById(id).orElseThrow();
+        mapper.map(newTransactionLimit, account);
+        Account accountUpdated = accountRepository.save(account);
+        return mapper.map(accountUpdated, AccountDto.class);
+    }
+
+ 
 }

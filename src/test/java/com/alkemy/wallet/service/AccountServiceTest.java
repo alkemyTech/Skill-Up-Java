@@ -47,7 +47,7 @@ class AccountServiceTest {
         accountMock.setCurrency(Currency.usd);
         accountMock.setTransactionLimit(10.0);
         accountMock.setBalance(100.00);
-        accountMock.setUserId(10l);
+        accountMock.setId(10l);
         accountMock.setTimestamp(new Timestamp(System.currentTimeMillis()));
         accountMock.setSoftDelete(false);
 

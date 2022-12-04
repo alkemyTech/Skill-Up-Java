@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.LoginUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
+@ApiModel("Controlador de Autorizaciones")
 public class AuthController {
 
     private AuthenticationManager authenticationManager;

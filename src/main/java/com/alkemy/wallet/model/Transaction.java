@@ -1,17 +1,17 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
 @Data
 @Table(name = "transaction")
+@ApiModel("Transacción")
 public class Transaction {
 
     @Id

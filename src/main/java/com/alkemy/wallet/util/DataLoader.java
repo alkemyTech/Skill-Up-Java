@@ -1,4 +1,4 @@
-package com.alkemy.wallet.fixtures;
+package com.alkemy.wallet.util;
 
 import java.util.Random;
 

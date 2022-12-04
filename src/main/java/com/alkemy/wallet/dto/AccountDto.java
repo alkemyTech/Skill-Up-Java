@@ -34,5 +34,7 @@ public class AccountDto {
 
     @NotNull
     private boolean softDelete;
+
+
 }
 

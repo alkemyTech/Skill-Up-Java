@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.interfaces;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 
@@ -12,4 +13,6 @@ public interface IAccountService {
     List<AccountDto> getAccountsByUserId(Long userId);
 
     AccountDto getAccountByCurrency(Long user_id, Currency currency);
+
+    boolean checkAccountLimit(AccountDto senderAccount, TransactionDto destinedTransactionDto);
 }

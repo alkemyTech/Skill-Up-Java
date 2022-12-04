@@ -1,12 +1,17 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.exception.AccountLimitException;
+import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,5 +54,13 @@ public class AccountService implements IAccountService {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean checkAccountLimit(AccountDto senderAccount, TransactionDto destinedTransactionDto) {
+        if (destinedTransactionDto.getAmount() <
+                senderAccount.getBalance() && destinedTransactionDto.getAmount() < senderAccount.getTransactionLimit())
+            return true;
+        else throw new AccountLimitException("No Tiene dinero suficiente o excedio el limite de transferencia");
     }
 }

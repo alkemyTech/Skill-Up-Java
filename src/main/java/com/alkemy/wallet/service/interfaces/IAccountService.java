@@ -23,4 +23,6 @@ public interface IAccountService {
 
     AccountDto updateAccount(Long id, AccountUpdateDto newTransactionLimit);
 
+    boolean checkAccountExistence(Long user_id, Currency currency);
+
 }

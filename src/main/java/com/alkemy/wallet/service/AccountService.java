@@ -3,6 +3,7 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.AccountDto;
 
 import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.exception.AccountAlreadyExistsException;
 import com.alkemy.wallet.exception.AccountLimitException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 
@@ -76,5 +77,14 @@ public class AccountService implements IAccountService {
         return mapper.map(accountUpdated, AccountDto.class);
     }
 
- 
+    @Override
+    public boolean checkAccountExistence(Long user_id, Currency currency) {
+        List<Account> accounts = accountRepository.getAccountsByUser(user_id);
+        for (Account account : accounts) {
+            if (account.getCurrency() == currency) {
+                throw new AccountAlreadyExistsException("La cuenta que quiere crear ya existe");
+            }
+        }
+        return false;
+    }
 }

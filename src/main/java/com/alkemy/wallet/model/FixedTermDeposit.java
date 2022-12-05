@@ -1,8 +1,10 @@
 package com.alkemy.wallet.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -30,11 +32,14 @@ public class FixedTermDeposit {
 
     @NotNull
     @Column(name = "CREATION_DATE")
+    @JsonFormat(pattern="dd-MM-yyyy")
 //    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate creationDate;
 
     @NotNull
     @Column(name = "CLOSING_DATE")
+    @JsonFormat(pattern="dd-MM-yyyy")
+
 //    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate closingDate;
 

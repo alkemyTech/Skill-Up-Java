@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.listing.RoleName;
+import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
@@ -67,17 +68,15 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_USER), Role.class);
         user.setRole(role);
-
+        user.setCreationDate(new java.util.Date());
         User userSaved = userRepository.save(user);
 
         this.authenticated(responseUserDto);
 
-        accountService.createAccount(new AccountDto(Currency.ars));
-        accountService.createAccount(new AccountDto(Currency.usd));
+        accountService.createAccount(new Account(Currency.ars));
+        accountService.createAccount(new Account(Currency.usd));
 
-        ResponseUserDto userDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
-
-        return userDto;
+        return mapper.getMapper().map(userSaved, ResponseUserDto.class);
 
     }
 

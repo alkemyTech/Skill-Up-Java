@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IAccountService {
 
-    AccountDto createAccount(AccountDto accountDto);
+    AccountDto createAccount(Account account);
 
     List<AccountDto> getAccountsByUserId(Long userId);
 

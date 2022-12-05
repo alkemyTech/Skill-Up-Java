@@ -60,6 +60,18 @@ public class Account {
     private boolean softDelete;
 
     public Account() {
+    }
 
+    public Account( Currency currency) {
+        this.balance = 0.;
+//        this.user = user;
+        if (currency == currency.ars) {
+            this.transactionLimit = 300000.0;
+            this.currency = currency.ars;
+        }
+        else {
+            this.transactionLimit=1000.;
+            this.currency=currency.usd;
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-
+import java.util.Date;
 
 
 @Getter
@@ -19,7 +19,7 @@ public class FixedTermDeposit {
 
     @Id
     @Column(name = "FIXED_TERM_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -34,14 +34,13 @@ public class FixedTermDeposit {
     @Column(name = "CREATION_DATE")
     @JsonFormat(pattern="dd-MM-yyyy")
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate creationDate;
+    private Date creationDate;
 
     @NotNull
     @Column(name = "CLOSING_DATE")
     @JsonFormat(pattern="dd-MM-yyyy")
-
 //    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate closingDate;
+    private Date closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOUNT_ID")

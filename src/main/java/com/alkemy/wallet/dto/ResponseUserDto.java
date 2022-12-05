@@ -1,5 +1,6 @@
 package com.alkemy.wallet.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Data
 public class ResponseUserDto {
 
     private Long id;
@@ -26,11 +28,6 @@ public class ResponseUserDto {
 
     @NotEmpty
     private String password;
-/*
- Agregar una vez que esten disponibles las entidades
-*/
-//    private Role role;
-//    private List<AccountDto> accounts;
 
     // Al refactorizar atributos en esta clase, se deberá actualizar la construcción del userDto
     // en CustomUserDetailsService

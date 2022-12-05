@@ -18,16 +18,15 @@ import java.util.Date;
  *
  * @author marti
  */
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("Rol")
+@Entity
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private Long id;
 

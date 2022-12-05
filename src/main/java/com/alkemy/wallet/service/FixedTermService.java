@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class FixedTermService implements IFixedTermService {
@@ -45,12 +47,14 @@ public class FixedTermService implements IFixedTermService {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email);
-        Account account = accountRepository.findByCurrencyAndUser_id(fixedTermDto.getCurrency(), user.getId());
+        Account account = accountRepository.findByCurrencyAndUser_Email(fixedTermDto.getCurrency(), user.getEmail());
 
         fixedTerm.setAccount(account);
-        fixedTerm.setCreationDate(LocalDate.now());
+        fixedTerm.setCreationDate(new Date());
 
-        Integer days = Period.between(fixedTerm.getCreationDate(), fixedTerm.getClosingDate()).getDays();
+        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
+        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
 
         if (days < MIN_DAYS) {
             throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
@@ -68,7 +72,8 @@ public class FixedTermService implements IFixedTermService {
     @Override
     public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
 
-        Integer days = Period.between(fixedTermDto.getCreationDate(), fixedTermDto.getClosingDate()).getDays();
+        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
+        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
         if (days < MIN_DAYS) {
             throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");

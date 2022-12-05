@@ -4,7 +4,7 @@ import com.alkemy.wallet.model.enums.Currency;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 public class FixedTermDto {
@@ -18,10 +18,10 @@ public class FixedTermDto {
     private Double interest;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private LocalDate creationDate;
+    private Date creationDate;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private LocalDate closingDate;
+    private Date closingDate;
 
     private Currency currency;
 

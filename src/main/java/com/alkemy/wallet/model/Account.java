@@ -5,10 +5,13 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "account")
@@ -22,6 +25,7 @@ public class Account {
 
     @NotNull
     @Column(name = "currency")
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
     @NotNull
@@ -36,15 +40,20 @@ public class Account {
     @Column(name = "balance")
     private Double balance;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
     private User user;
 
 //    @Column(name="user_id", nullable = false)
 //    private Long userId;
 
-    @NotNull
-    private Timestamp timestamp;
+    @Column(name = "CREATION_DATE")
+//    @CreationTimestamp
+    private Date creationDate;
+
+    @Column(name = "UPDATE_DATE")
+//    @UpdateTimestamp
+    private Date updateDate;
 
     @NotNull
     @Column(name = "soft_delete", nullable = false)

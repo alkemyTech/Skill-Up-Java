@@ -1,7 +1,7 @@
 package com.alkemy.wallet.model;
 
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -9,16 +9,18 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Data
 @Table(name="users")
-@ApiModel("Usuario")
-public class User implements Serializable{
+public class User {
 	
 	@Id
-	@Column(name = "USER_ID", unique=true, nullable=false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	@Column(name = "USER_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(name = "FIRST_NAME", nullable=false)
 	@NotEmpty
@@ -51,17 +53,14 @@ public class User implements Serializable{
 
 	@Column(name = "SOFT_DELETE")
 	private boolean softDelete = false;
-	
-	public User() {
-	}
-	
-	@PrePersist
-	public void prePersist() {
-		this.creationDate = new Date();
-	}
-	
-	@PreUpdate
-	public void preUpdate() {
-		this.updateDate = new Date();
-	}
+
+//	@PrePersist
+//	public void prePersist() {
+//		this.creationDate = new Date();
+//	}
+//
+//	@PreUpdate
+//	public void preUpdate() {
+//		this.updateDate = new Date();
+//	}
 }

@@ -1,16 +1,27 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
+import com.alkemy.wallet.listing.RoleName;
+import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.mapper.Mapper;
+import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
+import com.alkemy.wallet.service.interfaces.IRoleService;
+import com.alkemy.wallet.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,22 +41,23 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private IUserRepository userRepository;
 
     @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private IAccountService accountService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-/*
-    Agregar en las configuraciones de seguridad
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }*/
+    @Autowired
+    JwtUtil jwtTokenUtil;
 
-    //    @Autowired
-//    private IRoleService roleService;
-//
-//    @Autowired
-//    private IAccountService accountService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
     public ResponseUserDto save(@Valid ResponseUserDto responseUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
+
         if (userRepository.existsByEmail(responseUserDto.getEmail())) {
             throw new ResourceFoundException("User email already exists");
         }
@@ -53,22 +65,28 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         User user = mapper.getMapper().map(responseUserDto, User.class);
         user.setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
 
-
-/*
- Agregar una vez que esten disponibles las entidades
-*/
-//        Role role = iRoleService.findByName(Role.ROLE_USER);
-//        user.setRole(role); /*acomodar entidad Rol en User: un usuario tiene un rol*/
+        Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_USER), Role.class);
+        user.setRole(role);
 
         User userSaved = userRepository.save(user);
 
-//        accountService.addAccount(userSaved.getEmail(), Currency.USD));
-//        accountService.addAccount(userSaved.getEmail(), Currency.ARS));
+        this.authenticated(responseUserDto);
+
+        accountService.createAccount(new AccountDto(Currency.ars));
+        accountService.createAccount(new AccountDto(Currency.usd));
 
         ResponseUserDto userDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
 
         return userDto;
 
+    }
+
+    private String authenticated(ResponseUserDto responseUserDto) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(responseUserDto.getEmail(), responseUserDto.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return jwtTokenUtil.create(authentication);
     }
 
     @Override
@@ -122,5 +140,12 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         return new PageImpl<ResponseUserDto>(
                 findAll(), listaUser.getPageable(), listaUser.getTotalElements()
         );
+    }
+
+    @Override
+    public ResponseUserDto getUserAuthenticated() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        ResponseUserDto userDto = mapper.getMapper().map(userRepository.findByEmail(email), ResponseUserDto.class);
+        return userDto;
     }
 }

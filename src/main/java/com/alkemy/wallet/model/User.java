@@ -15,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name="users")
+@ApiModel("Usuario")
 public class User {
 	
 	@Id

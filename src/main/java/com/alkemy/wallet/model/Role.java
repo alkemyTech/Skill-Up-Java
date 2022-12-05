@@ -23,6 +23,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ApiModel("Rol")
 public class Role {
 
     @Id

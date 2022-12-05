@@ -6,6 +6,7 @@ import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.mapper.Mapper;
+import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CustomUserDetailsService {
+public class CustomUserDetailsService implements ICustomUserDetailsService {
 
     @Autowired
     private Mapper mapper;
@@ -38,12 +39,12 @@ public class CustomUserDetailsService {
         return new BCryptPasswordEncoder();
     }*/
 
-//    @Autowired
+    //    @Autowired
 //    private IRoleService roleService;
 //
 //    @Autowired
 //    private IAccountService accountService;
-
+    @Override
     public ResponseUserDto save(@Valid ResponseUserDto responseUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
         if (userRepository.existsByEmail(responseUserDto.getEmail())) {
             throw new ResourceFoundException("User email already exists");
@@ -51,6 +52,7 @@ public class CustomUserDetailsService {
 
         User user = mapper.getMapper().map(responseUserDto, User.class);
         user.setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
+
 
 /*
  Agregar una vez que esten disponibles las entidades
@@ -69,6 +71,7 @@ public class CustomUserDetailsService {
 
     }
 
+    @Override
     public ResponseUserDto update(@Valid ResponseUserDto responseUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
         if (!userRepository.existsByEmail(responseUserDto.getEmail())) {
             throw new ResourceNotFoundException("User email does not exists");
@@ -82,6 +85,7 @@ public class CustomUserDetailsService {
         return responseUserDto;
     }
 
+    @Override
     public ResponseUserDto findByEmail(String email) throws ResourceNotFoundException {
         if (!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("User not found");
@@ -96,21 +100,24 @@ public class CustomUserDetailsService {
         return userDto;
     }
 
-    public Boolean existsById(long id){
+    @Override
+    public Boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
 
-    public List<ResponseUserDto> findAll(){
+    @Override
+    public List<ResponseUserDto> findAll() {
         List<User> listaUser = userRepository.findAll();
         List<ResponseUserDto> listaResponse = new ArrayList<>();
-        for (User user: listaUser){
+        for (User user : listaUser) {
             ResponseUserDto responseUserDto = mapper.getMapper().map(user, ResponseUserDto.class);
             listaResponse.add(responseUserDto);
         }
         return listaResponse;
     }
 
-    public Page<ResponseUserDto> findAllPageable(Pageable pageable){
+    @Override
+    public Page<ResponseUserDto> findAllPageable(Pageable pageable) {
         Page<User> listaUser = userRepository.findAll(pageable);
         return new PageImpl<ResponseUserDto>(
                 findAll(), listaUser.getPageable(), listaUser.getTotalElements()

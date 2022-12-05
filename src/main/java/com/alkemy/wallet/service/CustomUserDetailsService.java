@@ -71,12 +71,13 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         user.setCreationDate(new java.util.Date());
         User userSaved = userRepository.save(user);
 
-        this.authenticated(responseUserDto);
+        String token = this.authenticated(responseUserDto);
 
         accountService.createAccount(new Account(Currency.ars));
         accountService.createAccount(new Account(Currency.usd));
-
-        return mapper.getMapper().map(userSaved, ResponseUserDto.class);
+        responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
+        responseUserDto.setToken(token);
+        return responseUserDto;
 
     }
 
@@ -85,7 +86,9 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
                 new UsernamePasswordAuthenticationToken(responseUserDto.getEmail(), responseUserDto.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtTokenUtil.create(authentication);
+        String token = jwtTokenUtil.create(authentication);
+        responseUserDto.setToken(token);
+        return token;
     }
 
     @Override

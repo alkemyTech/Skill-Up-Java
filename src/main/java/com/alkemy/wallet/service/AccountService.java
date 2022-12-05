@@ -59,11 +59,6 @@ public class AccountService implements IAccountService {
             }
         }
 
-//        Account account = mapper.map(accountDto, Account.class);
-//
-//        account.setUser(user);
-//
-
         account.setUser(user);
 //        account.setBalance(1000D);
         account.setCreationDate(new Date());

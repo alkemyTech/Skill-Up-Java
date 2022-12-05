@@ -62,16 +62,16 @@ public class Account {
     public Account() {
     }
 
-    public Account( Currency currency) {
+    public Account(Currency currency) {
         this.balance = 0.;
 //        this.user = user;
-        if (currency == currency.ars) {
+        if (currency == Currency.ars) {
             this.transactionLimit = 300000.0;
-            this.currency = currency.ars;
+            this.currency = currency;
         }
         else {
             this.transactionLimit=1000.;
-            this.currency=currency.usd;
+            this.currency=currency;
         }
     }
 }

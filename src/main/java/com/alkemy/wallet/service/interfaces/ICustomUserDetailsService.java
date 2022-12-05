@@ -20,4 +20,6 @@ public interface ICustomUserDetailsService {
     ResponseUserDto save(@Valid ResponseUserDto responseUserDto) throws ResourceFoundException;
 
     ResponseUserDto update(ResponseUserDto responseUserDto);
+
+    ResponseUserDto getUserAuthenticated();
 }

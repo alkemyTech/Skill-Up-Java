@@ -1,7 +1,8 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.FixedTermDto;
-import com.alkemy.wallet.exception.FixTermException;
+import com.alkemy.wallet.dto.SimulatedFixedTermDto;
+import com.alkemy.wallet.exception.FixedTermException;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.FixedTermDeposit;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class FixedTermService implements IFixedTermService {
@@ -44,15 +47,17 @@ public class FixedTermService implements IFixedTermService {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email);
-        Account account = accountRepository.findByCurrencyAndUser_id(fixedTermDto.getCurrency(), user.getId());
+        Account account = accountRepository.findByCurrencyAndUser_Email(fixedTermDto.getCurrency(), user.getEmail());
 
         fixedTerm.setAccount(account);
-        fixedTerm.setCreationDate(LocalDate.now());
+        fixedTerm.setCreationDate(new Date());
 
-        Integer days = Period.between(fixedTerm.getCreationDate(), fixedTerm.getCreationDate()).getDays();
+        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
+        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
 
         if (days < MIN_DAYS) {
-            throw new FixTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
+            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
         }
 
         fixedTerm.setInterest(fixedTerm.getAmount() * DAILY_INTEREST * days);
@@ -62,5 +67,24 @@ public class FixedTermService implements IFixedTermService {
 
         return mapper.getMapper().map(fixedTerm, FixedTermDto.class);
 
+    }
+
+    @Override
+    public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
+
+        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
+        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+        if (days < MIN_DAYS) {
+            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
+        }
+
+        Double interest = fixedTermDto.getAmount() * DAILY_INTEREST * days;
+
+        fixedTermDto.setInterest(interest);
+
+        fixedTermDto.setTotalAmount(fixedTermDto.getAmount() + interest);
+
+        return fixedTermDto;
     }
 }

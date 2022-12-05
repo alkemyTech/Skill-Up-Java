@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -34,11 +35,13 @@ public class JwtUtil {
     /**
      * Crear un nuevo token
      *
-     * @param id
-     * @param subject
+     * @param authentication
      * @return
      */
-    public String create(String id, String subject) {
+
+    public String create(Authentication authentication) {
+
+        String username = authentication.getName();
 
         // The JWT signature algorithm used to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -51,7 +54,10 @@ public class JwtUtil {
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         //  set the JWT Claims
-        JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuer)
+        JwtBuilder builder = Jwts.builder()
+                .setIssuedAt(now)
+                .setSubject(username)
+                .setIssuer(issuer)
                 .signWith(signatureAlgorithm, signingKey);
 
         if (ttlMillis >= 0) {

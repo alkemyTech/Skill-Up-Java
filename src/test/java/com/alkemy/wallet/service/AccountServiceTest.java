@@ -20,6 +20,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,7 +49,8 @@ class AccountServiceTest {
         accountMock.setTransactionLimit(10.0);
         accountMock.setBalance(100.00);
         accountMock.setId(10l);
-        accountMock.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        accountMock.setCreationDate(new Date());
+//        accountMock.setTimestamp(new Timestamp(System.currentTimeMillis()));
         accountMock.setSoftDelete(false);
 
         List<Account> simulations = new ArrayList<>();

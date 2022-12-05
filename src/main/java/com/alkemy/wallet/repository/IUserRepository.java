@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.alkemy.wallet.model.User;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
@@ -15,6 +17,8 @@ public interface IUserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String username);
 
     User findByEmail(String email);
+
+    Optional<User> findOptionalByEmail(String email);
 
     Boolean existsById(long id);
 

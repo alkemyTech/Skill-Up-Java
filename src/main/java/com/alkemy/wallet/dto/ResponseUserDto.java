@@ -29,6 +29,8 @@ public class ResponseUserDto {
     @NotEmpty
     private String password;
 
+    private String token;
+
     // Al refactorizar atributos en esta clase, se deberá actualizar la construcción del userDto
     // en CustomUserDetailsService
 

@@ -45,7 +45,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public AccountDto createAccount(AccountDto accountDto) {
+    public AccountDto createAccount(Account account) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -54,28 +54,18 @@ public class AccountService implements IAccountService {
             List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
             if (accounts.stream()
-                    .anyMatch(c -> c.getCurrency().equals(accountDto.getCurrency()))) {
-                throw new ResourceFoundException("Account with " + accountDto.getCurrency() + " is already created");
+                    .anyMatch(c -> c.getCurrency().equals(account.getCurrency()))) {
+                throw new ResourceFoundException("Account with " + account.getCurrency() + " is already created");
             }
         }
 
 //        Account account = mapper.map(accountDto, Account.class);
 //
 //        account.setUser(user);
+//
 
-        switch (accountDto.getCurrency()) {
-            case usd:
-                accountDto.setTransactionLimit(LIMIT_USD);
-                break;
-            case ars:
-                accountDto.setTransactionLimit(LIMIT_ARS);
-                break;
-
-        }
-
-        Account account = mapper.map(accountDto, Account.class);
         account.setUser(user);
-        account.setBalance(1000D);
+//        account.setBalance(1000D);
         account.setCreationDate(new Date());
 
         return mapper.map(accountRepository.save(account), AccountDto.class);

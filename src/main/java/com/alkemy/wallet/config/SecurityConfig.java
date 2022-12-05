@@ -12,9 +12,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -41,20 +44,6 @@ public class SecurityConfig {
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-//    @Bean
-//    public CUserDetailsService userDetailsService() {
-//        return new CUserDetailsService();
-//    }
-
-//ESTE ES EL CODIGO QUE HAY QUE ADAPTAR PARA PODER USAR EL authenticate() DEL AUTHCONTROLLER
-//    @Bean
-//    AuthenticationManager authenticationManagerBean(CUserDetailsService myUserDetailsService, PasswordEncoder encoder) {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(myUserDetailsService);
-//        provider.setPasswordEncoder(encoder);
-//        return new ProviderManager(provider);
-//    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

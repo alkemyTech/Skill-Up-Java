@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AuthToken;
 import com.alkemy.wallet.dto.LoginUserDto;
+import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
 import com.alkemy.wallet.util.JwtUtil;
@@ -33,8 +34,8 @@ public class AuthController {
     private ICustomUserDetailsService customUserDetailsService;
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody ResponseUserDto responseUserDto) {
-        ResponseUserDto userSaved = customUserDetailsService.save(responseUserDto);
+    public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody RequestUserDto requestUserDto) {
+        ResponseUserDto userSaved = customUserDetailsService.save(requestUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }
 
@@ -44,16 +45,8 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-//        /*token =*/ jwtTokenUtil.create(authentication);
-//        token = jwtTokenUtil.create(String.valueOf(customUserDetailsService.findByEmail(authentication.getName()).getId()),
-//                customUserDetailsService.findByEmail(authentication.getName()).getEmail());
         return ResponseEntity.ok(new AuthToken(jwtTokenUtil.create(authentication)));
     }
-
-//    @PostMapping("/register")
-//    public String signUp(@Valid @RequestBody ResponseUserDto responseUserDto) {
-//        return jwtTokenUtil.create(customUserDetailsService.save(responseUserDto).getId().toString(), responseUserDto.getPassword());
-//    }
 
     @GetMapping("/logout")
     public ResponseEntity<?> logout (HttpServletRequest request, HttpServletResponse response) {
@@ -64,7 +57,6 @@ public class AuthController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 
     @GetMapping("/user")
     public ResponseEntity<ResponseUserDto> authenticatedUser() {

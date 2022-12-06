@@ -18,6 +18,7 @@ import com.alkemy.wallet.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -145,7 +146,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     @Transactional
     public Page<ResponseUserDto> findAllPageable(Pageable pageable) throws Exception {
         try {
-            Page<User> listaUser = userRepository.findAll(pageable);
+            Page<User> listaUser = userRepository.findAll(pageable, PageRequest.ofSize(10));
             return new PageImpl<ResponseUserDto>(
                     findAll(), listaUser.getPageable(), listaUser.getTotalElements()
             );

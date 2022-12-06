@@ -1,18 +1,14 @@
 package com.alkemy.wallet.dto;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
 @Data
-public class ResponseUserDto {
+public class RequestUserDto {
+
+    private Long id;
 
     @NotEmpty
     private String firstName;
@@ -24,6 +20,7 @@ public class ResponseUserDto {
     @Email(message = "the email must be real email")
     private String email;
 
-    private String token;
+    @NotEmpty
+    private String password;
 
 }

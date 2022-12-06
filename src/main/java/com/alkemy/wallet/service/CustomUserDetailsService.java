@@ -1,6 +1,6 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
@@ -27,8 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,73 +35,76 @@ import java.util.List;
 public class CustomUserDetailsService implements ICustomUserDetailsService {
 
     @Autowired
+    JwtUtil jwtTokenUtil;
+    @Autowired
     private Mapper mapper;
-
     @Autowired
     private IUserRepository userRepository;
-
     @Autowired
     private IRoleService roleService;
-
     @Autowired
     private IAccountService accountService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    JwtUtil jwtTokenUtil;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseUserDto save(@Valid ResponseUserDto responseUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
+    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
 
-        if (userRepository.existsByEmail(responseUserDto.getEmail())) {
+        if (userRepository.existsByEmail(requestUserDto.getEmail())) {
             throw new ResourceFoundException("User email already exists");
         }
 
-        User user = mapper.getMapper().map(responseUserDto, User.class);
-        user.setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
+        User user = mapper.getMapper().map(requestUserDto, User.class);
+        user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
 
         Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_USER), Role.class);
         user.setRole(role);
-        user.setCreationDate(new java.util.Date());
+        user.setCreationDate(new Date());
         User userSaved = userRepository.save(user);
 
-        String token = this.authenticated(responseUserDto);
+        String token = this.authenticated(requestUserDto);
 
         accountService.createAccount(new Account(Currency.ars));
         accountService.createAccount(new Account(Currency.usd));
-        responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
+
+        ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
+
         return responseUserDto;
 
     }
 
-    private String authenticated(ResponseUserDto responseUserDto) {
+    private String authenticated(RequestUserDto requestUserDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(responseUserDto.getEmail(), responseUserDto.getPassword())
+                new UsernamePasswordAuthenticationToken(requestUserDto.getEmail(), requestUserDto.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenUtil.create(authentication);
-        responseUserDto.setToken(token);
         return token;
     }
 
     @Override
-    public ResponseUserDto update(@Valid ResponseUserDto responseUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
-        if (!userRepository.existsByEmail(responseUserDto.getEmail())) {
+    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
+        if (!userRepository.existsByEmail(requestUserDto.getEmail())) {
             throw new ResourceNotFoundException("User email does not exists");
         }
+        User user = userRepository.findByEmail(requestUserDto.getEmail());
 
-        userRepository.findByEmail(responseUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
-        userRepository.findByEmail(responseUserDto.getEmail()).setPassword(passwordEncoder.encode(responseUserDto.getPassword()));
-        userRepository.findByEmail(responseUserDto.getEmail()).setFirstName(responseUserDto.getFirstName());
-        userRepository.findByEmail(responseUserDto.getEmail()).setLastName(responseUserDto.getLastName());
+        user.setUpdateDate(new Date());
+        user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
+        user.setFirstName(requestUserDto.getFirstName());
+        user.setLastName(requestUserDto.getLastName());
 
-        return responseUserDto;
+        User userUpdated = userRepository.save(user);
+
+//        userRepository.findByEmail(requestUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
+//        userRepository.findByEmail(requestUserDto.getEmail()).setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
+//        userRepository.findByEmail(requestUserDto.getEmail()).setFirstName(requestUserDto.getFirstName());
+//        userRepository.findByEmail(requestUserDto.getEmail()).setLastName(requestUserDto.getLastName());
+
+        return mapper.getMapper().map(user, ResponseUserDto.class);
     }
 
     @Override
@@ -110,14 +112,16 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         if (!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("User not found");
         }
-        ResponseUserDto userDto = new ResponseUserDto();
-        userDto.setId(userRepository.findByEmail(email).getId());
-        userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
-        userDto.setLastName(userRepository.findByEmail(email).getLastName());
-        userDto.setEmail(userRepository.findByEmail(email).getEmail());
-        userDto.setPassword(userRepository.findByEmail(email).getPassword());
+        User user = userRepository.findByEmail(email);
 
-        return userDto;
+        return mapper.getMapper().map(user, ResponseUserDto.class);
+
+//        userDto.setId(userRepository.findByEmail(email).getId());
+//        userDto.setFirstName(userRepository.findByEmail(email).getFirstName());
+//        userDto.setLastName(userRepository.findByEmail(email).getLastName());
+//        userDto.setEmail(userRepository.findByEmail(email).getEmail());
+//        userDto.setPassword(userRepository.findByEmail(email).getPassword());
+
     }
 
     @Override

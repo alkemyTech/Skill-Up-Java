@@ -1,5 +1,6 @@
 package com.alkemy.wallet.controller;
 
+import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.CustomUserDetailsService;
 import io.swagger.annotations.ApiModel;
@@ -27,29 +28,33 @@ public class UserController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody ResponseUserDto user) {
-        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe? o no es correcto?
-            System.out.println("Trying to update User without Id");
-            return ResponseEntity.badRequest().body(user);
-        }
-        else{
-            ResponseUserDto userUpDated = customUserDetailsService.update(user);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userUpDated);
-        }
+    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(requestUserDto));
+
+//        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe? o no es correcto?
+//            System.out.println("Trying to update User without Id");
+//            return ResponseEntity.badRequest().body(mapper.getMapper().get(user, ResponseUserDto.class));;
+//        }
+//        else{
+//            ResponseUserDto userUpDated = customUserDetailsService.update(user);
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userUpDated);
+//        }
     }
 
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseUserDto> findUser(@RequestBody ResponseUserDto user) {
-        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe?
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
-        }
-        else{
-            ResponseUserDto userFound = customUserDetailsService.findByEmail(user.getEmail());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userFound);
-        }
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @GetMapping
+    public ResponseEntity<ResponseUserDto> findUser(@RequestBody RequestUserDto requestUserDto) {
+        return ResponseEntity.ok().body(customUserDetailsService.findByEmail(requestUserDto.getEmail()));
+
+//        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe?
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
+//        }
+//        else{
+//            ResponseUserDto userFound = customUserDetailsService.findByEmail(user.getEmail());
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userFound);
+//        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -60,7 +60,6 @@ public class AccountService implements IAccountService {
         }
 
         account.setUser(user);
-//        account.setBalance(1000D);
         account.setCreationDate(new Date());
 
         return mapper.map(accountRepository.save(account), AccountDto.class);

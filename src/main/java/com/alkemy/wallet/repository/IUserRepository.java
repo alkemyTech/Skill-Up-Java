@@ -1,6 +1,7 @@
 package com.alkemy.wallet.repository;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +27,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
 
     @Query(value = "SELECT * FROM users",countQuery = "SELECT count(*) FROM users" , nativeQuery = true)
-    Page<User> findAll(Pageable pageable);
+    Page<User> findAll(Pageable pageable, PageRequest size);
 
 }

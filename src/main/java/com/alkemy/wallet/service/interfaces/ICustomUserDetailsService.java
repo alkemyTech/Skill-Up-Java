@@ -14,7 +14,7 @@ public interface ICustomUserDetailsService {
 
     List<ResponseUserDto> findAll();
 
-    Page<ResponseUserDto> findAllPageable(Pageable pageable);
+    Page<ResponseUserDto> findAllPageable(Pageable pageable) throws Exception;
 
     Boolean existsById(Long id);
 

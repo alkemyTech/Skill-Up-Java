@@ -4,20 +4,14 @@ import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.CustomUserDetailsService;
 import io.swagger.annotations.ApiModel;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-@RestController
+@Controller
 @RequestMapping("/users")
 @ApiModel("Controlador de usuario")
 public class UserController {
@@ -57,23 +51,14 @@ public class UserController {
 //        }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<String> findAllUsers(@RequestParam Map<String, Object> params, Model model) {
-        int page = params.get("page") != null ? (Integer.valueOf(params.get("page").toString()) -1) : 0;
-
-        PageRequest pageRequest = PageRequest.of(page, 10);
-        Page<ResponseUserDto> userDtoPage = customUserDetailsService.findAllPageable(pageRequest);
-
-        int totalPages = userDtoPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pages = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
-            model.addAttribute("pages", pages);
+    public ResponseEntity<?> findAllUsers(Pageable pageable) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(customUserDetailsService.findAllPageable(pageable));
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron elementos" + e.getMessage());
         }
-        model.addAttribute("titulo", "Listado Usuarios");
-        model.addAttribute("users", userDtoPage.getContent());
-
-        return ResponseEntity.ok("all");
     }
 
 }

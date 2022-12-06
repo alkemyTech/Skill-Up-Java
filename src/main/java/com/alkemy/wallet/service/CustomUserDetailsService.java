@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.Date;
@@ -141,11 +142,16 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     }
 
     @Override
-    public Page<ResponseUserDto> findAllPageable(Pageable pageable) {
-        Page<User> listaUser = userRepository.findAll(pageable);
-        return new PageImpl<ResponseUserDto>(
-                findAll(), listaUser.getPageable(), listaUser.getTotalElements()
-        );
+    @Transactional
+    public Page<ResponseUserDto> findAllPageable(Pageable pageable) throws Exception {
+        try {
+            Page<User> listaUser = userRepository.findAll(pageable);
+            return new PageImpl<ResponseUserDto>(
+                    findAll(), listaUser.getPageable(), listaUser.getTotalElements()
+            );
+        } catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
     }
 
     @Override

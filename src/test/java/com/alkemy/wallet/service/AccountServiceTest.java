@@ -60,7 +60,7 @@ class AccountServiceTest {
                 .thenReturn(simulations);
 
         //Act
-        List<AccountDto> accounts = accountService.getAccountsByUserId(10l);
+        List<Account> accounts = accountService.getAccountsByUserId(10l);
         Integer count = accounts.size();
 
         //Assert

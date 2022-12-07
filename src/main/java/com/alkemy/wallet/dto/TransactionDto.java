@@ -26,7 +26,6 @@ public class TransactionDto {
 
     @Getter
     @Setter
-    private Account account;
-
+    private AccountDto account;
 
 }

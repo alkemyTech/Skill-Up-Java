@@ -20,6 +20,7 @@ public class UserService implements IUserService {
 
     private final Mapper mapper;
 
+    @Autowired
     private JwtUtil jwtUtil;
 
     public UserService(IUserRepository userRepository, Mapper mapper) {
@@ -29,13 +30,13 @@ public class UserService implements IUserService {
 
     @Override
     public boolean checkLoggedUser(String token) {
-        if (jwtUtil.getKey(token) != null)
+        if (jwtUtil.getValue(token) != null)
             return true;
-        else throw new UserNotLoggedException("El usuario no está loggeado");
+        else throw new UserNotLoggedException("User not logged");
     }
 
     @Override
-    public UserDto findByEmail(String email) throws ResourceNotFoundException{
+    public UserDto findByEmail(String email) throws ResourceNotFoundException {
         Optional<User> user = userRepository.findOptionalByEmail(email);
         if (user.isPresent()) {
             return mapper.getMapper().map(user.get(), UserDto.class);

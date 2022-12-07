@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.exception.AccountLimitException;
+import com.alkemy.wallet.exception.NotEnoughCashException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.mapper.Mapper;
@@ -51,15 +52,16 @@ public class TransactionService implements ITransactionService {
     @Autowired
     IAccountService accountService;
 
+    @Autowired
     JwtUtil jwtUtil;
 
 
     @Override
-    public HashSet<TransactionDto> getByUserId(@Valid List<AccountDto> accounts) {
+    public HashSet<TransactionDto> getByUserId(@Valid List<Account> accounts) {
 
         List<Long> accounts_id = new ArrayList<>();
-        for (AccountDto accountDto : accounts) {
-            accounts_id.add(mapper.getMapper().map(accountDto, Long.class));
+        for (Account account : accounts) {
+            accounts_id.add(account.getId());
         }
 
         return transactionRepository.findByAccount_idIn(accounts_id).stream().map((transaction) ->
@@ -78,14 +80,16 @@ public class TransactionService implements ITransactionService {
     public ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto) {
         try {
             userService.checkLoggedUser(token);
-            User senderUser = userRepository.findById(Long.parseLong(jwtUtil.getKey(token))).orElseThrow(() -> new ResourceNotFoundException("Usuario inexistente"));
-            AccountDto senderAccount = accountService.getAccountByCurrency(senderUser.getId(), Currency.usd);
+            User senderUser = userRepository.findByEmail(jwtUtil.getValue(token));
+            Account senderAccount = accountService.getAccountByCurrency(senderUser.getId(), Currency.usd);
             accountService.checkAccountLimit(senderAccount, destinedTransactionDto);
-            TransactionDto transactionPayment = createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedTransactionDto.getAccount()),
+            checkBalance(senderAccount.getBalance(), destinedTransactionDto.getAmount());
+            TransactionDto transactionPayment = createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), mapper.getMapper().map(destinedTransactionDto.getAccount(), Account.class)),
                     new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment, destinedTransactionDto.getDescription(), mapper.getMapper().map(senderAccount, Account.class)));
 
             return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));
-        } catch (ResourceNotFoundException | UserNotLoggedException | AccountLimitException e) {
+        } catch (ResourceNotFoundException | UserNotLoggedException | AccountLimitException |
+                NotEnoughCashException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
         }
@@ -96,11 +100,48 @@ public class TransactionService implements ITransactionService {
 
         UserDto user = userService.findByEmail(jwtUtil.getValue(token));
 
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
 
         Page<Transaction> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable);
 
         return pageTransactions;
+
+    }
+
+    public ResponseEntity<?> getTransaction(Long id, String token) {
+        try {
+            userService.checkLoggedUser(token);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(mapper.getMapper()
+                            .map(transactionRepository.findById(id), TransactionDto.class));
+        } catch (UserNotLoggedException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> patchTransaction(Long id, String token, String description) {
+        try {
+            userService.checkLoggedUser(token);
+            Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction doesn't exist"));
+            transaction.setDescription(description);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(mapper.getMapper()
+                            .map(transactionRepository.save(transaction), TransactionDto.class));
+        } catch (UserNotLoggedException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
+    }
+
+    @Override
+    public boolean checkBalance(Double balance, Double amount) {
+        if (balance < amount) {
+            throw new NotEnoughCashException("Not enough cash");
+        } else {
+            return true;
+        }
     }
 
 }

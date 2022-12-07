@@ -1,6 +1,7 @@
 
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
 import lombok.Data;
 import lombok.Getter;
@@ -15,30 +16,18 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class AccountDto {
 
-    @Getter
-    @Setter
     private Long id;
 
     @NotNull
-    @Getter
     private Currency currency;
 
-    @NotNull
-    @Getter
     private Double transactionLimit;
 
-    @NotNull
-    @Getter
     private Double balance;
 
-    private Date creationDate;
-
-    private Date updateDate;
-
-    @NotNull
     private boolean softDelete;
 
-    private Long userId;
+    private Long user_id;
 
     public AccountDto(Currency currency) {
         this.currency = currency;

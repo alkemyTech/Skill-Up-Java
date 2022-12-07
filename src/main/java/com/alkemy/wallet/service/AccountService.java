@@ -3,19 +3,20 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.AccountUpdateDto;
 import com.alkemy.wallet.dto.TransactionDto;
-import com.alkemy.wallet.exception.AccountAlreadyExistsException;
-import com.alkemy.wallet.exception.AccountLimitException;
-import com.alkemy.wallet.exception.ResourceFoundException;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
+import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
-import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
+import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.models.Response;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,10 @@ public class AccountService implements IAccountService {
     private IUserService userService;
 
     private ModelMapper mapper;
+
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public AccountService(IAccountRepository accountRepository, IUserService userService, ModelMapper mapper) {
         this.accountRepository = accountRepository;
@@ -69,15 +74,13 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AccountDto> getAccountsByUserId(Long userId) throws EmptyResultDataAccessException {
+    public List<Account> getAccountsByUserId(Long userId) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.getAccountsByUser(userId);
 
         if (accounts.isEmpty()) {
-            throw new EmptyResultDataAccessException("El usuario no posee cuentas", 1);
+            throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
-        return accounts.stream().map(account ->
-                mapper.map(account, AccountDto.class)
-        ).toList();
+        return accounts;
     }
 
     @Override
@@ -86,7 +89,7 @@ public class AccountService implements IAccountService {
         List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
         if (accounts.isEmpty()) {
-            throw new EmptyResultDataAccessException("El usuario no posee cuentas", 1);
+            throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
         return accounts.stream().map(account ->
                 mapper.map(account, AccountDto.class)
@@ -94,31 +97,34 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public AccountDto getAccountByCurrency(Long userId, Currency currency) {
+    public Account getAccountByCurrency(Long userId, Currency currency) {
 
-        List<AccountDto> userAccounts = getAccountsByUserId(userId);
-        for (AccountDto accountDto : userAccounts) {
-            if (accountDto.getCurrency() == currency) {
-                return accountDto;
+        List<Account> userAccounts = getAccountsByUserId(userId);
+        for (Account account : userAccounts) {
+            if (account.getCurrency() == currency) {
+                return account;
             }
         }
         return null;
     }
 
     @Override
-
-    public boolean checkAccountLimit(AccountDto senderAccount, TransactionDto destinedTransactionDto) {
-        if (destinedTransactionDto.getAmount() <
-                senderAccount.getBalance() && destinedTransactionDto.getAmount() < senderAccount.getTransactionLimit())
+    public boolean checkAccountLimit(Account senderAccount, TransactionDto transactionDto) {
+        if (transactionDto.getAmount() < senderAccount.getTransactionLimit())
             return true;
-        else throw new AccountLimitException("No Tiene dinero suficiente o excedio el limite de transferencia");
+        else throw new AccountLimitException("Account transaction limit exceeded");
     }
 
-    public AccountDto updateAccount(Long id, AccountUpdateDto newTransactionLimit) {
-        Account account = accountRepository.findById(id).orElseThrow();
-        mapper.map(newTransactionLimit, account);
-        Account accountUpdated = accountRepository.save(account);
-        return mapper.map(accountUpdated, AccountDto.class);
+    public ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit, String token) {
+        try {
+            userService.checkLoggedUser(token);
+            Account account = accountRepository.findById(id).orElseThrow();
+            mapper.map(newTransactionLimit, account);
+            Account accountUpdated = accountRepository.save(account);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.map(accountUpdated, AccountDto.class));
+        } catch (UserNotLoggedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
     }
 
     @Override
@@ -126,9 +132,23 @@ public class AccountService implements IAccountService {
         List<Account> accounts = accountRepository.getAccountsByUser(user_id);
         for (Account account : accounts) {
             if (account.getCurrency() == currency) {
-                throw new AccountAlreadyExistsException("La cuenta que quiere crear ya existe");
+                throw new AccountAlreadyExistsException("Account already exists");
             }
         }
         return false;
+    }
+
+    @Override
+    public ResponseEntity<?> postAccount(AccountDto accountDto, String token) {
+        try {
+            userService.checkLoggedUser(token);
+//            UserDto loggedUser = userService.findByEmail(jwtUtil.getValue(token));
+//            checkAccountExistence(loggedUser.getId(), accountDto.getCurrency());
+            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(accountDto, Account.class)));
+
+        } catch (UserNotLoggedException | AccountAlreadyExistsException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
+        }
     }
 }

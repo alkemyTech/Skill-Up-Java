@@ -35,7 +35,6 @@ public class TransactionsController {
 
     private Mapper mapper;
 
-
     @Autowired
     private IUserService userService;
 
@@ -44,39 +43,19 @@ public class TransactionsController {
         return transactionService.getByUserId(accountService.getAccountsByUserId(userId));
     }
 
-    @PatchMapping("/transactions/{id}")
-    public ResponseEntity<Object> patchTransaction(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto transactionDto) {
-        try {
-            userService.checkLoggedUser(token);
-            Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("La transaccion no existe"));
-            transaction.setDescription(transactionDto.getDescription());
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(mapper.getMapper()
-                            .map(transactionRepository.save(transaction), TransactionDto.class));
-        } catch (UserNotLoggedException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e);
-        }
+    @GetMapping("/transaction/{id}")
+    public ResponseEntity<?> getTransaction(@PathVariable Long id, @RequestHeader(name = "Authorization") String token) {
+        return transactionService.getTransaction(id, token);
     }
 
-    @GetMapping("/transactions/{id}")
-    public ResponseEntity<Object> getTransaction(@PathVariable Long id, @RequestHeader(name = "Authorization") String token) {
-        try {
-            userService.checkLoggedUser(token);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(mapper.getMapper()
-                            .map(transactionRepository.findById(id), TransactionDto.class));
-        } catch (UserNotLoggedException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
-        }
+    @PatchMapping("/transactions/{id}")
+    public ResponseEntity<?> patchTransaction(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token, @RequestBody String description) {
+        return transactionService.patchTransaction(id, token, description);
     }
 
     @PostMapping("/transactions/sendUsd")
-
     public ResponseEntity<Object> sendUsd(@RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
-
     }
 
     @PostMapping("/transactions/sendArs")

@@ -18,7 +18,7 @@ public class UserDto {
 
     private String password;
 
-    private Role role; // Clave foranea hacia ID de Role
+    private Role role;
 
     private Date creationDate;
 

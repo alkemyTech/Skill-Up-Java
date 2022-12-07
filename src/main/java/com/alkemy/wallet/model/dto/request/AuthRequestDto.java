@@ -13,13 +13,12 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class AuthRequestDto {
 
-    @NotEmpty(message = "Must provide an email")
-    @NotBlank(message = "The email cannot be whitespaces")
-    @Email(message = "Invalid email format")
+    @NotEmpty(message = "{user.empty-email}")
+    @NotBlank(message = "{user.blank-email}")
+    @Email(message = "{user.invalid-email}")
     private String email;
 
-    @NotEmpty(message = "The password cannot be empty")
-    @NotBlank(message = "The password cannot be whitespaces")
-    @NotBlank
+    @NotEmpty(message = "{user.empty-password}")
+    @NotBlank(message = "{user.blank-password}")
     private String password;
 }

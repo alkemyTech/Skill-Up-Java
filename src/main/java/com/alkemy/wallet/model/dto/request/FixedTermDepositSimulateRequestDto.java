@@ -10,17 +10,19 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static com.alkemy.wallet.utils.FixedTermDepositUtil.MIN_TO_INVEST;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
 public class FixedTermDepositSimulateRequestDto {
 
-    @NotNull(message = "Amount to invest cannot be null")
-    @Min(value = 1, message = "The minimum to invest is 1")
+    @NotNull(message = "{fixed.null-amount}")
+    @Min(value = MIN_TO_INVEST, message = "{fixed.min-amount}")
     private Double amount;
 
-    @NotEmpty(message = "Closing date cannot be null or empty")
-    @NotBlank(message = "Closing date cannot be whitespaces")
+    @NotEmpty(message = "{fixed.empty-date}")
+    @NotBlank(message = "{fixed.blank-date}")
     private String closingDate;
 }

@@ -15,23 +15,23 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class UserRequestDto {
 
-    @NotEmpty(message = "First name cannot be empty")
-    @NotBlank(message = "First name cannot be whitespaces")
+    @NotEmpty(message = "{user.empty-first-name}")
+    @NotBlank(message = "{user.blank-first-name}")
     private String firstName;
 
-    @NotEmpty(message = "Last name cannot be empty")
-    @NotBlank(message = "Last name cannot be whitespaces")
+    @NotEmpty(message = "{user.empty-last-name}")
+    @NotBlank(message = "{user.blank-last-name}")
     private String lastName;
 
-    @Email(message = "Invalid email format")
-    @NotEmpty(message = "Email cannot be empty")
-    @NotBlank(message = "Email cannot be whitespaces")
+    @Email(message = "{user.invalid-email}")
+    @NotEmpty(message = "{user.empty-email}")
+    @NotBlank(message = "{user.blank-email}")
     private String email;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @NotBlank(message = "Password cannot be whitespaces")
+    @NotEmpty(message = "{user.empty-password}")
+    @NotBlank(message = "{user.blank-password}")
     private String password;
 
-    @NotNull(message = "Must specify the id for the role")
+    @NotNull(message = "{user.role-id}")
     private Long roleId;
 }

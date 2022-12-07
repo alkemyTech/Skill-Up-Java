@@ -1,15 +1,16 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.security.service.UserDetailsCustomService;
-import com.alkemy.wallet.security.jwt.JwtUtils;
 import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Role;
+import com.alkemy.wallet.security.jwt.JwtUtils;
+import com.alkemy.wallet.security.service.UserDetailsCustomService;
 import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IRoleService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,13 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     private final JwtUtils jwtUtils;
     private final IUserService userService;
     private final IRoleService roleService;
+    private final CustomMessageSource messageSource;
 
     @Override
     public UserResponseDto register(UserRequestDto request) {
         if (userService.getByEmail(request.getEmail()) != null) {
-            throw new EntityExistsException(
-                    String.format("The email %s already exist in the data base", request.getEmail().toLowerCase()));
+            throw new EntityExistsException(messageSource
+                    .message("user.duplicated-email", new String[] {request.getEmail().toLowerCase()}));
         }
         if (roleService.getAll().isEmpty())
             roleService.save();

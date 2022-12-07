@@ -11,6 +11,7 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IRoleService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
+import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
 
 @Service
 @Transactional
@@ -37,6 +38,7 @@ public class UserServiceImpl implements IUserService {
     private final IAccountService accountService;
     private final IAuthenticationService authService;
     private final IRoleService roleService;
+    private final CustomMessageSource messageSource;
 
     @Override
     public UserResponseDto save(UserRequestDto request, Role role) {
@@ -53,11 +55,11 @@ public class UserServiceImpl implements IUserService {
     public UserResponseDto update(Long id, UserRequestDto request) {
         User user = getById(id);
         if (!user.getEmail().equals(authService.getEmailFromContext()))
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(messageSource.message("user.access", null));
         if ((request.getEmail() != null && !request.getEmail().isEmpty()))
-            throw new IllegalArgumentException("Cannot modify the email");
+            throw new IllegalArgumentException(messageSource.message("user.email-mod", null));
         if (request.getRoleId() != null)
-            throw new IllegalArgumentException("Cannot modify the role");
+            throw new IllegalArgumentException(messageSource.message("user.role-mod", null));
 
         user = mapper.refreshValues(request, user);
 
@@ -79,7 +81,7 @@ public class UserServiceImpl implements IUserService {
             return;
         }
         if (!user.getId().equals(id))
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(messageSource.message("user.access", null));
 
         user.setUpdateDate(LocalDateTime.now());
         user.setDeleted(true);
@@ -89,7 +91,7 @@ public class UserServiceImpl implements IUserService {
     public UserResponseDto getDetails(Long id) {
         User user = getById(id);
         if (!user.getEmail().equals(authService.getEmailFromContext()))
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(messageSource.message("user.access", null));
         return mapper.entity2Dto(user);
     }
 
@@ -101,7 +103,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getById(Long id) {
         Optional<User> user = repository.findById(id);
-        return user.orElseThrow(() -> new NullPointerException(String.format("User not found for id %s", id)));
+        return user.orElseThrow(() -> new NullPointerException(messageSource
+                .message("user.not-found", new Long[] {id})));
     }
 
     @Override

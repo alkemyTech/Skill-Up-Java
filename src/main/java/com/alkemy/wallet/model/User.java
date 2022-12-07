@@ -55,13 +55,4 @@ public class User {
 	@Column(name = "SOFT_DELETE")
 	private boolean softDelete = false;
 
-//	@PrePersist
-//	public void prePersist() {
-//		this.creationDate = new Date();
-//	}
-//
-//	@PreUpdate
-//	public void preUpdate() {
-//		this.updateDate = new Date();
-//	}
 }

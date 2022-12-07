@@ -3,7 +3,7 @@ package com.alkemy.wallet.service.interfaces;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.model.Transaction;
-import com.alkemy.wallet.service.TransactionService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
@@ -17,4 +17,5 @@ public interface ITransactionService {
 
     ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto);
 
+    Page<Transaction> paginateTransactionByUserId(Long id, int page, int size, String token);
 }

@@ -101,11 +101,6 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         User userUpdated = userRepository.save(user);
 
-//        userRepository.findByEmail(requestUserDto.getEmail()).setUpdateDate(Date.valueOf(LocalDate.now()));
-//        userRepository.findByEmail(requestUserDto.getEmail()).setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
-//        userRepository.findByEmail(requestUserDto.getEmail()).setFirstName(requestUserDto.getFirstName());
-//        userRepository.findByEmail(requestUserDto.getEmail()).setLastName(requestUserDto.getLastName());
-
         return mapper.getMapper().map(user, ResponseUserDto.class);
     }
 

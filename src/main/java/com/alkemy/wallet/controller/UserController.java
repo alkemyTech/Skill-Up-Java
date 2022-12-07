@@ -8,10 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+
+@RestController
 @RequestMapping("/users")
 @ApiModel("Controlador de usuario")
 public class UserController {
@@ -41,24 +41,13 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ResponseUserDto> findUser(@RequestBody RequestUserDto requestUserDto) {
         return ResponseEntity.ok().body(customUserDetailsService.findByEmail(requestUserDto.getEmail()));
-
-//        if(!customUserDetailsService.existsById(user.getId())){ //el Id no existe?
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
-//        }
-//        else{
-//            ResponseUserDto userFound = customUserDetailsService.findByEmail(user.getEmail());
-//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userFound);
-//        }
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<?> findAllUsers(Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(customUserDetailsService.findAllPageable(pageable));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron elementos" + e.getMessage());
-        }
+    public ResponseEntity<?> findAllUsers(Pageable pageable) throws Exception {
+        return ResponseEntity.status(HttpStatus.OK).body(customUserDetailsService.findAllPageable(pageable));
+
     }
 
 }

@@ -3,6 +3,7 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.exception.AccountLimitException;
 import com.alkemy.wallet.exception.NotEnoughCashException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
@@ -20,6 +21,9 @@ import com.alkemy.wallet.service.interfaces.ITransactionService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -85,13 +89,25 @@ public class TransactionService implements ITransactionService {
 
             return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));
         } catch (ResourceNotFoundException | UserNotLoggedException | AccountLimitException |
-                 NotEnoughCashException e) {
+                NotEnoughCashException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
         }
     }
 
     @Override
+    public Page<Transaction> paginateTransactionByUserId(Long id, int page, int size, String token) {
+
+        UserDto user = userService.findByEmail(jwtUtil.getValue(token));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Transaction> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable);
+
+        return pageTransactions;
+
+    }
+
     public ResponseEntity<?> getTransaction(Long id, String token) {
         try {
             userService.checkLoggedUser(token);
@@ -123,7 +139,9 @@ public class TransactionService implements ITransactionService {
     public boolean checkBalance(Double balance, Double amount) {
         if (balance < amount) {
             throw new NotEnoughCashException("Not enough cash");
-        } else return true;
+        } else {
+            return true;
+        }
     }
 
 }

@@ -15,7 +15,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- *
  * @author marti
  */
 @Getter
@@ -28,7 +27,6 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private Long id;
 
     @NotNull
@@ -47,8 +45,5 @@ public class Role {
     @Column(name = "UPDATE_DATE")
     @UpdateTimestamp
     private Date updateDate;
-
-
-
 
 }

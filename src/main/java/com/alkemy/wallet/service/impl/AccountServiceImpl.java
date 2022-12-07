@@ -14,6 +14,7 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ import java.util.*;
 
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.ARS;
 import static com.alkemy.wallet.model.constant.AccountCurrencyEnum.USD;
-import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
+import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.INCOME;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.PAYMENT;
 
@@ -44,14 +45,15 @@ public class AccountServiceImpl implements IAccountService {
     private final AccountMapper mapper;
     private final IAuthenticationService authService;
     private final IUserService userService;
+    private final CustomMessageSource messageSource;
 
     @Override
     public AccountResponseDto create(AccountRequestDto request) {
         User user = userService.getByEmail(authService.getEmailFromContext());
         user.getAccounts().forEach(account -> {
             if (request.getCurrency().equalsIgnoreCase(account.getCurrency().name()))
-                throw new EntityExistsException(String
-                        .format("An account in %s already exist", request.getCurrency().toUpperCase()));
+                throw new EntityExistsException(messageSource
+                        .message("account.duplicated", new String[] {request.getCurrency().toUpperCase()}));
         });
 
         AccountCurrencyEnum currency = getCurrencyType(request.getCurrency());
@@ -84,7 +86,7 @@ public class AccountServiceImpl implements IAccountService {
     public AccountResponseDto update(Long id, UpdateAccountRequestDto request) {
         Account account = getById(id);
         if (!account.getUser().getEmail().equals(authService.getEmailFromContext()))
-            throw new IllegalArgumentException("The account does not belong to current user");
+            throw new IllegalArgumentException(messageSource.message("account.out-of-bound", null));
         account.setTransactionLimit(request.getTransactionLimit());
         return mapper.entity2Dto(account);
     }
@@ -143,21 +145,21 @@ public class AccountServiceImpl implements IAccountService {
     public Account getByCurrencyAndUserId(String currency, Long userId) {
         Optional<Account> account = repository.findByCurrencyAndUserId(currency, userId);
         return account.orElseThrow(() ->
-                new NullPointerException("The account doesn't exist or the user is not present"));
+                new NullPointerException(messageSource.message("account.not-found", null)));
     }
 
     @Override
     public Account getById(Long id) {
         Optional<Account> account = repository.findById(id);
         return account.orElseThrow(() ->
-                new NullPointerException(String.format("Account with id %s was not found", id)));
+                new NullPointerException(messageSource.message("account.not-found", null)));
     }
 
     @Override
     public List<AccountResponseDto> getListByUserId(Long userId) {
         List<Account> accounts = repository.findAccountsByUserId(userId);
         if (accounts.isEmpty())
-            throw new NoSuchElementException("The user does not have accounts yet");
+            throw new NoSuchElementException(messageSource.message("account.empty-list", null));
         return mapper.entityList2DtoList(accounts);
     }
 
@@ -173,7 +175,7 @@ public class AccountServiceImpl implements IAccountService {
             return USD;
         if (ARS.name().equalsIgnoreCase(type))
             return ARS;
-        throw new InputMismatchException("Account currency can only be ARS or USD");
+        throw new InputMismatchException(messageSource.message("account.bad-currency-type", null));
     }
 
     protected Account buildAccount(User user, AccountCurrencyEnum currency, Double transactionLimit) {

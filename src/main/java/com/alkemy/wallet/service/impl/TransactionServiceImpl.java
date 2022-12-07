@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.impl;
 
-import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
 import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
@@ -13,6 +12,7 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,12 +20,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Optional;
 
-import static com.alkemy.wallet.model.constant.FinalValue.PAGE_SIZE;
 import static com.alkemy.wallet.model.constant.TransactionTypeEnum.*;
+import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
+import static com.alkemy.wallet.utils.TransactionUtil.setTransactionValues;
 
 @Service
 @Transactional
@@ -37,6 +37,7 @@ public class TransactionServiceImpl implements ITransactionService {
     private final IAccountService accountService;
     private final IUserService userService;
     private final IAuthenticationService authService;
+    private final CustomMessageSource messageSource;
 
     @Override
     public TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request) {
@@ -46,23 +47,22 @@ public class TransactionServiceImpl implements ITransactionService {
         User receiverUser = receiverAccount.getUser();
 
         if (receiverUser.equals(loggedUser))
-            throw new InputMismatchException("Trying to make a PAYMENT to one of your accounts");
+            throw new InputMismatchException(messageSource.message("transaction.payment-error", null));
         if (request.getAmount() > senderAccount.getBalance())
-            throw new InputMismatchException("Not enough money to send");
+            throw new InputMismatchException(messageSource.message("transaction.no-balance", null));
         if (request.getAmount() > senderAccount.getTransactionLimit())
-            throw new InputMismatchException("Transaction limit reached");
+            throw new InputMismatchException(messageSource.message("transaction.limit", null));
         if (!senderAccount.getCurrency().equals(receiverAccount.getCurrency()))
-            throw new IllegalArgumentException(String.format("Trying to send money from an %s account to an %s account",
-                            senderAccount.getCurrency(), receiverAccount.getCurrency()));
+            throw new InputMismatchException(messageSource.message("transaction.input-mismatch", null));
 
         Double newBalanceSender = senderAccount.getBalance() - request.getAmount();
         Double newBalanceReceiver = receiverAccount.getBalance() + request.getAmount();
         accountService.editBalanceAndSave(senderAccount, newBalanceSender);
         accountService.editBalanceAndSave(receiverAccount, newBalanceReceiver);
 
-        Transaction payment = setValues(
+        Transaction payment = setTransactionValues(
                 request.getAmount(), PAYMENT, request.getDescription(), loggedUser, receiverAccount);
-        Transaction income = setValues(
+        Transaction income = setTransactionValues(
                 request.getAmount(), INCOME, request.getDescription(), receiverUser, receiverAccount);
 
         repository.save(payment);
@@ -75,7 +75,7 @@ public class TransactionServiceImpl implements ITransactionService {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Transaction transaction = getById(id);
         if (!loggedUser.getTransactions().contains(transaction))
-            throw new IllegalArgumentException("The transaction does not belong to the current logged user");
+            throw new IllegalArgumentException(messageSource.message("transaction.out-of-bound", null));
         if (request.getDescription() != null && !request.getDescription().trim().isEmpty())
             transaction.setDescription(request.getDescription());
         return mapper.entity2Dto(transaction);
@@ -86,7 +86,7 @@ public class TransactionServiceImpl implements ITransactionService {
         User loggedUser = userService.getByEmail(authService.getEmailFromContext());
         Transaction transaction = getById(id);
         if (!transaction.getUser().equals(loggedUser))
-            throw new IllegalArgumentException("This transaction does not belong to current user");
+            throw new IllegalArgumentException(messageSource.message("transaction.out-of-bound", null));
         return mapper.entity2Dto(transaction);
     }
 
@@ -94,7 +94,8 @@ public class TransactionServiceImpl implements ITransactionService {
     public Transaction getById(Long id) {
         Optional<Transaction> transaction = repository.findById(id);
         return transaction.orElseThrow(() ->
-                new NullPointerException(String.format("Could not found the transaction with id %s", id)));
+                new NullPointerException(messageSource.message("transaction.not-found", new Long[] {id}))
+        );
     }
 
     @Override
@@ -109,12 +110,12 @@ public class TransactionServiceImpl implements ITransactionService {
         User user = receiverAccount.getUser();
 
         if (!user.getEmail().equals(authService.getEmailFromContext()))
-            throw new IllegalArgumentException("The receiver user is different that the sender");
+            throw new IllegalArgumentException(messageSource.message("transaction.deposit-error", null));
 
         double newBalance = receiverAccount.getBalance() + request.getAmount();
         accountService.editBalanceAndSave(receiverAccount, newBalance);
 
-        Transaction transaction = setValues(
+        Transaction transaction = setTransactionValues(
                 request.getAmount(), DEPOSIT, request.getDescription(), user, receiverAccount);
         return mapper.entity2Dto(repository.save(transaction));
     }
@@ -123,17 +124,5 @@ public class TransactionServiceImpl implements ITransactionService {
     public Page<TransactionResponseDto> paginateTransactions(Long userId, Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         return repository.findTransactionsByUserId(userId, pageable).map(mapper::entity2Dto);
-    }
-
-    protected Transaction setValues(Double amount, TransactionTypeEnum transactionType,
-                                    String description, User user, Account account) {
-        return Transaction.builder()
-                .amount(amount)
-                .type(transactionType)
-                .description(description)
-                .transactionDate(LocalDateTime.now())
-                .user(user)
-                .account(account)
-                .build();
     }
 }

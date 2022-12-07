@@ -15,15 +15,15 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class FixedTermDepositRequestDto {
 
-    @NotNull(message = "Must declare the amount of money to deposit")
-    @Min(value = 1, message = "The amount must be 1 positive minimum")
+    @NotNull(message = "{fixed.null-amount}")
+    @Min(value = 1, message = "{fixed.min-amount}")
     private Double amount;
 
-    @NotEmpty(message = "Specify the currency is mandatory")
-    @NotBlank(message = "Currency cannot be whitespaces")
+    @NotEmpty(message = "{fixed.empty-currency}")
+    @NotBlank(message = "{fixed.blank-currency}")
     private String currency;
 
-    @NotEmpty(message = "Must declare the closing date")
-    @NotBlank(message = "Closing date cannot be whitespaces")
+    @NotEmpty(message = "{fixed.empty-date}")
+    @NotBlank(message = "{fixed.blank-date}")
     private String closingDate;
 }

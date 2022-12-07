@@ -5,6 +5,8 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static com.alkemy.wallet.utils.TransactionUtil.MIN_AMOUNT_TO_SEND;
+
 @Data
 @Getter
 @Setter
@@ -12,10 +14,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class TransactionRequestDto {
-    @Min(value = 1, message = "The amount of money must be a minimum of 1 positive")
-    @NotNull(message = "Cannot be a null amount of money")
+    @Min(value = MIN_AMOUNT_TO_SEND, message = "{transaction.min-amount}")
+    @NotNull(message = "{transaction.null-amount}")
     private Double amount;
     private String description;
-    @NotNull(message = "Must declares the account that receive the money")
+    @NotNull(message = "{transaction.null-account}")
     private Long accountId;
 }

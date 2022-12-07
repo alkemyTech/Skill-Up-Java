@@ -5,13 +5,15 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static com.alkemy.wallet.utils.TransactionUtil.MIN_TRANSACTION_LIMIT;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 public class UpdateAccountRequestDto {
-    @NotNull(message = "The transaction limit cannot be null")
-    @Min(value = 1000, message = "The limit of transaction cannot be < 1000")
+    @NotNull(message = "{account.null-transaction-limit}")
+    @Min(value = MIN_TRANSACTION_LIMIT, message = "{account.min-transaction-limit}")
     Double transactionLimit;
 }

@@ -16,8 +16,7 @@ import java.util.HashSet;
 
 public interface IAccountRepository extends JpaRepository<Account,Long> {
 
-    @Query(value= "SELECT * FROM account where user_id = ?1", nativeQuery = true)
-    List<Account> getAccountsByUser(Long userId);
+    List<Account> findAllByUser_Id(Long userId);
 
     List<Account> findAllByUser_Email(String email);
 

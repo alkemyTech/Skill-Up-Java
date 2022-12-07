@@ -74,7 +74,7 @@ public class AccountService implements IAccountService {
     @Override
     @Transactional(readOnly = true)
     public List<Account> getAccountsByUserId(Long userId) throws EmptyResultDataAccessException {
-        List<Account> accounts = accountRepository.getAccountsByUser(userId);
+        List<Account> accounts = accountRepository.findAllByUser_Id(userId);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
@@ -128,7 +128,7 @@ public class AccountService implements IAccountService {
 
     @Override
     public boolean checkAccountExistence(Long user_id, Currency currency) {
-        List<Account> accounts = accountRepository.getAccountsByUser(user_id);
+        List<Account> accounts = accountRepository.findAllByUser_Id(user_id);
         for (Account account : accounts) {
             if (account.getCurrency() == currency) {
                 throw new AccountAlreadyExistsException("Account already exists");

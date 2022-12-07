@@ -19,7 +19,7 @@ public class TransactionModel extends RepresentationModel<TransactionModel> {
 
         private String description;
 
-        private Account account;
+        private Long accountId;
 
         private Date transactionDate;
 }

@@ -49,7 +49,7 @@ public class TransactionsController {
     private TransactionModelAssembler transactionModelAssembler;
 
     @Autowired
-    private PagedResourcesAssembler<Transaction> pagedResourcesAssembler;
+    private PagedResourcesAssembler<TransactionDto> pagedResourcesAssembler;
 
 
     @Autowired
@@ -75,7 +75,7 @@ public class TransactionsController {
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size,
                                                                 @RequestHeader("Authorization") String token) {
-        Page<Transaction> transactions = transactionService.paginateTransactionByUserId(userId, page, size, token);
+        Page<TransactionDto> transactions = transactionService.paginateTransactionByUserId(userId, page, size, token);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
 

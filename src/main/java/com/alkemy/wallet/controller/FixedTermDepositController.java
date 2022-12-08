@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/")
 public class FixedTermDepositController {
@@ -19,12 +21,12 @@ public class FixedTermDepositController {
     private IFixedTermService fixedTermService;
 
     @PostMapping("/fixedDeposit")
-    public ResponseEntity<FixedTermDto> createFixedDeposit (@RequestBody FixedTermDto fixedTermDto) {
+    public ResponseEntity<FixedTermDto> createFixedDeposit (@Valid @RequestBody FixedTermDto fixedTermDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto));
     }
 
     @PostMapping("/fixedTermDeposit/simulate")
-    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit (@RequestBody SimulatedFixedTermDto fixedTermDto) {
+    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit (@Valid @RequestBody SimulatedFixedTermDto fixedTermDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.simulateFixedTerm(fixedTermDto));
     }
 

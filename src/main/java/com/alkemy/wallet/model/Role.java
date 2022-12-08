@@ -11,22 +11,18 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- *
- * @author marti
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name="roles")
 @ApiModel("Rol")
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private Long id;
 
     @NotNull
@@ -45,8 +41,5 @@ public class Role {
     @Column(name = "UPDATE_DATE")
     @UpdateTimestamp
     private Date updateDate;
-
-
-
 
 }

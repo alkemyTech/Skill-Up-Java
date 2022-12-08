@@ -2,6 +2,8 @@ package com.alkemy.wallet.model;
 
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -45,23 +47,14 @@ public class User {
 	private Role role; // Clave foranea hacia ID de Role
 
 	@Column(name = "CREATION_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
+	@CreationTimestamp
 	private Date creationDate;
 
 	@Column(name = "UPDATE_DATE")
-	@Temporal(TemporalType.TIMESTAMP)
+	@UpdateTimestamp
 	private Date updateDate;
 
 	@Column(name = "SOFT_DELETE")
 	private boolean softDelete = false;
 
-//	@PrePersist
-//	public void prePersist() {
-//		this.creationDate = new Date();
-//	}
-//
-//	@PreUpdate
-//	public void preUpdate() {
-//		this.updateDate = new Date();
-//	}
 }

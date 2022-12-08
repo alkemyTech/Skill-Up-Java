@@ -61,10 +61,9 @@ public class Account {
         this.balance = 0.;
         if (currency == Currency.ars) {
             this.transactionLimit = 300000.0;
-            this.currency = currency;
         } else {
             this.transactionLimit = 1000.;
-            this.currency = currency;
         }
+        this.currency = currency;
     }
 }

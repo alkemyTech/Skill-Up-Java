@@ -1,6 +1,7 @@
 package com.alkemy.wallet.assembler.model;
 
 import com.alkemy.wallet.dto.BasicAccountDto;
+import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,16 +9,19 @@ import org.springframework.hateoas.RepresentationModel;
 
 @Setter
 @Getter
-public class TransactionModel extends RepresentationModel<TransactionModel> {
+public class AccountModel extends RepresentationModel<AccountModel>  {
 
     private Long id;
 
-    private Double amount;
+    private Currency currency;
 
-    private TypeOfTransaction type;
+    private Double transactionLimit;
 
-    private String description;
+    private Double balance;
 
-    private BasicAccountDto account;
+    private boolean softDelete;
+
+    private Long user_id;
+
 
 }

@@ -40,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser /*@RequestHeader("Authorization") String token*/) throws AuthenticationException {
+    public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword())
         );

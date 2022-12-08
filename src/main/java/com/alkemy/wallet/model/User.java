@@ -6,7 +6,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.Date;
 
 @Getter
@@ -14,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name="users")
 @ApiModel("Usuario")
 public class User {

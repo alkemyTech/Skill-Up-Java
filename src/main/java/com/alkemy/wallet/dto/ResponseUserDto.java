@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Builder
 @Data
 public class ResponseUserDto {
 

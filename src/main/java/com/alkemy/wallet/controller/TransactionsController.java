@@ -72,9 +72,9 @@ public class TransactionsController {
 
     @GetMapping("/transactions/page/{id}")
     public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(@PathVariable("id") Long userId,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
-                                                                @RequestHeader("Authorization") String token) {
+                                                                           @RequestParam(defaultValue = "0") int page,
+                                                                           @RequestParam(defaultValue = "10") int size,
+                                                                           @RequestHeader("Authorization") String token) {
         Page<Transaction> transactions = transactionService.paginateTransactionByUserId(userId, page, size, token);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
@@ -91,5 +91,15 @@ public class TransactionsController {
     public ResponseEntity<Object> sendArs(@RequestHeader(name = "Authorization") String
                                                   token, @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
+    }
+
+    @PostMapping("/transactions/deposit")
+    public ResponseEntity<?> postDeposit(@RequestBody TransactionDto transactionDto) {
+        return transactionService.createDeposit(transactionDto);
+    }
+
+    @PostMapping("/transactions/payment")
+    public ResponseEntity<?> postPayment(@RequestBody TransactionDto transcationDto) {
+        return transactionService.createPayment(transcationDto);
     }
 }

@@ -24,4 +24,10 @@ public interface ITransactionService {
     ResponseEntity<?>  patchTransaction(Long id, String token, String description);
 
     boolean checkBalance(Double balance, Double amount);
+
+    boolean checkTransactionAmount(Double amount);
+
+    ResponseEntity<?> createPayment(TransactionDto transctionDto);
+
+    ResponseEntity<?> createDeposit(TransactionDto transactionDto);
 }

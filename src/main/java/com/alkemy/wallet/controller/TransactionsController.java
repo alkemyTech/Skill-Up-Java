@@ -92,4 +92,14 @@ public class TransactionsController {
                                                   token, @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }
+
+    @PostMapping("/transactions/deposit")
+    public ResponseEntity<?> postDeposit(@RequestBody TransactionDto transactionDto) {
+        return transactionService.createDeposit(transactionDto);
+    }
+
+    @PostMapping("/transactions/payment")
+    public ResponseEntity<?> postPayment(@RequestBody TransactionDto transcationDto) {
+        return transactionService.createPayment(transcationDto);
+    }
 }

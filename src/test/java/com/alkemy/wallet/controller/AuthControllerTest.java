@@ -1,186 +1,126 @@
 package com.alkemy.wallet.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.mockito.Mockito.when;
-
-import com.alkemy.wallet.config.SecurityConfig;
 import com.alkemy.wallet.dto.LoginUserDto;
 import com.alkemy.wallet.dto.RequestUserDto;
-import com.alkemy.wallet.dto.ResponseUserDto;
-import com.alkemy.wallet.listing.RoleName;
-import com.alkemy.wallet.model.Role;
-import com.alkemy.wallet.model.User;
+import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Date;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(value = AuthController.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
+@Import({ObjectMapper.class, AuthController.class})
+@TestPropertySource(locations = "classpath:applicationtest.properties")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthControllerTest {
 
     @Autowired
+    public IUserRepository userRepo;
+    @Autowired
+    public IRoleRepository roleRepo;
+    RequestUserDto requestUserDto;
+    @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-    @MockBean
+    @Autowired
     private JwtUtil jwtUtil;
-
-    @MockBean
+    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @MockBean
+    @Autowired
     private IUserRepository userRepository;
-
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
     @Autowired
     private ObjectMapper objectMapper;
 
-    User user;
-
-    Role role;
-
-    @BeforeEach
-    void setUp() {
-        role = Role.builder()
-                .description("Usuario")
-                .name(RoleName.ROLE_USER)
-                .creationDate(new Date())
-                .build();
-
-        user = User.builder()
-                .id(1L)
-                .email("test@test.com")
-                .firstName("test")
-                .lastName("test")
-                .password(passwordEncoder.encode("test"))
-                .role(role)
-                .softDelete(false)
-                .creationDate(new Date())
-                .updateDate(new Date())
-                .build();
-
-    }
-
-
     @DisplayName("Signing up success")
     @Test
+    @Order(2)
     void signUpSucces() throws Exception {
-        // given
-        ResponseUserDto userDto = ResponseUserDto.builder()
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .build();
 
+        requestUserDto = RequestUserDto.builder()
+                .firstName("test")
+                .lastName("test")
+                .email("test@test.com")
+                .password("test").build();
 
-        when(customUserDetailsService.save(any(RequestUserDto.class)))
-                .thenReturn(userDto);
-
-
-        mockMvc.perform(post("/auth/register")
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "email": "test@test.com",
-                                    "firstName": "test",
-                                    "lastName": "test",
-                                    "password": "test"
-                                }
-                                """))
-                .andDo(print())
-                .andExpect(status().isCreated());
+                        .content(objectMapper.writeValueAsString(requestUserDto)))
+                .andExpect(status().isCreated()).andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.firstName", is("test")))
+                .andExpect(jsonPath("$.lastName", is("test")))
+                .andExpect(jsonPath("$.email", is("test@test.com")))
+                .andExpect(jsonPath("$.token", not(Matchers.blankString())));
     }
 
     @DisplayName("Signing up failed notNull nulled")
     @Test
+    @Order(1)
     void signUpFail() throws Exception {
-        // given
-        RequestUserDto user = RequestUserDto.builder()
-                .email("laacade@gmail.com")
-                .firstName(null)
-                .lastName("Argento")
-                .password("racing4ever")
-                .build();
 
-        // when
+        requestUserDto = RequestUserDto.builder()
+                .firstName("test")
+                .lastName(null)
+                .email("test@test.com")
+                .password("test").build();
 
-        ResultActions response = mockMvc.perform(post("/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)));
-        // then
-        response.andDo(print())
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestUserDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @DisplayName("Signing in success")
     @Test
+    @Order(4)
     void signInSuccess() throws Exception {
-        // given
-        RequestUserDto user = RequestUserDto.builder()
-                .email("laacade@gmail.com")
-                .firstName("Pepe")
-                .lastName("Argento")
-                .password("racing4ever")
-                .build();
 
-        ResultActions verifyGiven = mockMvc.perform(post("/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)));
+        LoginUserDto loginDto = LoginUserDto.builder()
+                .email("test@test.com")
+                .password("test").build();
 
-        verifyGiven.andDo(print())
-                .andExpect(status().isCreated());
-
-
-        // when
-        ResultActions result = mockMvc.perform(post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "email": "asd",
-                                    "password": "asd"
-                                }
-                                """))
-                .andDo(print())
+                        .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isOk());
     }
 
     @DisplayName("Signing in failed wrong pass")
     @Test
+    @Order(3)
     void signInFailed() throws Exception {
+        LoginUserDto loginDto = LoginUserDto.builder()
+                .email("test@test.com")
+                .password("cualquiercosa").build();
 
-        ResultActions result = mockMvc.perform(post("/auth/login")
-                        .with(SecurityMockMvcRequestPostProcessors
-                                .authentication(new UsernamePasswordAuthenticationToken(
-                                        "laacade@gmail.com", "otracosa")))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDto)))
                 .andExpect(status().isForbidden());
     }
 }

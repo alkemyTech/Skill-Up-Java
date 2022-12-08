@@ -8,6 +8,8 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class ResponseUserDto {
 

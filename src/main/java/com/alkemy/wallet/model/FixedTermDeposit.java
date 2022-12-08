@@ -32,12 +32,11 @@ public class FixedTermDeposit {
 
     @NotNull
     @Column(name = "CREATION_DATE")
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @CreationTimestamp
     private Date creationDate;
 
     @NotNull
     @Column(name = "CLOSING_DATE")
-    @JsonFormat(pattern="dd-MM-yyyy")
     private Date closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

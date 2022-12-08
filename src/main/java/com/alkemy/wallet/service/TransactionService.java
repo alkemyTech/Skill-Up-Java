@@ -97,13 +97,14 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Page<Transaction> paginateTransactionByUserId(Long id, int page, int size, String token) {
+    public Page<TransactionDto> paginateTransactionByUserId(Long id, int page, int size, String token) {
 
         UserDto user = userService.findByEmail(jwtUtil.getValue(token));
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Transaction> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable);
+        Page<TransactionDto> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable).map((transaction) ->
+                        mapper.getMapper().map(transaction, TransactionDto.class));
 
         return pageTransactions;
 

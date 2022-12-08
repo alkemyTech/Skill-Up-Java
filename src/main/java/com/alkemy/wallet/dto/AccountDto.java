@@ -21,11 +21,11 @@ public class AccountDto {
     @NotNull
     private Currency currency;
 
-    private Double transactionLimit;
+//    private Double transactionLimit;
 
-    private Double balance;
+//    private Double balance;
 
-    private boolean softDelete;
+//    private boolean softDelete;
 
     private Long user_id;
 

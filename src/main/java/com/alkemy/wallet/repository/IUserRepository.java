@@ -11,6 +11,12 @@ import java.util.Optional;
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
 
+    @Query(value = "SELECT CASE WHEN COUNT(u.email) = 1 THEN " +
+            "'true' ELSE 'false' END " +
+            "FROM wallet.users u " +
+            "WHERE u.email = ?", nativeQuery = true)
+    Boolean selectExistsEmail(String email);
+
     @Query(value = "SELECT * FROM users WHERE email LIKE :email", nativeQuery = true)
     Optional<User> findByEmail(@Param("email") String email);
 }

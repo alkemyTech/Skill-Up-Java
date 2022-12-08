@@ -28,11 +28,6 @@ import java.util.List;
 @Service
 public class AccountService implements IAccountService {
 
-    private static final Double LIMIT_USD = 1000D;
-
-    private static final Double LIMIT_ARS = 300000D;
-
-
     private IAccountRepository accountRepository;
 
     private IUserService userService;

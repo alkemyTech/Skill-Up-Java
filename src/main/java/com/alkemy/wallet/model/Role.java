@@ -14,9 +14,6 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * @author marti
- */
 @Getter
 @Setter
 @NoArgsConstructor

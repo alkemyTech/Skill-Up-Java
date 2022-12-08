@@ -18,7 +18,6 @@ public class TransactionModelAssembler extends RepresentationModelAssemblerSuppo
     @Override
     public TransactionModel toModel(TransactionDto dto) {
         TransactionModel model = new TransactionModel();
-        // Both CustomerModel and Customer have the same property names. So copy the values from the Entity to the Model
         BeanUtils.copyProperties(dto, model);
         return model;
     }

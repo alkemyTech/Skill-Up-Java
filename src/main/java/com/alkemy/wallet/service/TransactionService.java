@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TransactionService implements ITransactionService {
+
     @Autowired
     Mapper mapper;
 
@@ -97,7 +98,7 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Page<TransactionDto> paginateTransactionByUserId(Long id, int page, int size, String token) {
+    public Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, int size, String token) {
 
         UserDto user = userService.findByEmail(jwtUtil.getValue(token));
 

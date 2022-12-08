@@ -63,9 +63,8 @@ public class TransactionsController {
     @GetMapping("/transactions/page/{id}")
     public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(@PathVariable("id") Long userId,
                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
                                                                 @RequestHeader("Authorization") String token) {
-        Page<TransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, size, token);
+        Page<TransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, token);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
 

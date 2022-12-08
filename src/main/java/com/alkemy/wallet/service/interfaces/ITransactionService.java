@@ -17,7 +17,7 @@ public interface ITransactionService {
 
     ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto);
 
-    Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, int size, String token);
+    Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token);
 
     ResponseEntity<?> getTransaction(Long id, String token);
 

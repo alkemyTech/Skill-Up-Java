@@ -1,6 +1,6 @@
 package com.alkemy.wallet.assembler.model;
 
-import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +18,6 @@ public class TransactionModel extends RepresentationModel<TransactionModel> {
 
     private String description;
 
-    private AccountDto account;
+    private BasicAccountDto account;
 
 }

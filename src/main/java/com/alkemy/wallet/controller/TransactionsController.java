@@ -88,7 +88,7 @@ public class TransactionsController {
     }
 
     @PostMapping("/transactions/payment")
-    public ResponseEntity<?> postPayment(@RequestBody TransactionDto transcationDto) {
-        return transactionService.createPayment(transcationDto);
+    public ResponseEntity<?> postPayment(@RequestBody TransactionDto transactionDto) {
+        return transactionService.createPayment(transactionDto);
     }
 }

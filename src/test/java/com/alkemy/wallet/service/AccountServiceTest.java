@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-
 class AccountServiceTest {
 
     @InjectMocks
@@ -40,7 +39,7 @@ class AccountServiceTest {
     private ModelMapper mapper;
 
     @Test
-    public void getAccountsByUserId(){
+    public void getAccountsByUserId() {
 
         //Arrange
         Account accountMock = new Account();
@@ -64,12 +63,12 @@ class AccountServiceTest {
         Integer count = accounts.size();
 
         //Assert
-        assertEquals(count,1);
+        assertEquals(count, 1);
 
     }
 
     @Test
-    public void emptyResultDataAccessException(){
+    public void emptyResultDataAccessException() {
         //Arrange
         List<Account> simulations = new ArrayList<>();
         when(accountRepository.getAccountsByUser(10l))
@@ -79,13 +78,15 @@ class AccountServiceTest {
 
         try {
             var accounts = accountService.getAccountsByUserId(10l);
-        }catch (EmptyResultDataAccessException e){
-            exceptionMessage  = e.getMessage();
+        } catch (EmptyResultDataAccessException e) {
+            exceptionMessage = e.getMessage();
         }
 
         //Assert
-        assertThrows(EmptyResultDataAccessException.class, ()-> { accountService.getAccountsByUserId(10l);});
-        assertEquals("El usuario no posee cuentas",  exceptionMessage);
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            accountService.getAccountsByUserId(10l);
+        });
+        assertEquals("El usuario no posee cuentas", exceptionMessage);
     }
 
 }

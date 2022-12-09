@@ -1,11 +1,8 @@
 package com.alkemy.wallet.repository;
 
-import com.alkemy.wallet.model.Transaction;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +20,7 @@ public interface IUserRepository extends PagingAndSortingRepository<User, Long>,
 
     Optional<User> findOptionalByEmail(String email);
 
-    Boolean existsById(long id);
+    boolean existsById(Long id);
 
     List<User> findAll();
 

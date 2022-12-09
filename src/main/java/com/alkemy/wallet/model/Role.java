@@ -3,10 +3,7 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.listing.RoleName;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
@@ -14,14 +11,13 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.util.Date;
 
-/**
- * @author marti
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
+@Table(name="roles")
 @ApiModel("Rol")
 public class Role {
 

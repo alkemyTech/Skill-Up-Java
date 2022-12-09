@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.interfaces;
 
-import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
@@ -18,7 +17,7 @@ public interface ITransactionService {
 
     ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto);
 
-    Page<Transaction> paginateTransactionByUserId(Long id, int page, int size, String token);
+    Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token);
 
     ResponseEntity<?> getTransaction(Long id, String token);
 

@@ -1,10 +1,6 @@
 package com.alkemy.wallet.dto;
 
-import com.alkemy.wallet.model.Account;
-import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Date;
 
@@ -21,6 +17,10 @@ public class TransactionDto {
 
     private String description;
 
+
     private AccountDto account;
+
+    private BasicAccountDto account;
+
 
 }

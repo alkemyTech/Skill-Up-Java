@@ -3,10 +3,7 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.assembler.TransactionModelAssembler;
 import com.alkemy.wallet.assembler.model.TransactionModel;
 import com.alkemy.wallet.dto.TransactionDto;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
-import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.mapper.Mapper;
-import com.alkemy.wallet.model.Transaction;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ITransactionService;
@@ -15,17 +12,11 @@ import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 
 @RestController
@@ -49,8 +40,7 @@ public class TransactionsController {
     private TransactionModelAssembler transactionModelAssembler;
 
     @Autowired
-    private PagedResourcesAssembler<Transaction> pagedResourcesAssembler;
-
+    private PagedResourcesAssembler<TransactionDto> pagedResourcesAssembler;
 
     @Autowired
     private IUserService userService;
@@ -72,10 +62,9 @@ public class TransactionsController {
 
     @GetMapping("/transactions/page/{id}")
     public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(@PathVariable("id") Long userId,
-                                                                           @RequestParam(defaultValue = "0") int page,
-                                                                           @RequestParam(defaultValue = "10") int size,
-                                                                           @RequestHeader("Authorization") String token) {
-        Page<Transaction> transactions = transactionService.paginateTransactionByUserId(userId, page, size, token);
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestHeader("Authorization") String token) {
+        Page<TransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, token);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
 

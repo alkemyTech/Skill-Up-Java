@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.dto.AccountUpdateDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.exception.*;
@@ -11,10 +12,12 @@ import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
-import io.swagger.models.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,11 +30,6 @@ import java.util.List;
 
 @Service
 public class AccountService implements IAccountService {
-
-    private static final Double LIMIT_USD = 1000D;
-
-    private static final Double LIMIT_ARS = 300000D;
-
 
     private IAccountRepository accountRepository;
 
@@ -50,7 +48,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public AccountDto createAccount(Account account) {
+    public BasicAccountDto createAccount(Account account) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -67,14 +65,14 @@ public class AccountService implements IAccountService {
         account.setUser(user);
         account.setCreationDate(new Date());
 
-        return mapper.map(accountRepository.save(account), AccountDto.class);
+        return mapper.map(accountRepository.save(account), BasicAccountDto.class);
 
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Account> getAccountsByUserId(Long userId) throws EmptyResultDataAccessException {
-        List<Account> accounts = accountRepository.getAccountsByUser(userId);
+        List<Account> accounts = accountRepository.findAllByUser_Id(userId);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
@@ -84,14 +82,26 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
+    public Page<AccountDto> findAllAccountsPageable(int page) throws EmptyResultDataAccessException {
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        Page<AccountDto> pageAccounts = accountRepository.findAll(pageable).map((account) ->
+                mapper.map(account, AccountDto.class));
+
+        return pageAccounts;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BasicAccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
         return accounts.stream().map(account ->
-                mapper.map(account, AccountDto.class)
+                mapper.map(account, BasicAccountDto.class)
         ).toList();
     }
 
@@ -120,7 +130,7 @@ public class AccountService implements IAccountService {
             Account account = accountRepository.findById(id).orElseThrow();
             mapper.map(newTransactionLimit, account);
             Account accountUpdated = accountRepository.save(account);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.map(accountUpdated, AccountDto.class));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.map(accountUpdated, BasicAccountDto.class));
         } catch (UserNotLoggedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
@@ -128,7 +138,7 @@ public class AccountService implements IAccountService {
 
     @Override
     public boolean checkAccountExistence(Long user_id, Currency currency) {
-        List<Account> accounts = accountRepository.getAccountsByUser(user_id);
+        List<Account> accounts = accountRepository.findAllByUser_Id(user_id);
         for (Account account : accounts) {
             if (account.getCurrency() == currency) {
                 throw new AccountAlreadyExistsException("Account already exists");
@@ -138,12 +148,12 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<?> postAccount(AccountDto accountDto, String token) {
+    public ResponseEntity<?> postAccount(BasicAccountDto basicAccountDto, String token) {
         try {
             userService.checkLoggedUser(token);
 //            UserDto loggedUser = userService.findByEmail(jwtUtil.getValue(token));
-//            checkAccountExistence(loggedUser.getId(), accountDto.getCurrency());
-            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(accountDto, Account.class)));
+//            checkAccountExistence(loggedUser.getId(), basicAccountDto.getCurrency());
+            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(basicAccountDto, Account.class)));
 
         } catch (UserNotLoggedException | AccountAlreadyExistsException e) {
             System.out.println(e.getMessage());

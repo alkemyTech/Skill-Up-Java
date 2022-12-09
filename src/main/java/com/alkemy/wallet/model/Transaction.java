@@ -3,14 +3,17 @@ package com.alkemy.wallet.model;
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Entity
 @Data
-@Table(name = "transaction")
+@RequiredArgsConstructor
+@Entity
+@Table(name = "transactions")
 @ApiModel("Transacción")
 public class Transaction {
 
@@ -36,12 +39,8 @@ public class Transaction {
     private Account account;
 
     @Column(name = "TRANSACTION_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     private Date transactionDate;
-
-    public Transaction() {
-
-    }
 
     public Transaction(Double amount, TypeOfTransaction type, String description, Account account) {
         this.amount = amount;

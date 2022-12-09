@@ -30,4 +30,10 @@ public class RoleService implements IRoleService {
         throw new ResourceNotFoundException("Role name not found");
     }
 
+    @Override
+    public RoleDto createRole(RoleDto roleDto) {
+        Role role = mapper.getMapper().map(roleDto, Role.class);
+        return mapper.getMapper().map(roleRepository.save(role), RoleDto.class);
+    }
+
 }

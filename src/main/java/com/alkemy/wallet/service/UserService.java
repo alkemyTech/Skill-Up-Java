@@ -20,12 +20,12 @@ public class UserService implements IUserService {
 
     private final Mapper mapper;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    public UserService(IUserRepository userRepository, Mapper mapper) {
+    public UserService(IUserRepository userRepository, Mapper mapper, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override

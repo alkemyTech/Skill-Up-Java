@@ -5,7 +5,6 @@ import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,4 +25,7 @@ public interface ICustomUserDetailsService {
     Page<ResponseUserDto> findAllUsersPageable(int page) throws Exception;
 
     ResponseUserDto getUserAuthenticated();
+
+    ResponseUserDto getUserLoggedById(Long id);
+
 }

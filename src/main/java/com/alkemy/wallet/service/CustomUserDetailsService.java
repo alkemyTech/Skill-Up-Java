@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CustomUserDetailsService implements ICustomUserDetailsService {
@@ -153,4 +154,18 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         ResponseUserDto userDto = mapper.getMapper().map(userRepository.findByEmail(email), ResponseUserDto.class);
         return userDto;
     }
+
+    @Override
+    public ResponseUserDto getUserLoggedById(Long id) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(Objects.equals(userRepository.findByEmail(auth.getName()).getId(), id))) {
+            throw new ResourceFoundException("Resource out of permissions");
+        }
+        User user = userRepository.findByEmail(auth.getName());
+
+        return mapper.getMapper().map(user, ResponseUserDto.class);
+    }
+
+
 }

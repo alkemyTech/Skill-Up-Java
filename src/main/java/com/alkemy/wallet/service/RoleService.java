@@ -31,9 +31,8 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public RoleDto createRole(RoleDto roleDto) {
-        Role role = mapper.getMapper().map(roleDto, Role.class);
-        return mapper.getMapper().map(roleRepository.save(role), RoleDto.class);
+    public Role createRole(Role role) {
+        return roleRepository.save(role);
     }
 
 }

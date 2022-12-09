@@ -1,9 +1,6 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.BasicAccountDto;
-import com.alkemy.wallet.dto.AccountUpdateDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.User;
@@ -94,14 +91,14 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BasicAccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
+    public List<Account> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
         return accounts.stream().map(account ->
-                mapper.map(account, BasicAccountDto.class)
+                mapper.map(account, Account.class)
         ).toList();
     }
 
@@ -160,4 +157,13 @@ public class AccountService implements IAccountService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
     }
+
+    @Override
+    public List<BalanceDto> getBalance(String token) {
+        //User user = userService.findLoggedUser(token);
+        //getAccountsByUserEmail(user.getEmail()).stream().map()(account ->  )
+        return null;
+    }
+
+
 }

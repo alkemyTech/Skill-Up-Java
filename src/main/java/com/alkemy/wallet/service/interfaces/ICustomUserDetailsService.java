@@ -7,6 +7,7 @@ import com.alkemy.wallet.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public interface ICustomUserDetailsService {
@@ -14,6 +15,8 @@ public interface ICustomUserDetailsService {
     List<ResponseUserDto> findAll();
 
     Boolean existsById(Long id);
+
+    ResponseUserDto saveAdmin(@Valid RequestUserDto requestUserDto) throws ResourceFoundException;
 
     ResponseUserDto update(RequestUserDto requestUserDto) throws ResourceNotFoundException;
 

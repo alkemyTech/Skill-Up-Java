@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
@@ -30,9 +31,11 @@ public class FixedTermDeposit {
 
     @NotNull
     @CreationTimestamp
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date creationDate;
 
     @NotNull
+    @JsonFormat(pattern="dd-MM-yyyy")
     private Date closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

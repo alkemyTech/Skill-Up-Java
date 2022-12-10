@@ -65,7 +65,11 @@ public class FixedTermService implements IFixedTermService {
 
         FixedTermDeposit fixedTermSaved = fixedTermRepository.save(fixedTerm);
 
-        return mapper.getMapper().map(fixedTerm, FixedTermDto.class);
+        FixedTermDto fixedTermDtoMapped= mapper.getMapper().map(fixedTerm, FixedTermDto.class);
+
+        fixedTermDtoMapped.setCurrency(fixedTermSaved.getAccount().getCurrency());
+
+        return fixedTermDtoMapped;
 
     }
 

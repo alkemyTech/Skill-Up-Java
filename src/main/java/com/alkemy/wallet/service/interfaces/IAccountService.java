@@ -1,9 +1,6 @@
 package com.alkemy.wallet.service.interfaces;
 
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.BasicAccountDto;
-import com.alkemy.wallet.dto.AccountUpdateDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,7 +20,7 @@ public interface IAccountService {
     Page<AccountDto> findAllAccountsPageable(int page) throws EmptyResultDataAccessException;
 
     @Transactional(readOnly = true)
-    List<BasicAccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException;
+    List<AccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException;
 
     Account getAccountByCurrency(Long user_id, Currency currency);
 
@@ -34,4 +31,6 @@ public interface IAccountService {
     boolean checkAccountExistence(Long user_id, Currency currency);
 
     ResponseEntity<?> postAccount(BasicAccountDto basicAccountDto, String token);
+
+    List<BalanceDto> getBalance(String token);
 }

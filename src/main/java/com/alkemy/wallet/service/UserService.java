@@ -8,7 +8,6 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,7 +31,16 @@ public class UserService implements IUserService {
     public boolean checkLoggedUser(String token) {
         if (jwtUtil.getValue(token) != null)
             return true;
-        else throw new UserNotLoggedException("User not logged");
+        throw new UserNotLoggedException("User not logged");
+    }
+
+    @Override
+    public User findLoggedUser(String token) {
+        User user = userRepository.findByEmail(jwtUtil.getValue(token));
+        if (user != null) {
+            return user;
+        }
+        throw new UserNotLoggedException("User not logged");
     }
 
     @Override

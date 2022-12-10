@@ -35,7 +35,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     public UserResponseDto register(UserRequestDto request) {
-        if (userService.getByEmail(request.getEmail()) != null) {
+        boolean emailExist = userService.selectExistsEmail(request.getEmail().toLowerCase());
+        if (emailExist) {
             throw new EntityExistsException(messageSource
                     .message("user.duplicated-email", new String[] {request.getEmail().toLowerCase()}));
         }

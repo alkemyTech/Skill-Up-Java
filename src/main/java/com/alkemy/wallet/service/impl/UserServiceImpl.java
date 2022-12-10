@@ -114,6 +114,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public boolean selectExistsEmail(String email) {
+        return repository.selectExistsEmail(email);
+    }
+
+    @Override
     public Page<UserResponseDto> findAll(Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         pageable.next().getPageNumber();

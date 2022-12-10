@@ -23,5 +23,7 @@ public interface IUserService {
 
     User getByEmail(String email);
 
+    boolean selectExistsEmail(String email);
+
     Page<UserResponseDto> findAll(Integer pageNumber);
 }

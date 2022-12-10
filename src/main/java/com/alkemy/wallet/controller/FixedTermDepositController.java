@@ -27,7 +27,7 @@ public class FixedTermDepositController {
 
     @PostMapping("/fixedTermDeposit/simulate")
     public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit (@Valid @RequestBody SimulatedFixedTermDto fixedTermDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.simulateFixedTerm(fixedTermDto));
+        return ResponseEntity.status(HttpStatus.OK).body(fixedTermService.simulateFixedTerm(fixedTermDto));
     }
 
 }

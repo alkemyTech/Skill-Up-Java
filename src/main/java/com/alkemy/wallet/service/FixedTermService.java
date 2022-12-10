@@ -14,8 +14,10 @@ import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -50,14 +52,12 @@ public class FixedTermService implements IFixedTermService {
         Account account = accountRepository.findByCurrencyAndUser_Email(fixedTermDto.getCurrency(), user.getEmail());
 
         fixedTerm.setAccount(account);
-        fixedTerm.setCreationDate(new Date());
+        fixedTerm.setCreationDate(LocalDate.now());
 
-        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
-        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
+        long days = ChronoUnit.DAYS.between(fixedTerm.getCreationDate(), fixedTerm.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
+            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + " days");
         }
 
         fixedTerm.setInterest(fixedTerm.getAmount() * DAILY_INTEREST * days);
@@ -65,7 +65,7 @@ public class FixedTermService implements IFixedTermService {
 
         FixedTermDeposit fixedTermSaved = fixedTermRepository.save(fixedTerm);
 
-        FixedTermDto fixedTermDtoMapped= mapper.getMapper().map(fixedTerm, FixedTermDto.class);
+        FixedTermDto fixedTermDtoMapped= mapper.getMapper().map(fixedTermSaved, FixedTermDto.class);
 
         fixedTermDtoMapped.setCurrency(fixedTermSaved.getAccount().getCurrency());
 
@@ -76,11 +76,10 @@ public class FixedTermService implements IFixedTermService {
     @Override
     public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
 
-        long diffInMillies = Math.abs(fixedTermDto.getCreationDate().getTime() - fixedTermDto.getClosingDate().getTime());
-        long days = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        long days = ChronoUnit.DAYS.between(fixedTermDto.getCreationDate(), fixedTermDto.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + "days");
+            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + " days");
         }
 
         Double interest = fixedTermDto.getAmount() * DAILY_INTEREST * days;

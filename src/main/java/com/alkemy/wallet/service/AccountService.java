@@ -1,16 +1,20 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.exception.*;
+import com.alkemy.wallet.exception.AccountAlreadyExistsException;
+import com.alkemy.wallet.exception.AccountLimitException;
+import com.alkemy.wallet.exception.ResourceFoundException;
+import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
+import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,25 +27,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService implements IAccountService {
 
-    private IAccountRepository accountRepository;
+    private final IAccountRepository accountRepository;
+    private final IFixedTermRepository fixedTermRepository;
+    private final IUserService userService;
+    private final ModelMapper mapper;
+    private final JwtUtil jwtUtil;
 
-    private IUserService userService;
-
-    private ModelMapper mapper;
-
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public AccountService(IAccountRepository accountRepository, IUserService userService, ModelMapper mapper) {
+    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, ModelMapper mapper, JwtUtil jwtUtil) {
         this.accountRepository = accountRepository;
+        this.fixedTermRepository = fixedTermRepository;
         this.userService = userService;
         this.mapper = mapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -91,14 +93,14 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Account> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
+    public List<AccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
         return accounts.stream().map(account ->
-                mapper.map(account, Account.class)
+                mapper.map(account, AccountDto.class)
         ).toList();
     }
 
@@ -160,10 +162,24 @@ public class AccountService implements IAccountService {
 
     @Override
     public List<BalanceDto> getBalance(String token) {
-        //User user = userService.findLoggedUser(token);
-        //getAccountsByUserEmail(user.getEmail()).stream().map()(account ->  )
-        return null;
+        User user = userService.findLoggedUser(token);
+        List<AccountDto> accounts = getAccountsByUserEmail(user.getEmail());
+        return accounts
+                .stream()
+                .map(this::getBalanceByAccount)
+                .collect(Collectors.toList());
     }
 
+    private BalanceDto getBalanceByAccount(AccountDto accountDto) {
+        BalanceDto balanceDto = mapper.map(accountDto, BalanceDto.class);
+        List<FixedTermDeposit> fixedTermList = fixedTermRepository.findAllByAccount_Id(accountDto.getId());
+        List<FixedTermDto> fixedTermDtoList = fixedTermList
+                .stream()
+                .map(fixedTerm -> mapper.map(fixedTerm, FixedTermDto.class))
+                .collect(Collectors.toList());
+        fixedTermDtoList.stream().forEach(fixedTermDto -> fixedTermDto.setCurrency(accountDto.getCurrency()));
+        balanceDto.setFixedTermDto(fixedTermDtoList);
+        return balanceDto;
+    }
 
 }

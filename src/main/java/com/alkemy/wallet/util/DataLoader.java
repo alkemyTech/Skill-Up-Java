@@ -51,9 +51,41 @@ public class DataLoader implements CommandLineRunner {
         userService.save(user);
 
         user = RequestUserDto.builder()
+                .firstName("Nicolas")
+                .lastName("Tagliafico")
+                .email("tagliafico@gmail.com")
+                .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Julián")
+                .lastName("Álvarez")
+                .email("laarania@gmail.com")
+                .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Paulo")
+                .lastName("Dybala")
+                .email("dybala@gmail.com")
+                .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Gonzalo")
+                .lastName("Montiel")
+                .email("montiel@gmail.com")
+                .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
                 .firstName("Nahuel")
                 .lastName("Molina")
-                .email("negro@gmail.com")
+                .email("molina@gmail.com")
                 .password("password")
                 .build();
         userService.save(user);
@@ -61,7 +93,7 @@ public class DataLoader implements CommandLineRunner {
         user = RequestUserDto.builder()
                 .firstName("Nicolás ")
                 .lastName("Otamendi")
-                .email("elgeneral@gmail.com")
+                .email("otamendi@gmail.com")
                 .password("password")
                 .build();
         userService.save(user);
@@ -69,15 +101,7 @@ public class DataLoader implements CommandLineRunner {
         user = RequestUserDto.builder()
                 .firstName("Rodrigo")
                 .lastName("De Paul")
-                .email("pollo@gmail.com")
-                .password("password")
-                .build();
-        userService.save(user);
-
-        user = RequestUserDto.builder()
-                .firstName("Emiliano")
-                .lastName("Martinez")
-                .email("dibu@gmail.com")
+                .email("depaul@gmail.com")
                 .password("password")
                 .build();
         userService.save(user);
@@ -93,10 +117,27 @@ public class DataLoader implements CommandLineRunner {
         user = RequestUserDto.builder()
                 .firstName("Lisandro")
                 .lastName("Martinez")
-                .email("lisandro@gmail.com")
+                .email("licha@gmail.com")
                 .password("password")
                 .build();
         userService.save(user);
+
+        /* ROLE_ADMIN */
+        user = RequestUserDto.builder()
+                .firstName("Emiliano")
+                .lastName("Martinez")
+                .email("dibu@gmail.com")
+                .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Lionel")
+                .lastName("Messi")
+                .email("lapulga@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
 
         user = RequestUserDto.builder()
                 .firstName("Marcos")
@@ -104,7 +145,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("huevo@gmail.com")
                 .password("password")
                 .build();
-        userService.save(user);
+        userService.saveAdmin(user);
 
         user = RequestUserDto.builder()
                 .firstName("Alexis")
@@ -112,7 +153,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("macallister@gmail.com")
                 .password("password")
                 .build();
-        userService.save(user);
+        userService.saveAdmin(user);
 
         user = RequestUserDto.builder()
                 .firstName("Enzo")
@@ -120,8 +161,47 @@ public class DataLoader implements CommandLineRunner {
                 .email("enzo@gmail.com")
                 .password("password")
                 .build();
-        userService.save(user);
+        userService.saveAdmin(user);
 
-        /* ROLE_ADMIN */
+        user = RequestUserDto.builder()
+                .firstName("Leandro")
+                .lastName("Paredes")
+                .email("paredes@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Lautaro")
+                .lastName("Martinez")
+                .email("eltoro@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Ángel")
+                .lastName("Di Maria")
+                .email("fideo@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Ángel")
+                .lastName("Correa")
+                .email("correa@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
+
+        user = RequestUserDto.builder()
+                .firstName("Exequiel")
+                .lastName("Palacios")
+                .email("palacios@gmail.com")
+                .password("password")
+                .build();
+        userService.saveAdmin(user);
+
     }
 }

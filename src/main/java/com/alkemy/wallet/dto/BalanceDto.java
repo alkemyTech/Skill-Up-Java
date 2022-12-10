@@ -1,20 +1,23 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.enums.Currency;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
+@Setter
 public class BalanceDto {
+
+    private Long id;
 
     private Double balance;
 
     private Currency currency;
 
-    private Set<FixedTermDto> fixedTermDto;
+    private List<FixedTermDto> fixedTermDto;
 
 }

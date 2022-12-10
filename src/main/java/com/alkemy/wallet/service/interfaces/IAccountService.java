@@ -20,7 +20,7 @@ public interface IAccountService {
     Page<AccountDto> findAllAccountsPageable(int page) throws EmptyResultDataAccessException;
 
     @Transactional(readOnly = true)
-    List<Account> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException;
+    List<AccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException;
 
     Account getAccountByCurrency(Long user_id, Currency currency);
 

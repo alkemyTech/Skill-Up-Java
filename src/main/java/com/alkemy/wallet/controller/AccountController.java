@@ -82,9 +82,8 @@ public class AccountController {
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<List<BalanceDto>> getBalance(String token) {
+    public ResponseEntity<List<BalanceDto>> getBalance(@RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.getBalance(token));
     }
-
 
 }

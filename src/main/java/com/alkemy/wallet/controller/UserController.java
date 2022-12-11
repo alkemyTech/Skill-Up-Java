@@ -3,7 +3,9 @@ package com.alkemy.wallet.controller;
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.CustomUserDetailsService;
+import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.annotations.ApiModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public UserController(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
@@ -56,9 +61,23 @@ public class UserController {
     public ResponseEntity<?> findAllUsers(Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(customUserDetailsService.findAllPageable(pageable));
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron elementos" + e.getMessage());
         }
+    }
+
+    @PreAuthorize("hasRole('ADMIN','USER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
+
+        String usuarioId = jwtUtil.getKey(token);
+        if (usuarioId == null) {
+            return null;
+        }
+        customUserDetailsService.softDelete(id);
+
+        return ResponseEntity.ok(Boolean.TRUE);
+
     }
 
 }

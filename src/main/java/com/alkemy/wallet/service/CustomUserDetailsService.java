@@ -35,7 +35,7 @@ import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements ICustomUserDetailsService {
-
+    
     @Autowired
     JwtUtil jwtTokenUtil;
     @Autowired
@@ -50,34 +50,35 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    
     @Override
-    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
-
+    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {
+        /*Acordar exceptions*/
+        
         if (userRepository.existsByEmail(requestUserDto.getEmail())) {
             throw new ResourceFoundException("User email already exists");
         }
-
+        
         User user = mapper.getMapper().map(requestUserDto, User.class);
         user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
-
+        
         Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_USER), Role.class);
         user.setRole(role);
         user.setCreationDate(new Date());
         User userSaved = userRepository.save(user);
-
+        
         String token = this.authenticated(requestUserDto);
-
+        
         accountService.createAccount(new Account(Currency.ars));
         accountService.createAccount(new Account(Currency.usd));
-
+        
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
-
+        
         return responseUserDto;
-
+        
     }
-
+    
     private String authenticated(RequestUserDto requestUserDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(requestUserDto.getEmail(), requestUserDto.getPassword())
@@ -86,31 +87,32 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         String token = jwtTokenUtil.create(authentication);
         return token;
     }
-
+    
     @Override
-    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
+    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) throws ResourceNotFoundException {
+        /*Acordar exceptions*/
         if (!userRepository.existsByEmail(requestUserDto.getEmail())) {
             throw new ResourceNotFoundException("User email does not exists");
         }
         User user = userRepository.findByEmail(requestUserDto.getEmail());
-
+        
         user.setUpdateDate(new Date());
         user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
         user.setFirstName(requestUserDto.getFirstName());
         user.setLastName(requestUserDto.getLastName());
-
+        
         User userUpdated = userRepository.save(user);
-
+        
         return mapper.getMapper().map(user, ResponseUserDto.class);
     }
-
+    
     @Override
     public ResponseUserDto findByEmail(String email) throws ResourceNotFoundException {
         if (!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("User not found");
         }
         User user = userRepository.findByEmail(email);
-
+        
         return mapper.getMapper().map(user, ResponseUserDto.class);
 
 //        userDto.setId(userRepository.findByEmail(email).getId());
@@ -118,14 +120,13 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 //        userDto.setLastName(userRepository.findByEmail(email).getLastName());
 //        userDto.setEmail(userRepository.findByEmail(email).getEmail());
 //        userDto.setPassword(userRepository.findByEmail(email).getPassword());
-
     }
-
+    
     @Override
     public Boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
-
+    
     @Override
     public List<ResponseUserDto> findAll() {
         List<User> listaUser = userRepository.findAll();
@@ -136,7 +137,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         }
         return listaResponse;
     }
-
+    
     @Override
     @Transactional
     public Page<ResponseUserDto> findAllPageable(Pageable pageable) throws Exception {
@@ -145,15 +146,30 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
             return new PageImpl<ResponseUserDto>(
                     findAll(), listaUser.getPageable(), listaUser.getTotalElements()
             );
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
-
+    
     @Override
     public ResponseUserDto getUserAuthenticated() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         ResponseUserDto userDto = mapper.getMapper().map(userRepository.findByEmail(email), ResponseUserDto.class);
         return userDto;
+    }
+    
+    public void softDelete(Long id) {
+        
+        User user = userRepository.findById(id).get();
+        
+        if (user.getRole().toString() == "ADMIN") {
+            
+            user.setSoftDelete(Boolean.TRUE);
+            
+        } else if (user.getRole().toString() == "USER" && user.getId() == id) {
+            
+            user.setSoftDelete(Boolean.TRUE);
+        }
+        
     }
 }

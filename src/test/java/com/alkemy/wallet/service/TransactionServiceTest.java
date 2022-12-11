@@ -52,11 +52,11 @@ class TransactionServiceTest {
 
         accountArsDto = new AccountDto();
         accountArsDto.setCurrency(Currency.usd);
-        accountArsDto.setUser_id(1L);
+        accountArsDto.setUserId(1L);
 
         accountUsdDto = new AccountDto();
         accountUsdDto.setCurrency(Currency.ars);
-        accountUsdDto.setUser_id(2L);
+        accountUsdDto.setUserId(2L);
         accountUsdDto.setId(2L);
 
         transactionDeposit = new TransactionDto();

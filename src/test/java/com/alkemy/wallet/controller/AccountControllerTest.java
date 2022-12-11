@@ -1,5 +1,9 @@
 package com.alkemy.wallet.controller;
 
+import com.alkemy.wallet.dto.AccountUpdateDto;
+import com.alkemy.wallet.exception.FixedTermException;
+import com.alkemy.wallet.exception.ResourceNotFoundException;
+import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.FixedTermDeposit;
@@ -28,10 +32,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -136,13 +141,12 @@ class AccountControllerTest {
 
     @Test
     void when_getBalance_successfully() throws Exception {
+
         when(userRepository.findByEmail(anyString())).thenReturn(user);
-
         when(accountRepository.findAllByUser_Email(anyString())).thenReturn(List.of(accountArs, accountUsd));
-
         when(fixedTermRepository.findAllByAccount_Id(accountArs.getId())).thenReturn(List.of(fixedTermArs));
-
         when(fixedTermRepository.findAllByAccount_Id(accountUsd.getId())).thenReturn(List.of(fixedTermUsdOne, fixedTermUsdTwo));
+
 
         mockMvc.perform(MockMvcRequestBuilders.get("/accounts/balance")
                         .with(csrf())
@@ -169,7 +173,81 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$[1].fixedTerm[1].amount", is(500D)))
                 .andExpect(jsonPath("$[1].fixedTerm[1].creationDate", is(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
                 .andExpect(jsonPath("$[1].fixedTerm[1].closingDate", is(LocalDate.now().plusDays(35).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))));
+    }
+
+    @Test
+    void when_getBalance_fails_withUserIsNotFound() throws Exception {
+        token = jwtUtil.create("fake@user.com");
+
+        when(userRepository.findByEmail(anyString())).thenReturn(null);
+        when(accountRepository.findAllByUser_Email(anyString())).thenReturn(List.of(accountArs, accountUsd));
+        when(fixedTermRepository.findAllByAccount_Id(accountArs.getId())).thenReturn(List.of(fixedTermArs));
+        when(fixedTermRepository.findAllByAccount_Id(accountUsd.getId())).thenReturn(List.of(fixedTermUsdOne, fixedTermUsdTwo));
 
 
+        mockMvc.perform(MockMvcRequestBuilders.get("/accounts/balance")
+                        .with(csrf())
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotLoggedException))
+                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
+                        "User not logged"));
+
+    }
+
+    @Test
+    void updateAccountController_successfully() throws Exception {
+
+        Account updatedAccountArs = Account.builder()
+                .id(1L)
+                .balance(100000D)
+                .transactionLimit(400000D)
+                .creationDate(new Date())
+                .user(user)
+                .currency(Currency.ars)
+                .build();
+        AccountUpdateDto newTransactionLimit = new AccountUpdateDto(400000D);
+
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(accountRepository.findAllByUser_Email(anyString())).thenReturn(List.of(accountArs, accountUsd));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(accountArs));
+        when(accountRepository.save(any(Account.class))).thenReturn(updatedAccountArs);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/accounts/{id}", accountArs.getId())
+                        .with(csrf())
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newTransactionLimit)))
+                .andExpect(status().isAccepted())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.balance", is(100000D)))
+                .andExpect(jsonPath("$.currency", is("ars")))
+                .andExpect(jsonPath("$.transactionLimit", is(400000D)))
+                .andExpect(jsonPath("$.userId", is(1)));
+    }
+
+    @Test
+    void updateAccountController_fails_whenAccountDoesNotBelongToUserLogged() throws Exception {
+
+        AccountUpdateDto newTransactionLimit = new AccountUpdateDto(400000D);
+
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+        when(accountRepository.findAllByUser_Email(anyString())).thenReturn(List.of(accountArs, accountUsd));
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(accountArs));
+
+        Long anotherId = 3L;
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/accounts/{id}", anotherId)
+                        .with(csrf())
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newTransactionLimit)))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
+                        "Account with id  " + anotherId + " does not belong to this user"));
     }
 }

@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -74,10 +75,10 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     }
 
     @Override
-    public ResponseUserDto saveAdmin(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
+    public ResponseUserDto saveAdmin(@Valid RequestUserDto requestUserDto) throws SQLIntegrityConstraintViolationException {  /*Acordar exceptions*/
 
         if (userRepository.existsByEmail(requestUserDto.getEmail())) {
-            throw new ResourceFoundException("User email already exists");
+            throw new SQLIntegrityConstraintViolationException("User email already exists");
         }
 
         User user = mapper.getMapper().map(requestUserDto, User.class);

@@ -14,7 +14,6 @@ import java.util.Date;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@NoArgsConstructor
 @Table(name = "accounts")
 //@ApiModel("Cuenta")
 public class Account {

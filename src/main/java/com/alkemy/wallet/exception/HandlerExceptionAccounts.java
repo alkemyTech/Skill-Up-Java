@@ -1,5 +1,6 @@
 package com.alkemy.wallet.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Map;
 
+@Hidden
 @RestControllerAdvice
 public class HandlerExceptionAccounts {
 

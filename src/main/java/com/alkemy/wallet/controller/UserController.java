@@ -2,7 +2,6 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.UserModelAssembler;
 import com.alkemy.wallet.assembler.model.UserModel;
-import com.alkemy.wallet.dto.AuthToken;
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
@@ -76,8 +75,7 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Paged user list",
             description = "Provides a paged user list to be verified by administrators",
-            tags = "Get",
-            security = {})
+            tags = "Get")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Users found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),

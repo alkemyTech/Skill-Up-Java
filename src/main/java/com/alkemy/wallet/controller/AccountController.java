@@ -2,8 +2,6 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.AccountModelAssembler;
 import com.alkemy.wallet.assembler.model.AccountModel;
-import com.alkemy.wallet.assembler.model.TransactionModel;
-import com.alkemy.wallet.assembler.model.UserModel;
 import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.BasicAccountDto;
@@ -29,7 +27,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounts")
-//@ApiModel("Controlador de Cuentas")
 public class AccountController {
 
     @Autowired

@@ -1,19 +1,17 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.BasicAccountDto;
-import com.alkemy.wallet.dto.AccountUpdateDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
+import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,25 +24,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService implements IAccountService {
 
-    private IAccountRepository accountRepository;
+    private final IAccountRepository accountRepository;
+    private final IFixedTermRepository fixedTermRepository;
+    private final IUserService userService;
+    private final ModelMapper mapper;
+    private final JwtUtil jwtUtil;
 
-    private IUserService userService;
-
-    private ModelMapper mapper;
-
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    public AccountService(IAccountRepository accountRepository, IUserService userService, ModelMapper mapper) {
+    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, ModelMapper mapper, JwtUtil jwtUtil) {
         this.accountRepository = accountRepository;
+        this.fixedTermRepository = fixedTermRepository;
         this.userService = userService;
         this.mapper = mapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -94,14 +91,14 @@ public class AccountService implements IAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BasicAccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
+    public List<AccountDto> getAccountsByUserEmail(String email) throws EmptyResultDataAccessException {
         List<Account> accounts = accountRepository.findAllByUser_Email(email);
 
         if (accounts.isEmpty()) {
             throw new EmptyResultDataAccessException("User has no accounts", 1);
         }
         return accounts.stream().map(account ->
-                mapper.map(account, BasicAccountDto.class)
+                mapper.map(account, AccountDto.class)
         ).toList();
     }
 
@@ -126,10 +123,18 @@ public class AccountService implements IAccountService {
 
     public ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit, String token) {
         try {
-            userService.checkLoggedUser(token);
-            Account account = accountRepository.findById(id).orElseThrow();
+            User user = userService.findLoggedUser(token);
+            Account account = accountRepository.findById(id).orElseThrow(()
+                    -> new ResourceNotFoundException("Account with id " + id + " not found"));
+            List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
+
+            if (accounts.stream().noneMatch(c -> c.getId().equals(id))) {
+                throw new ResourceNotFoundException("Account with id  " + id + " does not belong to this user");
+            }
+
             mapper.map(newTransactionLimit, account);
             Account accountUpdated = accountRepository.save(account);
+            BasicAccountDto basicAccountDto = mapper.map(accountUpdated, BasicAccountDto.class);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.map(accountUpdated, BasicAccountDto.class));
         } catch (UserNotLoggedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
@@ -160,4 +165,46 @@ public class AccountService implements IAccountService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
     }
+
+    @Override
+    public List<BalanceDto> getBalance(String token) {
+        User user = userService.findLoggedUser(token);
+        List<AccountDto> accounts = getAccountsByUserEmail(user.getEmail());
+        return accounts
+                .stream()
+                .map(this::getBalanceByAccount)
+                .collect(Collectors.toList());
+    }
+
+    private BalanceDto getBalanceByAccount(AccountDto accountDto) {
+        BalanceDto balanceDto = mapper.map(accountDto, BalanceDto.class);
+        List<FixedTermDeposit> fixedTermList = fixedTermRepository.findAllByAccount_Id(accountDto.getId());
+        List<FixedTermDto> fixedTermDtoList = fixedTermList
+                .stream()
+                .map(fixedTerm -> mapper.map(fixedTerm, FixedTermDto.class))
+                .collect(Collectors.toList());
+        fixedTermDtoList.stream().forEach(fixedTermDto -> fixedTermDto.setCurrency(accountDto.getCurrency()));
+        balanceDto.setFixedTerm(fixedTermDtoList);
+        return balanceDto;
+    }
+
+    @Override
+    public AccountDto updateBalance(Long id, Double amount) {
+        if (amount <= 0) {
+            throw new NoAmountException("Cannot make a transaction without amount");
+        }
+        Optional<Account> foundAccount = accountRepository.findById(id);
+        if (!foundAccount.isPresent()) {
+            throw new ResourceFoundException("Account not found with the given id " + id);
+        }
+        if (foundAccount.get().getBalance() < amount) {
+            throw new NotEnoughCashException("Not enough cash");
+        }
+        Account account = foundAccount.get();
+        account.setBalance(account.getBalance() - amount);
+
+        return mapper.map(account, AccountDto.class);
+    }
+
+
 }

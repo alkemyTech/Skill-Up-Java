@@ -71,6 +71,32 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         responseUserDto.setToken(token);
 
         return responseUserDto;
+    }
+
+    @Override
+    public ResponseUserDto saveAdmin(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
+
+        if (userRepository.existsByEmail(requestUserDto.getEmail())) {
+            throw new ResourceFoundException("User email already exists");
+        }
+
+        User user = mapper.getMapper().map(requestUserDto, User.class);
+        user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
+
+        Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_ADMIN), Role.class);
+        user.setRole(role);
+        user.setCreationDate(new Date());
+        User userSaved = userRepository.save(user);
+
+        String token = this.authenticated(requestUserDto);
+
+        accountService.createAccount(new Account(Currency.ars));
+        accountService.createAccount(new Account(Currency.usd));
+
+        ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
+        responseUserDto.setToken(token);
+
+        return responseUserDto;
 
     }
 
@@ -120,13 +146,13 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
     @Override
     public List<ResponseUserDto> findAll() {
-        List<User> listaUser = userRepository.findAll();
-        List<ResponseUserDto> listaResponse = new ArrayList<>();
-        for (User user : listaUser) {
+        List<User> listUser = userRepository.findAll();
+        List<ResponseUserDto> listResponse = new ArrayList<>();
+        for (User user : listUser) {
             ResponseUserDto responseUserDto = mapper.getMapper().map(user, ResponseUserDto.class);
-            listaResponse.add(responseUserDto);
+            listResponse.add(responseUserDto);
         }
-        return listaResponse;
+        return listResponse;
     }
 
     @Override

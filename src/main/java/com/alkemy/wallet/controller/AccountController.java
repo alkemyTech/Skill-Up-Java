@@ -2,6 +2,9 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.AccountModelAssembler;
 import com.alkemy.wallet.assembler.model.AccountModel;
+import com.alkemy.wallet.assembler.model.TransactionModel;
+import com.alkemy.wallet.assembler.model.UserModel;
+import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.dto.AccountUpdateDto;
@@ -70,9 +73,7 @@ public class AccountController {
         return ResponseEntity.ok().body(model);
     }
 
-
-
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> postAccount(@RequestHeader(name = "Authorization") String token, @RequestBody BasicAccountDto basicAccountDto) {
         return accountService.postAccount(basicAccountDto, token);
     }
@@ -80,6 +81,11 @@ public class AccountController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateAccountController(@PathVariable Long id, @Valid @RequestBody AccountUpdateDto newTransactionLimit, @RequestHeader("Authorization") String token) {
         return accountService.updateAccount(id, newTransactionLimit, token);
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<List<BalanceDto>> getBalance(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(accountService.getBalance(token));
     }
 
 }

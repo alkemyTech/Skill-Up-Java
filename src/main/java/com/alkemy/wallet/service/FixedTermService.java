@@ -60,13 +60,9 @@ public class FixedTermService implements IFixedTermService {
         }
 
         fixedTerm.setInterest(fixedTerm.getAmount() * DAILY_INTEREST * days);
-
         accountService.updateBalance(account.getId(), fixedTerm.getAmount());
-
         FixedTermDeposit fixedTermSaved = fixedTermRepository.save(fixedTerm);
-
         FixedTermDto fixedTermDtoMapped= mapper.getMapper().map(fixedTermSaved, FixedTermDto.class);
-
         fixedTermDtoMapped.setCurrency(fixedTermSaved.getAccount().getCurrency());
 
         return fixedTermDtoMapped;
@@ -75,7 +71,6 @@ public class FixedTermService implements IFixedTermService {
 
     @Override
     public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
-
         long days = ChronoUnit.DAYS.between(fixedTermDto.getCreationDate(), fixedTermDto.getClosingDate());
 
         if (days < MIN_DAYS) {
@@ -83,9 +78,7 @@ public class FixedTermService implements IFixedTermService {
         }
 
         Double interest = fixedTermDto.getAmount() * DAILY_INTEREST * days;
-
         fixedTermDto.setInterest(interest);
-
         fixedTermDto.setTotalAmount(fixedTermDto.getAmount() + interest);
 
         return fixedTermDto;

@@ -18,6 +18,6 @@ public class BalanceDto {
 
     private Currency currency;
 
-    private List<FixedTermDto> fixedTermDto;
+    private List<FixedTermDto> fixedTerm;
 
 }

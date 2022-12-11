@@ -176,7 +176,7 @@ public class AccountService implements IAccountService {
                 .map(fixedTerm -> mapper.map(fixedTerm, FixedTermDto.class))
                 .collect(Collectors.toList());
         fixedTermDtoList.stream().forEach(fixedTermDto -> fixedTermDto.setCurrency(accountDto.getCurrency()));
-        balanceDto.setFixedTermDto(fixedTermDtoList);
+        balanceDto.setFixedTerm(fixedTermDtoList);
         return balanceDto;
     }
 

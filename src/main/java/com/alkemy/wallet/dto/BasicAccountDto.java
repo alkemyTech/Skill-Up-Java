@@ -2,6 +2,8 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.enums.Currency;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class BasicAccountDto {
 
     private Long id;
@@ -16,13 +19,11 @@ public class BasicAccountDto {
     @NotNull
     private Currency currency;
 
-//    private Double transactionLimit;
+    private Double transactionLimit;
 
-//    private Double balance;
+    private Double balance;
 
-//    private boolean softDelete;
-
-    private Long user_id;
+    private Long userId;
 
     public BasicAccountDto(Currency currency) {
         this.currency = currency;

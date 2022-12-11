@@ -148,13 +148,13 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
     @Override
     public List<ResponseUserDto> findAll() {
-        List<User> listaUser = userRepository.findAll();
-        List<ResponseUserDto> listaResponse = new ArrayList<>();
-        for (User user : listaUser) {
+        List<User> listUser = userRepository.findAll();
+        List<ResponseUserDto> listResponse = new ArrayList<>();
+        for (User user : listUser) {
             ResponseUserDto responseUserDto = mapper.getMapper().map(user, ResponseUserDto.class);
-            listaResponse.add(responseUserDto);
+            listResponse.add(responseUserDto);
         }
-        return listaResponse;
+        return listResponse;
     }
 
     @Override

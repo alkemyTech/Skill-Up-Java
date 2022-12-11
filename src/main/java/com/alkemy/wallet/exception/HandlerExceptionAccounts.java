@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -28,5 +29,29 @@ public class HandlerExceptionAccounts {
                 .developerMessage(ExceptionUtils.getRootCauseMessage(exception))
                 .build();
         return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({ResourceNotFoundException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleNotExistResourceException (Exception exception) {
+        ApiException apiException = ApiException.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .message(exception.getMessage())
+                .developerMessage(ExceptionUtils.getRootCauseMessage(exception))
+                .build();
+        return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({UserNotLoggedException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleNotLoggedUser(Exception exception) {
+        ApiException apiException = ApiException.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .message(exception.getMessage())
+                .developerMessage(ExceptionUtils.getRootCauseMessage(exception))
+                .build();
+        return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
 }

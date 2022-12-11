@@ -17,7 +17,6 @@ public class TransactionDto {
 
     private String description;
 
-
     private AccountDto account;
 
 //    private BasicAccountDto account;

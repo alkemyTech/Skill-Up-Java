@@ -123,10 +123,18 @@ public class AccountService implements IAccountService {
 
     public ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit, String token) {
         try {
-            userService.checkLoggedUser(token);
-            Account account = accountRepository.findById(id).orElseThrow();
+            User user = userService.findLoggedUser(token);
+            Account account = accountRepository.findById(id).orElseThrow(()
+                    -> new ResourceNotFoundException("Account with id " + id + " not found"));
+            List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
+
+            if (accounts.stream().noneMatch(c -> c.getId().equals(id))) {
+                throw new ResourceNotFoundException("Account with id  " + id + " does not belong to this user");
+            }
+
             mapper.map(newTransactionLimit, account);
             Account accountUpdated = accountRepository.save(account);
+            BasicAccountDto basicAccountDto = mapper.map(accountUpdated, BasicAccountDto.class);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.map(accountUpdated, BasicAccountDto.class));
         } catch (UserNotLoggedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
@@ -185,18 +193,14 @@ public class AccountService implements IAccountService {
         if (amount <= 0) {
             throw new NoAmountException("Cannot make a transaction without amount");
         }
-
         Optional<Account> foundAccount = accountRepository.findById(id);
-
         if (!foundAccount.isPresent()) {
             throw new ResourceFoundException("Account not found with the given id " + id);
         }
-
         if (foundAccount.get().getBalance() < amount) {
             throw new NotEnoughCashException("Not enough cash");
         }
         Account account = foundAccount.get();
-
         account.setBalance(account.getBalance() - amount);
 
         return mapper.map(account, AccountDto.class);

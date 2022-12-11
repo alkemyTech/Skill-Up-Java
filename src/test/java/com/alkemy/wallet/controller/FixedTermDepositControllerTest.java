@@ -121,11 +121,8 @@ class FixedTermDepositControllerTest {
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
-
         when(accountRepository.findByCurrencyAndUser_Email(any(Currency.class), anyString())).thenReturn(account);
-
         when(fixedTermRepository.save(any(FixedTermDeposit.class))).thenReturn(fixedTermDeposit);
-
         when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(account));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedDeposit")
@@ -140,8 +137,10 @@ class FixedTermDepositControllerTest {
                 .andExpect(jsonPath("$.amount", is(2000D)))
                 .andExpect(jsonPath("$.accountId", is(1)))
                 .andExpect(jsonPath("$.interest", is(0.005)))
-                .andExpect(jsonPath("$.creationDate", is(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
-                .andExpect(jsonPath("$.closingDate", is(LocalDate.now().plusDays(35).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
+                .andExpect(jsonPath("$.creationDate", is(LocalDate.now()
+                        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
+                .andExpect(jsonPath("$.closingDate", is(LocalDate.now().plusDays(35)
+                        .format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
                 .andExpect(jsonPath("$.currency", is("ars")));
 
     }
@@ -185,9 +184,7 @@ class FixedTermDepositControllerTest {
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
-
         when(accountRepository.findByCurrencyAndUser_Email(any(Currency.class), anyString())).thenReturn(account);
-
         when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(account));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedDeposit")

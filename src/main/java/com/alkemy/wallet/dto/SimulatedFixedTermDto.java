@@ -16,9 +16,9 @@ public class SimulatedFixedTermDto {
     private Double totalAmount;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private Date creationDate;
+    private LocalDate creationDate;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private Date closingDate;
+    private LocalDate closingDate;
 
 }

@@ -1,10 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.*;
-import com.alkemy.wallet.exception.AccountAlreadyExistsException;
-import com.alkemy.wallet.exception.AccountLimitException;
-import com.alkemy.wallet.exception.ResourceFoundException;
-import com.alkemy.wallet.exception.UserNotLoggedException;
+import com.alkemy.wallet.exception.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.model.User;
@@ -27,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -181,5 +179,28 @@ public class AccountService implements IAccountService {
         balanceDto.setFixedTermDto(fixedTermDtoList);
         return balanceDto;
     }
+
+    @Override
+    public AccountDto updateBalance(Long id, Double amount) {
+        if (amount <= 0) {
+            throw new NoAmountException("Cannot make a transaction without amount");
+        }
+
+        Optional<Account> foundAccount = accountRepository.findById(id);
+
+        if (!foundAccount.isPresent()) {
+            throw new ResourceFoundException("Account not found with the given id " + id);
+        }
+
+        if (foundAccount.get().getBalance() < amount) {
+            throw new NotEnoughCashException("Not enough cash");
+        }
+        Account account = foundAccount.get();
+
+        account.setBalance(account.getBalance() - amount);
+
+        return mapper.map(account, AccountDto.class);
+    }
+
 
 }

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -24,10 +25,10 @@ public class FixedTermDto {
     private Double interest;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private Date creationDate;
+    private LocalDate creationDate;
 
     @JsonFormat(pattern="dd-MM-yyyy")
-    private Date closingDate;
+    private LocalDate closingDate;
 
     private Currency currency;
 

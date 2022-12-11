@@ -8,14 +8,12 @@ import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DataLoader implements CommandLineRunner {
-
-    @Autowired
-    private IRoleService roleService;
+public class DataLoaderUser implements CommandLineRunner {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -28,15 +26,6 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        Role role;
-        role = Role.builder()
-                .name(RoleName.ROLE_ADMIN).build();
-        roleService.createRole(role);
-
-        role = Role.builder()
-                .name(RoleName.ROLE_USER).build();
-        roleService.createRole(role);
 
         /* ROLE_USER */
 
@@ -119,6 +108,14 @@ public class DataLoader implements CommandLineRunner {
                 .lastName("Martinez")
                 .email("licha@gmail.com")
                 .password("password")
+                .build();
+        userService.save(user);
+
+        user = RequestUserDto.builder()
+                .firstName("test")
+                .lastName("test")
+                .email("test@gmail.com")
+                .password("test")
                 .build();
         userService.save(user);
 

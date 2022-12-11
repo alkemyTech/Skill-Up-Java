@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.CustomUserDetailsService;
+import com.alkemy.wallet.util.DataLoaderUser;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -13,7 +14,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.TestPropertySource;
@@ -30,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import({ObjectMapper.class, AuthController.class})
-@TestPropertySource(locations = "classpath:applicationtest.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthControllerTest {
 
@@ -39,8 +42,13 @@ class AuthControllerTest {
     @Autowired
     public IRoleRepository roleRepo;
     RequestUserDto requestUserDto;
+
     @Autowired
     private MockMvc mockMvc;
+
+//    @MockBean
+//    DataLoaderUser dataLoaderUser;
+
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
@@ -55,7 +63,7 @@ class AuthControllerTest {
     @DisplayName("Signing up success")
     @Test
     @Order(2)
-    void signUpSucces() throws Exception {
+    void signUpSuccess() throws Exception {
 
         requestUserDto = RequestUserDto.builder()
                 .firstName("test")

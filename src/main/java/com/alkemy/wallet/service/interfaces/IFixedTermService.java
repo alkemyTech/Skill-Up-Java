@@ -5,7 +5,7 @@ import com.alkemy.wallet.dto.SimulatedFixedTermDto;
 
 public interface IFixedTermService {
 
-    FixedTermDto createFixedTerm(FixedTermDto fixedTermDto);
+    FixedTermDto createFixedTerm(FixedTermDto fixedTermDto, String token);
 
     SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto);
 }

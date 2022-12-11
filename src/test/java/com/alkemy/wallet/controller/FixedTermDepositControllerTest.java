@@ -56,24 +56,18 @@ class FixedTermDepositControllerTest {
     IUserRepository userRepository;
     @MockBean
     IFixedTermRepository fixedTermRepository;
+    @MockBean
+    IAccountRepository accountRepository;
     User user;
     Role role;
     Account account;
     String token;
-    @MockBean
-    IAccountRepository accountRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtUtil jwtUtil;
-
-    @Autowired
-    private CustomUserDetailsService userService;
 
     @BeforeEach
     void setup() {
@@ -139,7 +133,6 @@ class FixedTermDepositControllerTest {
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(fixedTermDto)))
-
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

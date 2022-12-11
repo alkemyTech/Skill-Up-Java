@@ -2,6 +2,7 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.FixedTermDto;
 import com.alkemy.wallet.exception.FixedTermException;
+import com.alkemy.wallet.exception.NotEnoughCashException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.FixedTermDeposit;
@@ -11,15 +12,20 @@ import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.util.DataLoaderUser;
+import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,42 +33,47 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ContextConfiguration
 @TestPropertySource(locations = "classpath:application-test.properties")
 class FixedTermDepositControllerTest {
 
+    static final Integer MIN_DAYS = 30;
     @MockBean
     DataLoaderUser dataLoaderUser;
-
     @MockBean
     IUserRepository userRepository;
     @MockBean
     IFixedTermRepository fixedTermRepository;
-
     User user;
     Role role;
     Account account;
-
-    private static final Integer MIN_DAYS = 30;
-
-
+    String token;
     @MockBean
     IAccountRepository accountRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private CustomUserDetailsService userService;
 
     @BeforeEach
     void setup() {
@@ -91,6 +102,8 @@ class FixedTermDepositControllerTest {
                 .user(user)
                 .currency(Currency.ars)
                 .build();
+
+        token = jwtUtil.create(user.getEmail());
     }
 
     @Test
@@ -119,11 +132,14 @@ class FixedTermDepositControllerTest {
 
         when(fixedTermRepository.save(any(FixedTermDeposit.class))).thenReturn(fixedTermDeposit);
 
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(account));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedDeposit")
                         .with(csrf())
+                        .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(fixedTermDto)))
+
                 .andExpect(status().isCreated())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -138,7 +154,7 @@ class FixedTermDepositControllerTest {
     }
 
     @Test
-    void when_createFixedDeposit_withPeriodLessThan30Days() throws Exception {
+    void when_createFixedDeposit_fails_withPeriodLessThan30Days() throws Exception {
 
         FixedTermDto fixedTermDto = FixedTermDto.builder()
                 .accountId(1L)
@@ -154,6 +170,7 @@ class FixedTermDepositControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedDeposit")
                         .with(csrf())
+                        .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(fixedTermDto)))
                 .andExpect(status().isBadRequest())
@@ -161,6 +178,34 @@ class FixedTermDepositControllerTest {
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
                         "Closing Date must be greater or equal to " + MIN_DAYS + " days"));
 
+    }
+
+    @Test
+    void when_createFixedDeposit_withNotEnoughCash() throws Exception {
+
+        FixedTermDto fixedTermDto = FixedTermDto.builder()
+                .accountId(1L)
+                .amount(200000D)
+                .creationDate(LocalDate.now())
+                .closingDate(LocalDate.now().plusDays(60))
+                .currency(Currency.ars)
+                .build();
+
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+
+        when(accountRepository.findByCurrencyAndUser_Email(any(Currency.class), anyString())).thenReturn(account);
+
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.ofNullable(account));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/fixedDeposit")
+                        .with(csrf())
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(fixedTermDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotEnoughCashException))
+                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
+                        "Not enough cash"));
     }
 
     @Test
@@ -186,4 +231,25 @@ class FixedTermDepositControllerTest {
                 .andExpect(jsonPath("$.creationDate", is(LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))))
                 .andExpect(jsonPath("$.closingDate", is(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")))));
     }
+
+    @Test
+    void when_simulateFixedDeposit_withPeriodLessThan30Days() throws Exception {
+        FixedTermDto fixedTermDto = FixedTermDto.builder()
+                .accountId(1L)
+                .amount(2000D)
+                .creationDate(LocalDate.now())
+                .closingDate(LocalDate.now().plusDays(25))
+                .currency(Currency.ars)
+                .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/fixedTermDeposit/simulate")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(fixedTermDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof FixedTermException))
+                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
+                        "Closing Date must be greater or equal to " + MIN_DAYS + " days"));
+    }
+
 }

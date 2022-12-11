@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Profile;
 @SpringBootTest
 class WalletApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+//	@Test
+//	void contextLoads() {
+//	}
 
 }

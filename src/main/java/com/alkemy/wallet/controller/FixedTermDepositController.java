@@ -6,10 +6,7 @@ import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -21,8 +18,8 @@ public class FixedTermDepositController {
     private IFixedTermService fixedTermService;
 
     @PostMapping("/fixedDeposit")
-    public ResponseEntity<FixedTermDto> createFixedDeposit (@Valid @RequestBody FixedTermDto fixedTermDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto));
+    public ResponseEntity<FixedTermDto> createFixedDeposit (@Valid @RequestBody FixedTermDto fixedTermDto, @RequestHeader("Authorization") String token) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto, token));
     }
 
     @PostMapping("/fixedTermDeposit/simulate")

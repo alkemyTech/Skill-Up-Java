@@ -111,6 +111,14 @@ public class DataLoaderUser implements CommandLineRunner {
                 .build();
         userService.save(user);
 
+        user = RequestUserDto.builder()
+                .firstName("test")
+                .lastName("test")
+                .email("test@gmail.com")
+                .password("test")
+                .build();
+        userService.save(user);
+
         /* ROLE_ADMIN */
         user = RequestUserDto.builder()
                 .firstName("Emiliano")

@@ -20,7 +20,7 @@ public class HandlerExceptionAccounts {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({FixedTermException.class, ConstraintViolationException.class})
+    @ExceptionHandler({FixedTermException.class, NotEnoughCashException.class, ConstraintViolationException.class})
     public ResponseEntity<Object> handleCreateUserException(Exception exception) {
         ApiException apiException = ApiException.builder()
                 .status(HttpStatus.BAD_REQUEST)

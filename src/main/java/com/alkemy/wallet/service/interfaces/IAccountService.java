@@ -33,4 +33,6 @@ public interface IAccountService {
     ResponseEntity<?> postAccount(BasicAccountDto basicAccountDto, String token);
 
     List<BalanceDto> getBalance(String token);
+
+    AccountDto updateBalance(Long id, Double amount);
 }

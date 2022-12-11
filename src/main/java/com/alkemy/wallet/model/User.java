@@ -1,6 +1,5 @@
 package com.alkemy.wallet.model;
 
-import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,7 +16,6 @@ import java.util.Date;
 @Entity
 @Builder
 @Table(name="users")
-@ApiModel("Usuario")
 public class User {
 	
 	@Id

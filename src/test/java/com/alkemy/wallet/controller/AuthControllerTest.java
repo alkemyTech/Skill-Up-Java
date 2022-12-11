@@ -71,6 +71,8 @@ class AuthControllerTest {
                 .email("test@test.com")
                 .password("test").build();
 
+
+
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)

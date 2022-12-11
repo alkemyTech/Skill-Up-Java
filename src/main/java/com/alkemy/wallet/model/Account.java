@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table(name = "accounts")
-@ApiModel("Cuenta")
+//@ApiModel("Cuenta")
 public class Account {
 
     @Id

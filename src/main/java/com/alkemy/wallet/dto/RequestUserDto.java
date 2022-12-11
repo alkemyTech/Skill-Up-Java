@@ -14,19 +14,16 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 public class RequestUserDto {
 
-    private Long id;
-
-    @NotEmpty
+    @NotEmpty(message = "First name shouldn't be null or empty")
     private String firstName;
 
-    @NotEmpty
+    @NotEmpty(message = "Last name shouldn't be null or empty")
     private String lastName;
 
-    @NotEmpty
-    @Email(message = "the email must be real email")
+    @Email(message = "Email must be a real email")
     private String email;
 
-    @NotEmpty
+    @NotEmpty(message = "Password shouldn't be null or empty")
     private String password;
 
 }

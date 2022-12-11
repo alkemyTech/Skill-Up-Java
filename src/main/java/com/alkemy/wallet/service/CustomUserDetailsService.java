@@ -2,7 +2,6 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
-import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.mapper.Mapper;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,11 +52,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) throws ResourceFoundException {  /*Acordar exceptions*/
-
-        if (userRepository.existsByEmail(requestUserDto.getEmail())) {
-            throw new ResourceFoundException("User email already exists");
-        }
+    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) {
 
         User user = mapper.getMapper().map(requestUserDto, User.class);
         user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
@@ -88,9 +84,11 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     }
 
     @Override
-    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) throws ResourceNotFoundException {  /*Acordar exceptions*/
-        if (!userRepository.existsByEmail(requestUserDto.getEmail())) {
-            throw new ResourceNotFoundException("User email does not exists");
+    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!(Objects.equals(userRepository.findByEmail(auth.getName()).getId(), userRepository.findByEmail(requestUserDto.getEmail()).getId()))) {
+            throw new AccessDeniedException("You can not modify another user´s details");
         }
         User user = userRepository.findByEmail(requestUserDto.getEmail());
 
@@ -160,7 +158,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(Objects.equals(userRepository.findByEmail(auth.getName()).getId(), id))) {
-            throw new ResourceFoundException("Resource out of permissions");
+            throw new AccessDeniedException("You can not access to another user´s details");
         }
         User user = userRepository.findByEmail(auth.getName());
 

@@ -2,19 +2,15 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.AccountModelAssembler;
 import com.alkemy.wallet.assembler.model.AccountModel;
-import com.alkemy.wallet.assembler.model.TransactionModel;
-import com.alkemy.wallet.assembler.model.UserModel;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.dto.AccountUpdateDto;
-import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
-import io.swagger.annotations.ApiModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -30,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/accounts")
-@ApiModel("Controlador de Cuentas")
+//@ApiModel("Controlador de Cuentas")
 public class AccountController {
 
     @Autowired

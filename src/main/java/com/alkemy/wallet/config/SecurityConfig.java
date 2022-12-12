@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests(auth -> {
                     auth
-                            .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**").permitAll()
+                            .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**",
+                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll()
                             .anyRequest().authenticated();
 
                 })

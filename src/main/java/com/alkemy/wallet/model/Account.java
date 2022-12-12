@@ -11,12 +11,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
-@NoArgsConstructor
 @Table(name = "accounts")
 @ApiModel("Cuenta")
 @Builder
-@AllArgsConstructor
+
 public class Account {
 
     @Id

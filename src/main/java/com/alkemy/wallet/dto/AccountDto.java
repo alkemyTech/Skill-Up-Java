@@ -18,6 +18,6 @@ public class AccountDto {
 
     private boolean softDelete;
 
-    private Long user_id;
+    private Long userId;
 
 }

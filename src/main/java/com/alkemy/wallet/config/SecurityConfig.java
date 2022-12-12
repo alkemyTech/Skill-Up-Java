@@ -23,9 +23,14 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> {
-                    auth.anyRequest().permitAll();
+                    auth
+                            .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**",
+                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll()
+                            .anyRequest().authenticated();
 
                 })
+                .httpBasic()
+                .and()
                 //.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -76,6 +76,7 @@ class TransactionServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
+
         userTest = User.builder()
                 .id(1L)
                 .firstName("test")
@@ -89,6 +90,7 @@ class TransactionServiceTest {
                 .user(userTest)
                 .currency(Currency.ars)
                 .transactionLimit(3000.).build();
+
 
         transactionDeposit = new TransactionDto();
         transactionDeposit.setDescription("Descripcion de prueba");

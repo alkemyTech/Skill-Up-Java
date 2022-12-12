@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import({ObjectMapper.class, AuthController.class})
-@TestPropertySource(locations = "classpath:applicationtest.properties")
+@TestPropertySource(locations = "classpath:application-test.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthControllerTest {
 
@@ -39,8 +39,13 @@ class AuthControllerTest {
     @Autowired
     public IRoleRepository roleRepo;
     RequestUserDto requestUserDto;
+
     @Autowired
     private MockMvc mockMvc;
+
+//    @MockBean
+//    DataLoaderUser dataLoaderUser;
+
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
@@ -55,13 +60,15 @@ class AuthControllerTest {
     @DisplayName("Signing up success")
     @Test
     @Order(2)
-    void signUpSucces() throws Exception {
+    void signUpSuccess() throws Exception {
 
         requestUserDto = RequestUserDto.builder()
                 .firstName("test")
                 .lastName("test")
                 .email("test@test.com")
                 .password("test").build();
+
+
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
                         .with(csrf())
@@ -121,6 +128,6 @@ class AuthControllerTest {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginDto)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

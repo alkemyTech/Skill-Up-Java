@@ -90,7 +90,6 @@ public class AuthController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

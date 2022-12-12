@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 
+import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.exception.*;
@@ -82,12 +83,20 @@ public class TransactionService implements ITransactionService {
         try {
             userService.checkLoggedUser(token);
             User senderUser = userRepository.findByEmail(jwtUtil.getValue(token));
+
             Account senderAccount = accountService.getAccountByCurrency(senderUser.getId(), destinedTransactionDto.getAccount().getCurrency());
             Account destinedAccount = accountRepository.findById(destinedTransactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("The receiving account does not exist"));
             accountService.checkAccountLimit(senderAccount, destinedTransactionDto);
             checkBalance(senderAccount.getBalance(), destinedTransactionDto.getAmount());
             TransactionDto transactionPayment = createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedAccount),
                     new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment, destinedTransactionDto.getDescription(), mapper.getMapper().map(senderAccount, Account.class)));
+
+            senderAccount.setBalance(senderAccount.getBalance() - transactionPayment.getAmount());
+            destinedAccount.setBalance(senderAccount.getBalance() + transactionPayment.getAmount());
+            accountRepository.save(senderAccount);
+            accountRepository.save(destinedAccount);
+            //vuelvo a setear el sender account en la transaccion con el nuevo balance de la cuenta
+            transactionPayment.setAccount(mapper.getMapper().map(senderAccount, AccountDto.class));
 
             return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));
         } catch (ResourceNotFoundException | UserNotLoggedException | AccountLimitException |
@@ -105,7 +114,7 @@ public class TransactionService implements ITransactionService {
         Pageable pageable = PageRequest.of(page, 10);
 
         Page<TransactionDto> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable).map((transaction) ->
-                        mapper.getMapper().map(transaction, TransactionDto.class));
+                mapper.getMapper().map(transaction, TransactionDto.class));
 
         return pageTransactions;
 
@@ -149,7 +158,7 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public boolean checkTransactionAmount(Double amount) {
-        if (amount < 0) {
+        if (amount <= 0) {
             throw new NoAmountException("Cannot make a transaction without amount");
         } else return true;
     }
@@ -158,7 +167,10 @@ public class TransactionService implements ITransactionService {
     public ResponseEntity<?> createPayment(TransactionDto transactionDto) {
         try {
             Account account = accountRepository.findById(transactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+            checkTransactionAmount(transactionDto.getAmount());
+            account.setBalance(account.getBalance() - transactionDto.getAmount());
             Transaction transaction = transactionRepository.save(new Transaction(transactionDto.getAmount(), TypeOfTransaction.payment, transactionDto.getDescription(), account));
+            accountRepository.save(account);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper().map(transaction, TransactionDto.class));
         } catch (NoAmountException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
@@ -169,6 +181,7 @@ public class TransactionService implements ITransactionService {
     public ResponseEntity<?> createDeposit(TransactionDto transactionDto) {
         try {
             Account account = accountRepository.findById(transactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+            checkTransactionAmount(transactionDto.getAmount());
             Transaction transaction = transactionRepository.save(new Transaction(transactionDto.getAmount(), TypeOfTransaction.deposit, transactionDto.getDescription(), account));
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper().map(transaction, TransactionDto.class));
         } catch (NoAmountException e) {

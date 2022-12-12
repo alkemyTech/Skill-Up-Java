@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.controller.AuthController;
+import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
@@ -46,8 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({ObjectMapper.class, AuthController.class})
-@TestPropertySource(locations = "classpath:applicationtest.properties")
+@Import({ObjectMapper.class, TransactionsController.class})
+@TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionSendArsTest {
 
     @Autowired
@@ -87,7 +88,7 @@ class TransactionSendArsTest {
     private List<Account> accountsTest;
 
 
-    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA3MTE2NDAsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxMzE2NDQwfQ.q3fFXiarnJo1FqBg4_WbzCDvui3BSdITmIYrzhCBw44";
+    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA4Njc3NTMsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxNDcyNTUzfQ.-LQO6GnpJu7IPij-U6np15gVzT5sRQWQ1y_IeelcrCU";
 
 
     @BeforeEach
@@ -152,6 +153,7 @@ class TransactionSendArsTest {
     }
 
     @Test
+    @WithMockUser
     void createTransactionsArsWithoutAuthorization() throws Exception
     {
         mockMvc.perform(MockMvcRequestBuilders.post("/transactions/sendArs")

@@ -20,7 +20,7 @@ public class TransactionDto {
 
     private AccountDto account;
 
-    private BasicAccountDto account;
+//    private BasicAccountDto account;
 
 
 }

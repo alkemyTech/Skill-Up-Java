@@ -2,10 +2,7 @@ package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
 import io.swagger.annotations.ApiModel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,6 +15,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Table(name = "accounts")
 @ApiModel("Cuenta")
+@Builder
+@AllArgsConstructor
 public class Account {
 
     @Id

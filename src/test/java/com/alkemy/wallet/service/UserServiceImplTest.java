@@ -1,5 +1,7 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.controller.AuthController;
+import com.alkemy.wallet.controller.exception.ExceptionsHandler;
 import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import com.alkemy.wallet.model.constant.RoleEnum;
 import com.alkemy.wallet.model.dto.request.AuthRequestDto;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -69,19 +72,21 @@ class UserServiceImplTest {
     void setUp() {
         // Instantiating roles
         ROLE_ADMIN = new Role();
+        ROLE_ADMIN.setId(1L);
         ROLE_ADMIN.setName(RoleEnum.ADMIN.getFullRoleName());
         ROLE_ADMIN.setDescription(RoleEnum.ADMIN.getSimpleRoleName());
         ROLE_ADMIN.setCreationDate(LocalDateTime.now());
         ROLE_ADMIN.setUpdateDate(null);
 
         ROLE_USER = new Role();
+        ROLE_USER.setId(2L);
         ROLE_USER.setName(RoleEnum.USER.getFullRoleName());
         ROLE_USER.setDescription(RoleEnum.USER.getSimpleRoleName());
         ROLE_USER.setCreationDate(LocalDateTime.now());
         ROLE_USER.setUpdateDate(null);
 
         // Saving roles
-        roleService.save();
+        verify(roleService).save();
 
         userRequestDto1 = new UserRequestDto();
         userRequestDto1.setFirstName("Hector");
@@ -98,6 +103,7 @@ class UserServiceImplTest {
         userRequestDto2.setRoleId(2L);
 
         user1 = new User();
+        user1.setId(1L);
         user1.setFirstName("Hector");
         user1.setLastName("Cortez");
         user1.setEmail("hector@gmail.com");
@@ -107,6 +113,7 @@ class UserServiceImplTest {
         user1.setFixedTermDeposits(null);
 
         user2 = new User();
+        user2.setId(2L);
         user2.setFirstName("Francisco");
         user2.setLastName("Orieta");
         user2.setEmail("fran@gmail.com");
@@ -118,6 +125,7 @@ class UserServiceImplTest {
         // Instantiating accounts
         Account account1, account2, account3, account4;
         account1 = new Account();
+        account1.setId(1L);
         account1.setCurrency(AccountCurrencyEnum.ARS);
         account1.setTransactionLimit(300000.0);
         account1.setBalance(0.0);
@@ -127,6 +135,7 @@ class UserServiceImplTest {
         account1.setFixedTermDeposits(null);
 
         account2 = new Account();
+        account2.setId(2L);
         account2.setCurrency(AccountCurrencyEnum.USD);
         account2.setTransactionLimit(1000.0);
         account2.setBalance(0.0);
@@ -136,6 +145,7 @@ class UserServiceImplTest {
         account2.setFixedTermDeposits(null);
 
         account3 = new Account();
+        account3.setId(3L);
         account3.setCurrency(AccountCurrencyEnum.ARS);
         account3.setTransactionLimit(300000.0);
         account3.setBalance(0.0);
@@ -145,6 +155,7 @@ class UserServiceImplTest {
         account3.setFixedTermDeposits(null);
 
         account4 = new Account();
+        account4.setId(4L);
         account4.setCurrency(AccountCurrencyEnum.USD);
         account4.setTransactionLimit(1000.0);
         account4.setBalance(0.0);

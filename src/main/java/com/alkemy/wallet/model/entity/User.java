@@ -12,6 +12,7 @@ import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
 import static java.time.LocalDateTime.now;
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -56,11 +57,11 @@ public class User {
     @Column(name = "DELETED")
     private boolean deleted = FALSE;
 
-    @OneToMany(mappedBy = "user", fetch = LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<Account> accounts;
 
-    @ManyToMany(fetch = EAGER)
+    @ManyToMany(fetch = EAGER, cascade = ALL)
     @JoinTable(
             name = "REL_USER_ROLE",
             joinColumns = {@JoinColumn(name = "USER_ID")},
@@ -68,11 +69,11 @@ public class User {
     @ToString.Exclude
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", fetch = LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "user", fetch = LAZY)
+    @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<FixedTermDeposit> fixedTermDeposits;
 }

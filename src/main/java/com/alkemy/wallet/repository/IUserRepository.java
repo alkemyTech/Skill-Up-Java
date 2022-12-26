@@ -11,10 +11,9 @@ import java.util.Optional;
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
 
-    // TODO: 8/12/2022 check if this method can be used
-    @Query(value = "SELECT CASE WHEN COUNT(u.*) > 0 THEN " +
+    @Query(value = "SELECT CASE WHEN COUNT(u.email) > 0 THEN " +
             "'true' ELSE 'false' END " +
-            "FROM wallet.users u " +
+            "FROM users u " +
             "WHERE u.email = ?", nativeQuery = true)
     Boolean selectExistsEmail(String email);
 

@@ -13,6 +13,7 @@ public class DateUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return LocalDate.parse(dateTime, formatter);
     }
+
     public static Long daysBetween2Dates(LocalDate date1, LocalDate date2) {
         return DAYS.between(date1, date2);
     }

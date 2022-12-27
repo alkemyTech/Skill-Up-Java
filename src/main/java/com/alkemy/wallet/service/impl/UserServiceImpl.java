@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.request.UserUpdateRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Role;
@@ -8,7 +9,7 @@ import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthenticationService;
+import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IRoleService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.utils.CustomMessageSource;
@@ -21,107 +22,97 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
+import static com.alkemy.wallet.model.constant.RoleEnum.ADMIN;
 import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
+import static java.time.LocalDateTime.now;
 
 @Service
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = {@Lazy})
 public class UserServiceImpl implements IUserService {
 
-    private final IUserRepository repository;
-    private final UserMapper mapper;
+    private final IUserRepository userRepository;
+    private final UserMapper userMapper;
     private final IAccountService accountService;
-    private final IAuthenticationService authService;
+    private final IAuthService authService;
     private final IRoleService roleService;
     private final CustomMessageSource messageSource;
 
     @Override
-    public UserResponseDto save(UserRequestDto request, Role role) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        User user = mapper.dto2Entity(request, roles);
-        user.setPassword(authService.encode(user.getPassword()));
-        user.setDeleted(false);
+    public UserResponseDto saveNewUser(UserRequestDto userRequestDto) {
+        userRequestDto.setPassword(authService.encode(userRequestDto.getPassword()));
+        User user = userMapper.dto2Entity(userRequestDto);
+        Role role = roleService.saveNewRole(userRequestDto.getRole(), user);
+        user.setRole(role);
         user.setAccounts(accountService.createDefaultAccounts(user));
-        return mapper.entity2Dto(repository.save(user));
+        return userMapper.entity2Dto(userRepository.save(user));
     }
 
     @Override
-    public UserResponseDto update(Long id, UserRequestDto request) {
-        User user = getById(id);
+    public UserResponseDto updateUser(Long id, UserUpdateRequestDto userUpdateRequestDto) {
+        User user = getUserById(id);
         if (!user.getEmail().equals(authService.getEmailFromContext()))
-            throw new AccessDeniedException(messageSource.message("user.access", null));
-        if ((request.getEmail() != null && !request.getEmail().isEmpty()))
-            throw new IllegalArgumentException(messageSource.message("user.email-mod", null));
-        if (request.getRoleId() != null)
-            throw new IllegalArgumentException(messageSource.message("user.role-mod", null));
-
-        user = mapper.refreshValues(request, user);
-
-        if (request.getPassword() != null && !request.getPassword().trim().isEmpty())
-            user.setPassword(authService.encode(request.getPassword()));
-
-        return mapper.entity2Dto(user);
+            throw new AccessDeniedException(messageSource.message("user.access-denied", null));
+        User userUpdated = userMapper.refreshValues(userUpdateRequestDto, user);
+        userUpdated.setUpdateDate(now());
+        return userMapper.entity2Dto(userUpdated);
     }
 
     @Override
-    public void deleteById(Long id) {
-        User user = getByEmail(authService.getEmailFromContext());
-        Role ADMIN = roleService.getById(1L);
+    public void deleteUserById(Long id) {
+        User loggedUser, user;
+        loggedUser = getUserByEmail(authService.getEmailFromContext());
 
-        if (user.getRoles().contains(ADMIN)) {
-            user = getById(id);
-            user.setUpdateDate(LocalDateTime.now());
+        if (loggedUser.getRole().getName().equals(ADMIN.getFullRoleName())) {
+            user = getUserById(id);
+            user.setUpdateDate(now());
             user.setDeleted(true);
             return;
         }
-        if (!user.getId().equals(id))
-            throw new AccessDeniedException(messageSource.message("user.access", null));
 
-        user.setUpdateDate(LocalDateTime.now());
-        user.setDeleted(true);
+        if (!loggedUser.getId().equals(id))
+            throw new AccessDeniedException(messageSource.message("user.access-denied", null));
+        loggedUser.setUpdateDate(now());
+        loggedUser.setDeleted(true);
     }
 
     @Override
-    public UserResponseDto getDetails(Long id) {
-        User user = getById(id);
+    public UserResponseDto getUserDetails(Long id) {
+        User user = getUserById(id);
         if (!user.getEmail().equals(authService.getEmailFromContext()))
-            throw new AccessDeniedException(messageSource.message("user.access", null));
-        return mapper.entity2Dto(user);
+            throw new AccessDeniedException(messageSource.message("user.access-denied", null));
+        return userMapper.entity2Dto(user);
     }
 
     @Override
-    public void addAccount(User user, Account account) {
+    public void addAccountToUser(User user, Account account) {
         user.getAccounts().add(account);
     }
 
     @Override
-    public User getById(Long id) {
-        Optional<User> user = repository.findById(id);
+    public User getUserById(Long id) {
+        Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(() -> new NullPointerException(messageSource
-                .message("user.not-found", new Long[] {id})));
+                .message("entity.not-found", new String[]{"User", "id", id.toString()})));
     }
 
     @Override
-    public User getByEmail(String email) {
-        Optional<User> user = repository.findByEmail(email);
+    public User getUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);
     }
 
     @Override
-    public boolean selectExistsEmail(String email) {
-        return repository.selectExistsEmail(email);
+    public boolean checkIfUserEmailExists(String email) {
+        return userRepository.selectExistsEmail(email);
     }
 
     @Override
-    public Page<UserResponseDto> findAll(Integer pageNumber) {
+    public Page<UserResponseDto> getAllUsers(Integer pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         pageable.next().getPageNumber();
-        return repository.findAll(pageable).map(mapper::entity2Dto);
+        return userRepository.findAll(pageable).map(userMapper::entity2Dto);
     }
 }

@@ -10,12 +10,14 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString
 @Table(name = "ACCOUNTS")
 @SQLDelete(sql = "UPDATE accounts SET DELETED=true WHERE id=?")
@@ -48,15 +50,15 @@ public class Account {
     @Column(name = "DELETED")
     private boolean softDelete = Boolean.FALSE;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = ALL)
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<Transaction> transactions;
 
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<FixedTermDeposit> fixedTermDeposits;
 }

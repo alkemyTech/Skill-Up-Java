@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 @Table(name = "FIXED_TERM_DEPOSITS")
 public class FixedTermDeposit {
 

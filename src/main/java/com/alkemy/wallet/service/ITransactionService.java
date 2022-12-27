@@ -8,17 +8,17 @@ import org.springframework.data.domain.Page;
 
 public interface ITransactionService {
 
-    TransactionResponseDto sendMoneyIndicatingCurrency(String currencyType, TransactionRequestDto request);
+    TransactionResponseDto sendMoneyIndicatingCurrency(String currencyType, TransactionRequestDto transactionRequestDto);
 
-    TransactionResponseDto update(Long id, UpdateTransactionRequestDto request);
+    TransactionResponseDto updateTransaction(Long id, UpdateTransactionRequestDto transactionRequestDto);
 
-    TransactionResponseDto getDetails (Long id);
+    TransactionResponseDto getTransactionDetails (Long id);
 
-    Transaction getById(Long id);
+    Transaction getTransactionById(Long id);
 
-    TransactionResponseDto payment(TransactionRequestDto request);
+    TransactionResponseDto doPayment(TransactionRequestDto transactionRequestDto);
 
-    TransactionResponseDto deposit(TransactionRequestDto request);
+    TransactionResponseDto doDeposit(TransactionRequestDto transactionRequestDto);
 
-    Page<TransactionResponseDto> paginateTransactions(Long userId, Integer pageNumber);
+    Page<TransactionResponseDto> getAllTransactions(Long userId, Integer pageNumber);
 }

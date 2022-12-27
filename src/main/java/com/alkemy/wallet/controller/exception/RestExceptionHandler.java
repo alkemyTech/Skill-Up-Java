@@ -31,7 +31,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
-public class ExceptionsHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     //validates the proper JSON format
     @Override

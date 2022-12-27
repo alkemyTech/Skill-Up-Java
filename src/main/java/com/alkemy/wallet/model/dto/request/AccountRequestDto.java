@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class AccountRequestDto {
 
-    @NotEmpty(message = "{account.empty-currency}")
-    @NotBlank(message = "{account.blank-currency}")
+    @NotEmpty(message = "{account.invalid-currency}")
+    @NotBlank(message = "{account.invalid-currency}")
     private String currency;
 }

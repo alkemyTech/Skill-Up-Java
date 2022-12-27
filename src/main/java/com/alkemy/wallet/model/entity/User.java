@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import static java.lang.Boolean.FALSE;
 import static java.time.LocalDateTime.now;
@@ -23,7 +22,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
 @Table(name = "USERS")
 @SQLDelete(sql = "UPDATE users SET DELETED=true WHERE id=?")
 @Where(clause = "DELETED=false")
@@ -57,17 +55,13 @@ public class User {
     @Column(name = "DELETED")
     private boolean deleted = FALSE;
 
+    @OneToOne(mappedBy = "user", fetch = EAGER, cascade = ALL)
+    @JoinColumn(name = "ROLE_ID", nullable = false)
+    private Role role;
+
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     @ToString.Exclude
     private List<Account> accounts;
-
-    @ManyToMany(fetch = EAGER, cascade = ALL)
-    @JoinTable(
-            name = "REL_USER_ROLE",
-            joinColumns = {@JoinColumn(name = "USER_ID")},
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
-    @ToString.Exclude
-    private Set<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
     @ToString.Exclude

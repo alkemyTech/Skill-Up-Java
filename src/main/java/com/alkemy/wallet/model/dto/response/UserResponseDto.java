@@ -3,7 +3,6 @@ package com.alkemy.wallet.model.dto.response;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Getter
@@ -14,18 +13,11 @@ import java.util.List;
 public class UserResponseDto {
 
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
     private String email;
-
     private String password;
-
-    private List<String> roles;
-
+    private String role;
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 }

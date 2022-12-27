@@ -4,7 +4,7 @@ import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.service.IAuthenticationService;
+import com.alkemy.wallet.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,18 +18,18 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private final IAuthenticationService service;
+    private final IAuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> signUp(@Validated @RequestBody UserRequestDto request) {
-        return ResponseEntity.status(CREATED).body(service.register(request));
+    public ResponseEntity<UserResponseDto> signUp(@Validated @RequestBody UserRequestDto userRequestDto) {
+        return ResponseEntity.status(CREATED).body(authService.register(userRequestDto));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Validated @RequestBody AuthRequestDto request) {
-        return ResponseEntity.status(OK).body(service.login(request));
+    public ResponseEntity<AuthResponseDto> login(@Validated @RequestBody AuthRequestDto authRequestDto) {
+        return ResponseEntity.status(OK).body(authService.login(authRequestDto));
     }
 }

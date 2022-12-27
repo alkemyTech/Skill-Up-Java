@@ -18,11 +18,11 @@ import static com.alkemy.wallet.utils.FixedTermDepositUtil.MIN_TO_INVEST;
 @Getter
 public class FixedTermDepositSimulateRequestDto {
 
-    @NotNull(message = "{fixed.null-amount}")
-    @Min(value = MIN_TO_INVEST, message = "{fixed.min-amount}")
+    @NotNull(message = "{fixed.invalid-amount}")
+    @Min(value = MIN_TO_INVEST, message = "{fixed.invalid-amount}")
     private Double amount;
 
-    @NotEmpty(message = "{fixed.empty-date}")
-    @NotBlank(message = "{fixed.blank-date}")
+    @NotEmpty(message = "{fixed.invalid-date}")
+    @NotBlank(message = "{fixed.invalid-date}")
     private String closingDate;
 }

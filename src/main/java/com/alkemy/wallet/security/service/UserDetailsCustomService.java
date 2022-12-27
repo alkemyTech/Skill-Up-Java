@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,14 +32,16 @@ public class UserDetailsCustomService implements UserDetailsService {
         Optional<User> user = repository.findByEmail(email);
         if (user.isEmpty())
             throw new UsernameNotFoundException(messageSource
-                    .message("user.email-not-found", new String[] {email}));
+                    .message("entity.not-found", new String[] {"User", "email", email}));
         if (user.get().isDeleted())
             throw new DisabledException(messageSource.message("user.disabled-account", null));
         return new org.springframework.security.core.userdetails.User(
-                user.get().getEmail(), user.get().getPassword(), mapRolesToGrantedAuth(user.get().getRoles()));
+                user.get().getEmail(), user.get().getPassword(), mapRoleToGrantedAuth(user.get().getRole()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToGrantedAuth(Set<Role> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
+    private Collection<? extends GrantedAuthority> mapRoleToGrantedAuth(Role role) {
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        return authorities;
     }
 }

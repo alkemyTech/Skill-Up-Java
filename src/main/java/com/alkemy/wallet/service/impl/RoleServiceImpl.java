@@ -1,39 +1,45 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.entity.Role;
+import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.service.IRoleService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.InputMismatchException;
 import java.util.Optional;
 
 import static com.alkemy.wallet.model.constant.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.constant.RoleEnum.USER;
-import static java.time.LocalDateTime.now;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RoleServiceImpl implements IRoleService {
 
-    private final IRoleRepository repository;
+    private final IRoleRepository roleRepository;
+    private final CustomMessageSource messageSource;
 
     @Override
-    public void save() {
-        repository.save(new Role(1L, ADMIN.getFullRoleName(), ADMIN.getSimpleRoleName(), now(), null));
-        repository.save(new Role(2L, USER.getFullRoleName(), USER.getSimpleRoleName(), now(), null));
-    }
+    public Role saveNewRole(String roleName, User user) {
+        Role role = new Role();
 
-    @Override
-    public Role getById(Long id) {
-        Optional<Role> response = repository.findById(id);
-        return response.orElseThrow(() ->
-                new IllegalArgumentException(String.format("Invalid role id: %s. Try ADMIN(1) or USER(2)", id)));
-    }
+        if (roleName.equalsIgnoreCase(ADMIN.getSimpleRoleName())) {
+            role.setName(ADMIN.getFullRoleName());
+            role.setDescription(ADMIN.getSimpleRoleName());
+            role.setUser(user);
+        } else if (roleName.equalsIgnoreCase(USER.getSimpleRoleName())) {
+            role.setName(USER.getFullRoleName());
+            role.setDescription(USER.getSimpleRoleName());
+            role.setUser(user);
+        } else {
+            throw new InputMismatchException(messageSource.message("role.mismatch", null));
+        }
 
-    @Override
-    public List<Role> getAll() {
-        return repository.findAll();
+        roleRepository.save(role);
+        return role;
     }
 }

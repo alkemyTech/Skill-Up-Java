@@ -1,26 +1,26 @@
 package com.alkemy.wallet.model.mapper;
 
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.request.UserUpdateRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
+import com.alkemy.wallet.service.IAuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
 
-    public User dto2Entity(UserRequestDto dto, Set<Role> roles) {
-        return User.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .email(dto.getEmail().toLowerCase())
-                .password(dto.getPassword())
-                .creationDate(LocalDateTime.now())
-                .roles(roles)
-                .build();
+    private final IAuthService authService;
+
+    public User dto2Entity(UserRequestDto dto) {
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        return user;
     }
 
     public UserResponseDto entity2Dto(User entity) {
@@ -32,18 +32,17 @@ public class UserMapper {
                 .password(entity.getPassword())
                 .createdAt(entity.getCreationDate())
                 .updatedAt(entity.getUpdateDate())
-                .roles(entity.getRoles().stream().map(Role::getName).toList())
+                .role(entity.getRole().getName())
                 .build();
     }
 
-    public User refreshValues(UserRequestDto dto, User entity2Return) {
+    public User refreshValues(UserUpdateRequestDto dto, User user) {
         if (dto.getFirstName() != null && !dto.getFirstName().trim().isEmpty())
-            entity2Return.setFirstName(dto.getFirstName());
+            user.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null && !dto.getLastName().trim().isEmpty())
-            entity2Return.setLastName(dto.getLastName());
+            user.setLastName(dto.getLastName());
         if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty())
-            entity2Return.setPassword(dto.getPassword());
-        entity2Return.setUpdateDate(LocalDateTime.now());
-        return entity2Return;
+            user.setPassword(authService.encode(dto.getPassword()));
+        return user;
     }
 }

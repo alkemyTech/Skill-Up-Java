@@ -6,6 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static java.time.LocalDateTime.now;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Getter
 @Setter
@@ -16,7 +21,7 @@ import java.time.LocalDateTime;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -28,9 +33,13 @@ public class Role {
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "CREATED_AT")
-    private LocalDateTime creationDate;
+    private LocalDateTime creationDate = now();
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "UPDATED_AT")
-    private LocalDateTime updateDate;
+    private LocalDateTime updateDate = now();
+
+    @OneToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
 }

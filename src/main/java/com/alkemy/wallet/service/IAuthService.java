@@ -5,15 +5,15 @@ import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 
-public interface IAuthenticationService {
+public interface IAuthService {
 
-    UserResponseDto register(UserRequestDto user);
+    UserResponseDto register(UserRequestDto userRequestDto);
 
-    AuthResponseDto login(AuthRequestDto request);
+    AuthResponseDto login(AuthRequestDto authRequestDto);
 
     String getEmailFromContext();
 
     String encode(String toEncode);
 
-    String generateToken(String userRequest);
+    String generateToken(String email);
 }

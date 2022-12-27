@@ -13,7 +13,7 @@ import static com.alkemy.wallet.utils.TransactionUtil.MIN_TRANSACTION_LIMIT;
 @Setter
 @Builder
 public class UpdateAccountRequestDto {
-    @NotNull(message = "{account.null-transaction-limit}")
-    @Min(value = MIN_TRANSACTION_LIMIT, message = "{account.min-transaction-limit}")
+    @NotNull(message = "{account.invalid-transaction-limit}")
+    @Min(value = MIN_TRANSACTION_LIMIT, message = "{account.invalid-transaction-limit}")
     Double transactionLimit;
 }

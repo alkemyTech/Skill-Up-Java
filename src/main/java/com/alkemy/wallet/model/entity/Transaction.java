@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Table(name = "TRANSACTIONS")
-@Builder
 public class Transaction {
 
     @Id

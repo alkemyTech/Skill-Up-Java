@@ -14,10 +14,10 @@ import static com.alkemy.wallet.utils.TransactionUtil.MIN_AMOUNT_TO_SEND;
 @NoArgsConstructor
 @Builder
 public class TransactionRequestDto {
-    @Min(value = MIN_AMOUNT_TO_SEND, message = "{transaction.min-amount}")
-    @NotNull(message = "{transaction.null-amount}")
+    @Min(value = MIN_AMOUNT_TO_SEND, message = "{transaction.invalid.min-amount}")
+    @NotNull(message = "{transaction.invalid.min-amount}")
     private Double amount;
     private String description;
-    @NotNull(message = "{transaction.null-account}")
+    @NotNull(message = "{transaction.invalid-account}")
     private Long accountId;
 }

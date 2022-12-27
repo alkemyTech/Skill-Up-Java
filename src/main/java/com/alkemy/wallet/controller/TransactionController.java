@@ -17,47 +17,54 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
 public class TransactionController {
 
-    private final ITransactionService service;
+    private final ITransactionService transactionService;
 
     @PostMapping("/sendArs")
-    public ResponseEntity<TransactionResponseDto> sendARS(@Validated @RequestBody TransactionRequestDto request) {
-        return ResponseEntity.status(CREATED).body(service.sendMoneyIndicatingCurrency(ARS.name(), request));
+    public ResponseEntity<TransactionResponseDto> sendARS(@Validated @RequestBody
+                                                          TransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.status(CREATED)
+                .body(transactionService.sendMoneyIndicatingCurrency(ARS.name(), transactionRequestDto));
     }
 
     @PostMapping("/sendUsd")
-    public ResponseEntity<TransactionResponseDto> sendUsd(@Validated @RequestBody TransactionRequestDto request) {
-        return ResponseEntity.status(CREATED).body(service.sendMoneyIndicatingCurrency(USD.name(), request));
+    public ResponseEntity<TransactionResponseDto> sendUsd(@Validated @RequestBody
+                                                          TransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.status(CREATED)
+                .body(transactionService.sendMoneyIndicatingCurrency(USD.name(), transactionRequestDto));
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<TransactionResponseDto> deposit(@Validated @RequestBody TransactionRequestDto request) {
-        return ResponseEntity.status(CREATED).body(service.deposit(request));
+    public ResponseEntity<TransactionResponseDto> deposit(@Validated @RequestBody
+                                                          TransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.status(CREATED).body(transactionService.doDeposit(transactionRequestDto));
     }
 
     @PostMapping("/payment")
-    public ResponseEntity<TransactionResponseDto> payment(@Validated @RequestBody TransactionRequestDto request) {
-        return ResponseEntity.status(CREATED).body(service.payment(request));
+    public ResponseEntity<TransactionResponseDto> payment(@Validated @RequestBody
+                                                          TransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.status(CREATED).body(transactionService.doPayment(transactionRequestDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TransactionResponseDto> update(@PathVariable("id") Long id,
-                                                         @RequestBody UpdateTransactionRequestDto request) {
-        return ResponseEntity.status(OK).body(service.update(id, request));
+    public ResponseEntity<TransactionResponseDto> updateTransaction(@PathVariable("id") Long id,
+                                                                    @RequestBody
+                                                                    UpdateTransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.status(OK).body(transactionService.updateTransaction(id, transactionRequestDto));
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<TransactionResponseDto> getDetails(@PathVariable("id") long id) {
-        return ResponseEntity.status(OK).body(service.getDetails(id));
+    public ResponseEntity<TransactionResponseDto> getTransactionDetails(@PathVariable("id") long id) {
+        return ResponseEntity.status(OK).body(transactionService.getTransactionDetails(id));
     }
 
     @Secured({"ROLE_ADMIN"})
     @GetMapping("/{userId}")
-    public ResponseEntity<Page<TransactionResponseDto>> pageAllTransactions(
+    public ResponseEntity<Page<TransactionResponseDto>> getAllTransactions(
             @PathVariable(value = "userId", required = true) Long userId, @RequestParam("page") Integer pageNumber) {
-        return ResponseEntity.status(OK).body(service.paginateTransactions(userId, pageNumber));
+        return ResponseEntity.status(OK).body(transactionService.getAllTransactions(userId, pageNumber));
     }
 }

@@ -12,21 +12,21 @@ import java.util.List;
 
 public interface IAccountService {
 
-    AccountResponseDto create(AccountRequestDto request);
+    AccountResponseDto createNewAccount(AccountRequestDto accountRequestDto);
 
     List<Account> createDefaultAccounts(User user);
 
-    AccountResponseDto update(Long id, UpdateAccountRequestDto request);
+    AccountResponseDto updateAccount(Long id, UpdateAccountRequestDto updateAccountRequestDto);
 
     void editBalanceAndSave(Account account, Double newBalance);
 
-    AccountBalanceResponseDto getBalance();
+    AccountBalanceResponseDto getAccountBalance();
 
-    Account getByCurrencyAndUserId(String currency, Long userId);
+    Account getAccountByCurrencyAndUserId(String currency, Long userId);
 
-    Account getById(Long id);
+    Account getAccountById(Long id);
 
-    List<AccountResponseDto> getListByUserId(Long userId);
+    List<AccountResponseDto> getAccountListByUserId(Long userId);
 
-    Page<AccountResponseDto> getAll(Integer pageNumber);
+    Page<AccountResponseDto> getAllAccounts(Integer pageNumber);
 }

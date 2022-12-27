@@ -4,11 +4,9 @@ import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.security.jwt.JwtUtils;
 import com.alkemy.wallet.security.service.UserDetailsCustomService;
-import com.alkemy.wallet.service.IAuthenticationService;
-import com.alkemy.wallet.service.IRoleService;
+import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
@@ -24,36 +22,31 @@ import javax.persistence.EntityExistsException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthenticationServiceImpl implements IAuthenticationService {
+public class AuthServiceImpl implements IAuthService {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsCustomService userDetailsCustomService;
     private final JwtUtils jwtUtils;
     private final IUserService userService;
-    private final IRoleService roleService;
     private final CustomMessageSource messageSource;
 
     @Override
-    public UserResponseDto register(UserRequestDto request) {
-        boolean emailExist = userService.selectExistsEmail(request.getEmail().toLowerCase());
+    public UserResponseDto register(UserRequestDto userRequestDto) {
+        boolean emailExist = userService.checkIfUserEmailExists(userRequestDto.getEmail().toLowerCase());
         if (emailExist) {
             throw new EntityExistsException(messageSource
-                    .message("user.duplicated-email", new String[] {request.getEmail().toLowerCase()}));
+                    .message("user.duplicated-email", new String[]{userRequestDto.getEmail().toLowerCase()}));
         }
-        if (roleService.getAll().isEmpty())
-            roleService.save();
-
-        Role role = roleService.getById(request.getRoleId());
-        return userService.save(request, role);
+        return userService.saveNewUser(userRequestDto);
     }
 
     @Override
-    public AuthResponseDto login(AuthRequestDto request) {
+    public AuthResponseDto login(AuthRequestDto authRequestDto) {
         authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        String token = generateToken(request.getEmail());
+                .authenticate(new UsernamePasswordAuthenticationToken(authRequestDto.getEmail(), authRequestDto.getPassword()));
+        String token = generateToken(authRequestDto.getEmail());
         return AuthResponseDto.builder()
-                .email(request.getEmail())
+                .email(authRequestDto.getEmail())
                 .token(token)
                 .build();
     }
@@ -69,7 +62,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     @Override
-    public String generateToken(String userRequest) {
-        return jwtUtils.generateToken(userDetailsCustomService.loadUserByUsername(userRequest));
+    public String generateToken(String email) {
+        return jwtUtils.generateToken(userDetailsCustomService.loadUserByUsername(email));
     }
 }

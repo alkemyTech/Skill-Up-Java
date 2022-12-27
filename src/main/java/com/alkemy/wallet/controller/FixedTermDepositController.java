@@ -16,19 +16,19 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/fixed-term-deposit")
+@RequestMapping("/api/v1/fixed-term-deposit")
 public class FixedTermDepositController {
     private final IFixedTermDepositService service;
 
     @PostMapping
-    public ResponseEntity<FixedTermDepositResponseDto> createFixedTem(
+    public ResponseEntity<FixedTermDepositResponseDto> createFixedTemDeposit(
             @Validated @RequestBody FixedTermDepositRequestDto requestDto) {
-        return ResponseEntity.status(CREATED).body(service.create(requestDto));
+        return ResponseEntity.status(CREATED).body(service.createNewFixedTermDeposit(requestDto));
     }
 
     @GetMapping("/simulate")
-    public ResponseEntity<FixedTermDepositSimulationResponseDto> simulateDeposit(
-            @Validated @RequestBody FixedTermDepositSimulateRequestDto request) {
-        return ResponseEntity.status(OK).body(service.simulateDeposit(request));
+    public ResponseEntity<FixedTermDepositSimulationResponseDto> simulateFixedTermDeposit(
+            @Validated @RequestBody FixedTermDepositSimulateRequestDto requestDto) {
+        return ResponseEntity.status(OK).body(service.simulateDeposit(requestDto));
     }
 }

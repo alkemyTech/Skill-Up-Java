@@ -5,7 +5,6 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Getter
@@ -15,23 +14,24 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class UserRequestDto {
 
-    @NotEmpty(message = "{user.empty-first-name}")
-    @NotBlank(message = "{user.blank-first-name}")
+    @NotEmpty(message = "{user.invalid-first-name}")
+    @NotBlank(message = "{user.invalid-first-name}")
     private String firstName;
 
-    @NotEmpty(message = "{user.empty-last-name}")
-    @NotBlank(message = "{user.blank-last-name}")
+    @NotEmpty(message = "{user.invalid-last-name}")
+    @NotBlank(message = "{user.invalid-last-name}")
     private String lastName;
 
     @Email(message = "{user.invalid-email}")
-    @NotEmpty(message = "{user.empty-email}")
-    @NotBlank(message = "{user.blank-email}")
+    @NotEmpty(message = "{user.invalid-email}")
+    @NotBlank(message = "{user.invalid-email}")
     private String email;
 
-    @NotEmpty(message = "{user.empty-password}")
-    @NotBlank(message = "{user.blank-password}")
+    @NotEmpty(message = "{user.invalid-password}")
+    @NotBlank(message = "{user.invalid-password}")
     private String password;
 
-    @NotNull(message = "{user.role-id}")
-    private Long roleId;
+    @NotEmpty(message = "{role.mismatch}")
+    @NotBlank(message = "{role.mismatch}")
+    private String role;
 }

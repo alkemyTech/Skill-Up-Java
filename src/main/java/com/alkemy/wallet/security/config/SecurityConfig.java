@@ -25,7 +25,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    protected static final String AUTH_WHITELIST = "/auth/**";
+    protected static final String AUTH_WHITELIST = "/api/v1/auth/**";
 
     private final UserDetailsCustomService userDetailsCustomService;
     private final JwtRequestFilter jwtRequestFilter;

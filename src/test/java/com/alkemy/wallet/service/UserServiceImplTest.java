@@ -1,11 +1,10 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.controller.AuthController;
-import com.alkemy.wallet.controller.exception.ExceptionsHandler;
 import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import com.alkemy.wallet.model.constant.RoleEnum;
 import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.request.UserUpdateRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Account;
@@ -27,7 +26,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -43,7 +41,7 @@ class UserServiceImplTest {
     @Mock
     protected IAccountService accountService;
     @Mock
-    protected IAuthenticationService authService;
+    protected IAuthService authService;
     @Mock
     protected IRoleService roleService;
     @Mock
@@ -57,6 +55,7 @@ class UserServiceImplTest {
     protected AuthResponseDto authResponseDto;
     protected UserRequestDto userRequestDto1;
     protected UserRequestDto userRequestDto2;
+    protected UserUpdateRequestDto userUpdateRequestDto;
     protected User user1;
     protected User user2;
     protected Role ROLE_ADMIN;
@@ -86,21 +85,22 @@ class UserServiceImplTest {
         ROLE_USER.setUpdateDate(null);
 
         // Saving roles
-        verify(roleService).save();
+        verify(roleService).saveNewRole(RoleEnum.ADMIN.getSimpleRoleName(), user1);
+        verify(roleService).saveNewRole(RoleEnum.USER.getSimpleRoleName(), user2);
 
         userRequestDto1 = new UserRequestDto();
         userRequestDto1.setFirstName("Hector");
         userRequestDto1.setLastName("Cortez");
         userRequestDto1.setEmail("hector@gmail.com");
         userRequestDto1.setPassword("password");
-        userRequestDto1.setRoleId(1L);
+        userRequestDto1.setRole(RoleEnum.ADMIN.getSimpleRoleName());
 
         userRequestDto2 = new UserRequestDto();
         userRequestDto2.setFirstName("Francisco");
         userRequestDto2.setLastName("Orieta");
         userRequestDto2.setEmail("fran@gmail.com");
         userRequestDto2.setPassword("password123");
-        userRequestDto2.setRoleId(2L);
+        userRequestDto2.setRole(RoleEnum.USER.getSimpleRoleName());
 
         user1 = new User();
         user1.setId(1L);
@@ -172,12 +172,6 @@ class UserServiceImplTest {
         accountsUser2.add(account3);
         accountsUser2.add(account4);
 
-        given(roleService.getById(1L)).willReturn(ROLE_ADMIN);
-        given(roleService.getById(2L)).willReturn(ROLE_USER);
-
-        ROLE_ADMIN = roleService.getById(1L);
-        ROLE_USER = roleService.getById(2L);
-
         rolesUser1 = new HashSet<>();
         rolesUser1.add(ROLE_ADMIN);
 
@@ -185,10 +179,10 @@ class UserServiceImplTest {
         rolesUser2.add(ROLE_USER);
 
         user1.setAccounts(accountsUser1);
-        user1.setRoles(rolesUser1);
+        user1.setRole(ROLE_ADMIN);
 
         user2.setAccounts(accountsUser2);
-        user2.setRoles(rolesUser2);
+        user2.setRole(ROLE_USER);
 
         userResponseDto1 = new UserResponseDto();
         userResponseDto1.setId(user1.getId());
@@ -198,7 +192,7 @@ class UserServiceImplTest {
         userResponseDto1.setPassword(user1.getPassword());
         userResponseDto1.setCreatedAt(user1.getCreationDate());
         userResponseDto1.setUpdatedAt(user1.getUpdateDate());
-        userResponseDto1.setRoles(user1.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        userResponseDto1.setRole(user1.getRole().getName());
 
         userResponseDto2 = new UserResponseDto();
         userResponseDto2.setId(user2.getId());
@@ -208,7 +202,7 @@ class UserServiceImplTest {
         userResponseDto2.setPassword(user2.getPassword());
         userResponseDto2.setCreatedAt(user2.getCreationDate());
         userResponseDto2.setUpdatedAt(user2.getUpdateDate());
-        userResponseDto2.setRoles(user2.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+        userResponseDto2.setRole(user2.getRole().getName());
 
         authRequestDto = new AuthRequestDto();
         authRequestDto.setEmail("hector@gmail.com");
@@ -221,6 +215,11 @@ class UserServiceImplTest {
                         "hector@gmail.com", "password",
                         rolesUser1.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList()))
         );
+
+        userUpdateRequestDto = new UserUpdateRequestDto();
+        userUpdateRequestDto.setFirstName("Hector Armando");
+        userUpdateRequestDto.setLastName("Cortez");
+        userUpdateRequestDto.setPassword(null);
     }
 
     @DisplayName("It should SAVE a user")
@@ -228,12 +227,12 @@ class UserServiceImplTest {
     void itShouldSaveUser() {
         // Given
         given(userRepository.save(user1)).willReturn(user1);
-        given(userMapper.dto2Entity(userRequestDto1, rolesUser1)).willReturn(user1);
+        given(userMapper.dto2Entity(userRequestDto1)).willReturn(user1);
         given(accountService.createDefaultAccounts(user1)).willReturn(accountsUser1);
-        given(underTest.save(userRequestDto1, ROLE_ADMIN)).willReturn(userResponseDto1);
+        given(underTest.saveNewUser(userRequestDto1)).willReturn(userResponseDto1);
 
         // When
-        UserResponseDto userResponseDtoFromService = underTest.save(userRequestDto1, ROLE_ADMIN);
+        UserResponseDto userResponseDtoFromService = underTest.saveNewUser(userRequestDto1);
 
         // Then
         assertThat(userResponseDtoFromService).isNotNull();
@@ -246,21 +245,17 @@ class UserServiceImplTest {
         // Given
         given(userRepository.save(user1)).willReturn(user1);
         given(userRepository.findById(1L)).willReturn(Optional.of(user1));
-        given(userMapper.dto2Entity(userRequestDto1, rolesUser1)).willReturn(user1);
+        given(userMapper.dto2Entity(userRequestDto1)).willReturn(user1);
         given(accountService.createDefaultAccounts(user1)).willReturn(accountsUser1);
-        given(underTest.save(userRequestDto1, ROLE_ADMIN)).willReturn(userResponseDto1);
+        given(underTest.saveNewUser(userRequestDto1)).willReturn(userResponseDto1);
         given(authService.login(authRequestDto)).willReturn(authResponseDto);
 
-        userRequestDto1.setRoleId(null);
-        userRequestDto1.setLastName("Armando Cortez");
-        userResponseDto1.setLastName(userRequestDto1.getLastName());
-
-        given(underTest.update(1L, userRequestDto1)).willReturn(userResponseDto1);
-        given(underTest.getById(1L)).willReturn(user1);
-        given(userMapper.refreshValues(userRequestDto1, user1));
+        given(underTest.updateUser(1L, userUpdateRequestDto)).willReturn(userResponseDto1);
+        given(underTest.getUserById(1L)).willReturn(user1);
+        given(userMapper.refreshValues(userUpdateRequestDto, user1));
 
         // When
-        UserResponseDto userResponseDto = underTest.update(1L, userRequestDto1);
+        UserResponseDto userResponseDto = underTest.updateUser(1L, userUpdateRequestDto);
 
         // Then
         assertThat(userResponseDto).usingRecursiveComparison().isEqualTo(userResponseDto1);

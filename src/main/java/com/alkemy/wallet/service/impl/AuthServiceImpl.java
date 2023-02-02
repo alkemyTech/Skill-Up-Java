@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -54,11 +53,6 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public String getEmailFromContext() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    @Override
-    public String encode(String toEncode) {
-        return new BCryptPasswordEncoder().encode(toEncode);
     }
 
     @Override

@@ -11,11 +11,11 @@ public interface IUserService {
 
     UserResponseDto saveNewUser(UserRequestDto userRequestDto);
 
-    UserResponseDto updateUser(Long id, UserUpdateRequestDto userUpdateRequestDto);
+    UserResponseDto updateUser(Long id, User loggedUser, UserUpdateRequestDto userUpdateRequestDto);
 
-    void deleteUserById(Long id);
+    void deleteUserById(Long id, User loggedUser);
 
-    UserResponseDto getUserDetails(Long id);
+    UserResponseDto getUserDetails(Long id, User loggedUser);
 
     void addAccountToUser(User user, Account account);
 

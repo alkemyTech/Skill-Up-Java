@@ -1,13 +1,17 @@
 package com.alkemy.wallet.model.entity;
 
-import lombok.*;
+import com.alkemy.wallet.model.constant.RoleEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static java.time.LocalDateTime.now;
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -16,9 +20,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Table(name = "ROLES")
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -26,10 +29,8 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, name = "NAME")
-    private String name;
-
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum name;
 
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "CREATED_AT")
@@ -39,7 +40,12 @@ public class Role {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updateDate = now();
 
-    @OneToOne
-    @JoinColumn(name = "USER_ID")
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
+
+    @Override
+    public String getAuthority() {
+        return name.getFullRoleName();
+    }
 }

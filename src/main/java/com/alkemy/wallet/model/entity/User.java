@@ -4,12 +4,14 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
-import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.time.LocalDateTime.now;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
@@ -21,11 +23,11 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Builder
 @Table(name = "USERS")
-@SQLDelete(sql = "UPDATE users SET DELETED=true WHERE id=?")
-@Where(clause = "DELETED=false")
-public class User {
+@SQLDelete(sql = "UPDATE users SET ENABLED=false WHERE id=?")
+@Where(clause = "ENABLED=true")
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -44,6 +46,12 @@ public class User {
     @Column(nullable = false, name = "PASSWORD")
     private String password;
 
+    @OneToMany(mappedBy = "user", fetch = EAGER, cascade = ALL)
+    Set<Role> authorities;
+
+    @Column(name = "ENABLED")
+    private boolean enabled = TRUE;
+
     @DateTimeFormat(pattern = "yyyy/MM/dd")
     @Column(name = "CREATED_AT")
     private LocalDateTime creationDate = now();
@@ -52,22 +60,42 @@ public class User {
     @Column(name = "UPDATED_AT")
     private LocalDateTime updateDate;
 
-    @Column(name = "DELETED")
-    private boolean deleted = FALSE;
-
-    @OneToOne(mappedBy = "user", fetch = EAGER, cascade = ALL)
-    @JoinColumn(name = "ROLE_ID", nullable = false)
-    private Role role;
-
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
-    @ToString.Exclude
     private List<Account> accounts;
 
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
-    @ToString.Exclude
     private List<Transaction> transactions;
 
     @OneToMany(mappedBy = "user", fetch = LAZY, cascade = ALL)
-    @ToString.Exclude
     private List<FixedTermDeposit> fixedTermDeposits;
+
+    @Override
+    public Set<Role> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 }

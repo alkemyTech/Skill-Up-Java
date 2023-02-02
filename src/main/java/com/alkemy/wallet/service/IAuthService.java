@@ -13,7 +13,5 @@ public interface IAuthService {
 
     String getEmailFromContext();
 
-    String encode(String toEncode);
-
     String generateToken(String email);
 }

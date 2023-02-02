@@ -9,19 +9,18 @@ import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.IRoleService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static com.alkemy.wallet.model.constant.RoleEnum.ADMIN;
@@ -29,59 +28,69 @@ import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
 import static java.time.LocalDateTime.now;
 
 @Service
-@Transactional
-@RequiredArgsConstructor(onConstructor_ = {@Lazy})
+@RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
 
     private final IUserRepository userRepository;
     private final UserMapper userMapper;
     private final IAccountService accountService;
-    private final IAuthService authService;
     private final IRoleService roleService;
     private final CustomMessageSource messageSource;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto saveNewUser(UserRequestDto userRequestDto) {
-        userRequestDto.setPassword(authService.encode(userRequestDto.getPassword()));
+        userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         User user = userMapper.dto2Entity(userRequestDto);
         Role role = roleService.saveNewRole(userRequestDto.getRole(), user);
-        user.setRole(role);
+        user.setAuthorities(Collections.singleton(role));
         user.setAccounts(accountService.createDefaultAccounts(user));
         return userMapper.entity2Dto(userRepository.save(user));
     }
 
     @Override
-    public UserResponseDto updateUser(Long id, UserUpdateRequestDto userUpdateRequestDto) {
+    public UserResponseDto updateUser(Long id, User loggedUser, UserUpdateRequestDto userUpdateRequestDto) {
         User user = getUserById(id);
-        if (!user.getEmail().equals(authService.getEmailFromContext()))
+        if (!user.getEmail().equals(loggedUser.getUsername()))
             throw new AccessDeniedException(messageSource.message("user.access-denied", null));
-        User userUpdated = userMapper.refreshValues(userUpdateRequestDto, user);
-        userUpdated.setUpdateDate(now());
-        return userMapper.entity2Dto(userUpdated);
+
+        if (userUpdateRequestDto.getFirstName() != null && !userUpdateRequestDto.getFirstName().trim().isEmpty())
+            user.setFirstName(userUpdateRequestDto.getFirstName());
+        if (userUpdateRequestDto.getLastName() != null && !userUpdateRequestDto.getLastName().trim().isEmpty())
+            user.setLastName(userUpdateRequestDto.getLastName());
+        if (userUpdateRequestDto.getPassword() != null && !userUpdateRequestDto.getPassword().trim().isEmpty())
+            user.setPassword(passwordEncoder.encode(userUpdateRequestDto.getPassword()));
+
+        user.setUpdateDate(now());
+        return userMapper.entity2Dto(userRepository.save(user));
     }
 
     @Override
-    public void deleteUserById(Long id) {
-        User loggedUser, user;
-        loggedUser = getUserByEmail(authService.getEmailFromContext());
+    public void deleteUserById(Long id, User loggedUser) {
+        User user = getUserById(id);
+        Optional<Role> ROLE_ADMIN = loggedUser.getAuthorities()
+                .stream()
+                .filter(role -> role.getAuthority().equals(ADMIN.getFullRoleName()))
+                .findFirst();
 
-        if (loggedUser.getRole().getName().equals(ADMIN.getFullRoleName())) {
-            user = getUserById(id);
+        if (ROLE_ADMIN.isPresent()) {
+            user.setEnabled(false);
             user.setUpdateDate(now());
-            user.setDeleted(true);
+            userRepository.save(user);
             return;
         }
-
-        if (!loggedUser.getId().equals(id))
+        if (!loggedUser.equals(user))
             throw new AccessDeniedException(messageSource.message("user.access-denied", null));
+
+        loggedUser.setEnabled(false);
         loggedUser.setUpdateDate(now());
-        loggedUser.setDeleted(true);
+        userRepository.save(loggedUser);
     }
 
     @Override
-    public UserResponseDto getUserDetails(Long id) {
+    public UserResponseDto getUserDetails(Long id, User loggedUser) {
         User user = getUserById(id);
-        if (!user.getEmail().equals(authService.getEmailFromContext()))
+        if (!user.getEmail().equals(loggedUser.getEmail()))
             throw new AccessDeniedException(messageSource.message("user.access-denied", null));
         return userMapper.entity2Dto(user);
     }
@@ -89,6 +98,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void addAccountToUser(User user, Account account) {
         user.getAccounts().add(account);
+        userRepository.save(user);
     }
 
     @Override

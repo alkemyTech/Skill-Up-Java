@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.InputMismatchException;
-import java.util.Optional;
 
 import static com.alkemy.wallet.model.constant.RoleEnum.ADMIN;
 import static com.alkemy.wallet.model.constant.RoleEnum.USER;
@@ -28,12 +27,10 @@ public class RoleServiceImpl implements IRoleService {
         Role role = new Role();
 
         if (roleName.equalsIgnoreCase(ADMIN.getSimpleRoleName())) {
-            role.setName(ADMIN.getFullRoleName());
-            role.setDescription(ADMIN.getSimpleRoleName());
+            role.setName(ADMIN);
             role.setUser(user);
         } else if (roleName.equalsIgnoreCase(USER.getSimpleRoleName())) {
-            role.setName(USER.getFullRoleName());
-            role.setDescription(USER.getSimpleRoleName());
+            role.setName(USER);
             role.setUser(user);
         } else {
             throw new InputMismatchException(messageSource.message("role.mismatch", null));

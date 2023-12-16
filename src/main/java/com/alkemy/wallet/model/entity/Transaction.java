@@ -1,5 +1,6 @@
 package com.alkemy.wallet.model.entity;
 
+import com.alkemy.wallet.model.constant.TransactionTypeEnum;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @Table(name = "TRANSACTIONS")
-@Builder
 public class Transaction {
 
     @Id

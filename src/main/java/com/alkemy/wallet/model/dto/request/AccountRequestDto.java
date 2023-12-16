@@ -12,7 +12,8 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @Builder
 public class AccountRequestDto {
-    @NotEmpty(message = "Must declare a currency type (example: USD, EUR")
-    @NotBlank(message = "Currency cannot be whitespaces")
+
+    @NotEmpty(message = "{account.invalid-currency}")
+    @NotBlank(message = "{account.invalid-currency}")
     private String currency;
 }

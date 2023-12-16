@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service.impl;
 
 import com.alkemy.wallet.model.dto.request.TransactionRequestDto;
+import com.alkemy.wallet.model.dto.request.UpdateTransactionRequestDto;
 import com.alkemy.wallet.model.dto.response.TransactionResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.Transaction;
@@ -11,16 +12,23 @@ import com.alkemy.wallet.service.IAccountService;
 import com.alkemy.wallet.service.IAuthService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
+import com.alkemy.wallet.utils.CustomMessageSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.InputMismatchException;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static com.alkemy.wallet.model.entity.TransactionTypeEnum.*;
+import static com.alkemy.wallet.model.constant.TransactionTypeEnum.*;
+import static com.alkemy.wallet.utils.PageUtil.PAGE_SIZE;
+import static com.alkemy.wallet.utils.TransactionUtil.setTransactionValues;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements ITransactionService {
 
@@ -29,28 +37,36 @@ public class TransactionServiceImpl implements ITransactionService {
     private final IAccountService accountService;
     private final IUserService userService;
     private final IAuthService authService;
+    private final CustomMessageSource messageSource;
 
     @Override
-    public TransactionResponseDto sendMoneyIndicatingCurrency(String currency, TransactionRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
-        Account senderAccount = accountService.getByCurrencyAndUserId(currency, loggedUser.getId());
-        Account receiverAccount = accountService.getAccountById(request.getAccountId());
-        User receiverUser = userService.getEntityById(receiverAccount.getUser().getId());
+    public TransactionResponseDto sendMoneyIndicatingCurrency(String currency,
+                                                              TransactionRequestDto transactionRequestDto) {
+        User loggedUser = userService.getUserByEmail(authService.getEmailFromContext());
+        Account senderAccount = accountService.getAccountByCurrencyAndUserId(currency, loggedUser.getId());
+        Account receiverAccount = accountService.getAccountById(transactionRequestDto.getAccountId());
+        User receiverUser = receiverAccount.getUser();
 
         if (receiverUser.equals(loggedUser))
-            throw new IllegalCallerException("Trying to make a PAYMENT to one of your accounts");
-        if (request.getAmount() > senderAccount.getBalance() || request.getAmount() > senderAccount.getTransactionLimit())
-            throw new InputMismatchException("Not enough money to send or transaction limit reached");
+            throw new InputMismatchException(messageSource.message("transaction.invalid-transaction", null));
+        if (transactionRequestDto.getAmount() > senderAccount.getBalance())
+            throw new InputMismatchException(messageSource.message("transaction.invalid-balance", null));
+        if (transactionRequestDto.getAmount() > senderAccount.getTransactionLimit())
+            throw new InputMismatchException(messageSource.message("transaction.limit", null));
         if (!senderAccount.getCurrency().equals(receiverAccount.getCurrency()))
-            throw new IllegalArgumentException(String.format("Trying to send money from an %s account to an %s account", senderAccount.getCurrency(), receiverAccount.getCurrency()));
+            throw new InputMismatchException(messageSource.message("transaction.currency-mismatch", null));
 
-        Double newBalanceSender = senderAccount.getBalance() - request.getAmount();
-        Double newBalanceReceiver = receiverAccount.getBalance() + request.getAmount();
+        Double newBalanceSender = senderAccount.getBalance() - transactionRequestDto.getAmount();
+        Double newBalanceReceiver = receiverAccount.getBalance() + transactionRequestDto.getAmount();
         accountService.editBalanceAndSave(senderAccount, newBalanceSender);
         accountService.editBalanceAndSave(receiverAccount, newBalanceReceiver);
 
-        Transaction payment = mapper.dto2Entity(request, PAYMENT, loggedUser, receiverAccount);
-        Transaction income = mapper.dto2Entity(request, INCOME, receiverUser, receiverAccount);
+        Transaction payment = setTransactionValues(
+                transactionRequestDto.getAmount(), PAYMENT,
+                transactionRequestDto.getDescription(), loggedUser, receiverAccount);
+        Transaction income = setTransactionValues(
+                transactionRequestDto.getAmount(), INCOME,
+                transactionRequestDto.getDescription(), receiverUser, receiverAccount);
 
         repository.save(payment);
         repository.save(income);
@@ -58,29 +74,63 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionResponseDto doTransaction(TransactionRequestDto request, String token) {
-        User loggedUser = authService.getUserFromToken(token);
-        Account receiverAccount = accountService.getAccountById(request.getAccountId());
+    public TransactionResponseDto updateTransaction(Long id, UpdateTransactionRequestDto transactionRequestDto) {
+        User loggedUser = userService.getUserByEmail(authService.getEmailFromContext());
+        Transaction transaction = getTransactionById(id);
+        if (!loggedUser.getTransactions().contains(transaction))
+            throw new IllegalArgumentException(
+                    messageSource.message("entity.out-of-bound", new String[]{"transaction"}));
+        if (transactionRequestDto.getDescription() != null && !transactionRequestDto.getDescription().trim().isEmpty())
+            transaction.setDescription(transactionRequestDto.getDescription());
+        return mapper.entity2Dto(transaction);
+    }
 
-        double newBalance;
-        Transaction transaction;
+    @Override
+    public TransactionResponseDto getTransactionDetails(Long id) {
+        User loggedUser = userService.getUserByEmail(authService.getEmailFromContext());
+        Transaction transaction = getTransactionById(id);
+        if (!transaction.getUser().equals(loggedUser))
+            throw new IllegalArgumentException(
+                    messageSource.message("entity.out-of-bound", new String[]{"transaction"}));
+        return mapper.entity2Dto(transaction);
+    }
 
-        if (loggedUser.getAccounts().contains(receiverAccount)) {
-            newBalance = receiverAccount.getBalance() + request.getAmount();
-            transaction = mapper.dto2Entity(request, DEPOSIT, loggedUser, receiverAccount);
-        } else {
-            newBalance = receiverAccount.getBalance() - request.getAmount();
-            transaction = mapper.dto2Entity(request, PAYMENT, loggedUser, receiverAccount);
-        }
+    @Override
+    public Transaction getTransactionById(Long id) {
+        Optional<Transaction> transaction = repository.findById(id);
+        return transaction.orElseThrow(() ->
+                new NullPointerException(
+                        messageSource.message("entity.not-found",
+                                new String[]{"Transaction", "id", id.toString()}))
+        );
+    }
+
+    @Override
+    public TransactionResponseDto doPayment(TransactionRequestDto transactionRequestDto) {
+        Account receiverAccount = accountService.getAccountById(transactionRequestDto.getAccountId());
+        return sendMoneyIndicatingCurrency(receiverAccount.getCurrency().name(), transactionRequestDto);
+    }
+
+    @Override
+    public TransactionResponseDto doDeposit(TransactionRequestDto transactionRequestDto) {
+        Account receiverAccount = accountService.getAccountById(transactionRequestDto.getAccountId());
+        User user = receiverAccount.getUser();
+
+        if (!user.getEmail().equals(authService.getEmailFromContext()))
+            throw new IllegalArgumentException(messageSource.message("transaction.deposit-mismatch", null));
+
+        double newBalance = receiverAccount.getBalance() + transactionRequestDto.getAmount();
         accountService.editBalanceAndSave(receiverAccount, newBalance);
+
+        Transaction transaction = setTransactionValues(
+                transactionRequestDto.getAmount(), DEPOSIT,
+                transactionRequestDto.getDescription(), user, receiverAccount);
         return mapper.entity2Dto(repository.save(transaction));
     }
 
     @Override
-    public List<TransactionResponseDto> listTransactionsByUserId(Long userId) {
-        List<Transaction> transactions = repository.findTransactionsByUserId(userId);
-        if (transactions.isEmpty())
-            throw new NoSuchElementException(String.format("The user with ID %s does not have transactions yet", userId));
-        return mapper.entityList2DtoList(transactions);
+    public Page<TransactionResponseDto> getAllTransactions(Long userId, Integer pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
+        return repository.findTransactionsByUserId(userId, pageable).map(mapper::entity2Dto);
     }
 }

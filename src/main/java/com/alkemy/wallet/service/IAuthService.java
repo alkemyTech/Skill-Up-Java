@@ -4,20 +4,14 @@ import com.alkemy.wallet.model.dto.request.AuthRequestDto;
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.AuthResponseDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.entity.Role;
-import com.alkemy.wallet.model.entity.User;
 
 public interface IAuthService {
 
-    UserResponseDto register(UserRequestDto user);
+    UserResponseDto register(UserRequestDto userRequestDto);
 
-    AuthResponseDto login(AuthRequestDto request);
+    AuthResponseDto login(AuthRequestDto authRequestDto);
 
-    User getByEmail(String email);
+    String getEmailFromContext();
 
-    User getUserFromToken(String token);
-
-    Role getRoleById(Long roleId);
-
-    String encode(String toEncode);
+    String generateToken(String email);
 }

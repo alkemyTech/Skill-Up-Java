@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 public class TransactionServiceTest {
     @Autowired
-    IAuthService authService;
+    IAuthenticationService authService;
 
     @Autowired
     IUserRepository userRepository;

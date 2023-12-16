@@ -1,8 +1,8 @@
 /*
 package com.alkemy.wallet.controller;
 
-import com.alkemy.wallet.auth.service.UserDetailsCustomService;
-import com.alkemy.wallet.auth.utility.JwtUtils;
+import com.alkemy.wallet.config.service.UserDetailsCustomService;
+import com.alkemy.wallet.config.utility.JwtUtils;
 import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.model.mapper.UserMapper;
@@ -11,15 +11,15 @@ import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
-import com.alkemy.wallet.service.impl.AuthServiceImpl;
+import com.alkemy.wallet.service.IAuthenticationService;
+import com.alkemy.wallet.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.config.authentication.AuthenticationManager;
+import org.springframework.config.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.config.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -37,7 +37,7 @@ class AuthControllerTest {
     private final UserMapper mapper = new UserMapper();
     private final IRoleRepository roleRepository = Mockito.mock(IRoleRepository.class);
     private final IAccountService accountService = Mockito.mock(IAccountService.class);
-    private final IAuthService service = new AuthServiceImpl(passwordEncoder, authenticationManager,
+    private final IAuthenticationService service = new AuthenticationServiceImpl(passwordEncoder, authenticationManager,
             userDetailsCustomService, jwtUtils, userRepository, mapper, roleRepository, accountService);
 
     private final AuthController controller = new AuthController(service);

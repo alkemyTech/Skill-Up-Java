@@ -5,7 +5,6 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Getter
@@ -15,23 +14,24 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class UserRequestDto {
 
-    @NotEmpty(message = "First name cannot be empty")
-    @NotBlank(message = "First name cannot be whitespaces")
+    @NotEmpty(message = "{user.invalid-first-name}")
+    @NotBlank(message = "{user.invalid-first-name}")
     private String firstName;
 
-    @NotEmpty(message = "Last name cannot be empty")
-    @NotBlank(message = "Last name cannot be whitespaces")
+    @NotEmpty(message = "{user.invalid-last-name}")
+    @NotBlank(message = "{user.invalid-last-name}")
     private String lastName;
 
-    @Email(message = "Invalid email format")
-    @NotEmpty(message = "Email cannot be empty")
-    @NotBlank(message = "Email cannot be whitespaces")
+    @Email(message = "{user.invalid-email}")
+    @NotEmpty(message = "{user.invalid-email}")
+    @NotBlank(message = "{user.invalid-email}")
     private String email;
 
-    @NotEmpty(message = "Password cannot be empty")
-    @NotBlank(message = "Password cannot be whitespaces")
+    @NotEmpty(message = "{user.invalid-password}")
+    @NotBlank(message = "{user.invalid-password}")
     private String password;
 
-    @NotNull(message = "Must specify the id for the role")
-    private Long roleId;
+    @NotEmpty(message = "{role.mismatch}")
+    @NotBlank(message = "{role.mismatch}")
+    private String role;
 }

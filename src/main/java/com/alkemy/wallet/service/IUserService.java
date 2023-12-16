@@ -1,28 +1,29 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.model.dto.request.UserRequestDto;
+import com.alkemy.wallet.model.dto.request.UserUpdateRequestDto;
+import com.alkemy.wallet.model.dto.response.UserResponseDto;
 import com.alkemy.wallet.model.entity.Account;
 import com.alkemy.wallet.model.entity.User;
-
-import java.util.List;
-import java.util.Optional;
-import com.alkemy.wallet.model.dto.request.UserRequestDto;
-import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.dto.response.list.UserListResponseDto;
 import org.springframework.data.domain.Page;
 
 public interface IUserService {
 
-    UserResponseDto update(Long id, String token, UserRequestDto request);
+    UserResponseDto saveNewUser(UserRequestDto userRequestDto);
 
-    void addAccount(User user, Account account);
+    UserResponseDto updateUser(Long id, User loggedUser, UserUpdateRequestDto userUpdateRequestDto);
 
-    List<UserResponseDto> getUsers();
+    void deleteUserById(Long id, User loggedUser);
 
-    User getEntityById(Long id);
+    UserResponseDto getUserDetails(Long id, User loggedUser);
 
-    UserResponseDto getUserDetails(Long id, String token);
+    void addAccountToUser(User user, Account account);
 
-    void deleteUserById(Long id, String token);
+    User getUserById(Long id);
 
-    Page<UserResponseDto> findAll(Integer pageNumber, Integer pageSize);
+    User getUserByEmail(String email);
+
+    boolean checkIfUserEmailExists(String email);
+
+    Page<UserResponseDto> getAllUsers(Integer pageNumber);
 }

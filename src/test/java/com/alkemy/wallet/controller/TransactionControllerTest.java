@@ -2,11 +2,11 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.model.entity.Account;
-import com.alkemy.wallet.model.entity.AccountCurrencyEnum;
+import com.alkemy.wallet.model.constant.AccountCurrencyEnum;
 import com.alkemy.wallet.model.entity.User;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.service.IAccountService;
-import com.alkemy.wallet.service.IAuthService;
+import com.alkemy.wallet.service.IAuthenticationService;
 import com.alkemy.wallet.service.ITransactionService;
 import com.alkemy.wallet.service.IUserService;
 import com.alkemy.wallet.service.impl.TransactionServiceImpl;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TransactionControllerTest {
     private final ITransactionRepository repository = Mockito.mock(ITransactionRepository.class);
-    private final IAuthService authService = Mockito.mock(IAuthService.class);
+    private final IAuthenticationService authService = Mockito.mock(IAuthenticationService.class);
     private final IUserService userService = Mockito.mock(IUserService.class);
     private final IAccountService accountService = Mockito.mock(IAccountService.class);
     private final ITransactionService transactionService = new TransactionServiceImpl(repository, userService, authService, accountService);

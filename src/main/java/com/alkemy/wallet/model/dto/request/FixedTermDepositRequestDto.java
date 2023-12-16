@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static com.alkemy.wallet.utils.FixedTermDepositUtil.MIN_TO_INVEST;
+
 @Data
 @Getter
 @Setter
@@ -14,12 +16,16 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class FixedTermDepositRequestDto {
-    @NotNull(message = "Must declare the amount of money to deposit in fixed terms")
-    @Min(value = 1, message = "The amount must be 1 positive minimum")
+
+    @NotNull(message = "{fixed.invalid-amount}")
+    @Min(value = MIN_TO_INVEST, message = "{fixed.invalid-amount}")
     private Double amount;
-    @NotNull(message = "Declare the id of the account")
-    private Long accountId;
-    @NotEmpty(message = "Must declare the closing date")
-    @NotBlank(message = "Closing date cannot be whitespaces")
+
+    @NotEmpty(message = "{fixed.invalid-currency}")
+    @NotBlank(message = "{fixed.invalid-currency}")
+    private String currency;
+
+    @NotEmpty(message = "{fixed.invalid-date}")
+    @NotBlank(message = "{fixed.invalid-date}")
     private String closingDate;
 }

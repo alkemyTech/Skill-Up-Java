@@ -12,12 +12,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class UserResponseDto {
+
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private Set<String> roles;
+    private Set<String> authorities;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

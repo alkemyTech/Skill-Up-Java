@@ -2,27 +2,24 @@ package com.alkemy.wallet.model.mapper;
 
 import com.alkemy.wallet.model.dto.request.UserRequestDto;
 import com.alkemy.wallet.model.dto.response.UserResponseDto;
-import com.alkemy.wallet.model.entity.Role;
 import com.alkemy.wallet.model.entity.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
 
-    public User dto2Entity(UserRequestDto dto, Set<Role> roles) {
-        return User.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .creationDate(LocalDateTime.now())
-                .roles(roles)
-                .build();
+    public User dto2Entity(UserRequestDto dto) {
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+        return user;
     }
 
     public UserResponseDto entity2Dto(User entity) {
@@ -34,24 +31,10 @@ public class UserMapper {
                 .password(entity.getPassword())
                 .createdAt(entity.getCreationDate())
                 .updatedAt(entity.getUpdateDate())
-                .roles(
-                        entity.getRoles().stream().map(Role::getName).collect(Collectors.toSet())
-                )
+                .authorities(entity.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                 .build();
-    }
 
-    public User refreshValues(UserRequestDto dto, User entity2Return) {
-        if (dto.getFirstName() != null && !dto.getFirstName().trim().isEmpty())
-            entity2Return.setFirstName(dto.getFirstName());
-        if (dto.getLastName() != null && !dto.getLastName().trim().isEmpty())
-            entity2Return.setLastName(dto.getLastName());
-        if (dto.getPassword() != null && !dto.getPassword().trim().isEmpty())
-            entity2Return.setPassword(dto.getPassword());
-        entity2Return.setUpdateDate(LocalDateTime.now());
-        return entity2Return;
-    }
-
-    public List<UserResponseDto> entityList2DtoList(List<User> entityList) {
-        return entityList.stream().map(this::entity2Dto).toList();
     }
 }
